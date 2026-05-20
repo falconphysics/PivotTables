@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pivot Tables: Day One — Michigan Crash Data</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,500;1,300&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="data/michigan_crashes.js"></script>
+<style>
+:root {
+  --bg:#F5F2EC; --surface:#FFFDF8; --surface2:#EDE9E0; --border:#D4CFC4;
+  --text:#1A1714; --text2:#5A5650; --text3:#8A8580;
+  --accent:#2B5F3E; --accent-light:#DCF0E4;
+  --accent2:#1A3A6B; --accent2-light:#DDE8F5;
+  --accent3:#C4420A; --accent3-light:#FAE8DF;
+  --mono:'DM Mono',monospace; --serif:'Fraunces',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif;
+  --r:6px; --rl:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.65;min-height:100vh;}
+
+/* Header */
+.page-header{background:var(--text);color:var(--bg);padding:2.5rem 2rem 2rem;position:relative;overflow:hidden;}
+.page-header::before{content:'';position:absolute;top:-40px;right:-40px;width:220px;height:220px;border-radius:50%;background:var(--accent);opacity:.12;}
+.course-tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#A09890;margin-bottom:.5rem;}
+.page-header h1{font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.4rem);font-weight:300;line-height:1.2;margin-bottom:.5rem;}
+.page-header h1 em{color:#9EC9AD;font-style:italic;}
+.header-sub{font-size:14px;color:#A09890;margin-bottom:1.5rem;}
+.progress-bar-wrap{display:flex;gap:4px;align-items:center;}
+.progress-seg{height:4px;flex:1;border-radius:2px;background:#3A3630;transition:background .4s;}
+.progress-seg.done{background:var(--accent);}
+.progress-seg.active{background:#9EC9AD;}
+.progress-label{font-family:var(--mono);font-size:11px;color:#A09890;margin-left:8px;white-space:nowrap;}
+
+/* Nav */
+.nav-strip{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;gap:0;overflow-x:auto;}
+.nav-btn{font-family:var(--mono);font-size:12px;padding:14px 16px;border:none;background:transparent;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;letter-spacing:.04em;}
+.nav-btn:hover{color:var(--text);}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* Main */
+.main{max-width:860px;margin:0 auto;padding:2rem;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;margin-bottom:1.25rem;}
+.card-title{font-family:var(--serif);font-size:1.1rem;font-weight:300;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.card-title .num{font-family:var(--mono);font-size:11px;background:var(--accent);color:white;padding:2px 7px;border-radius:3px;}
+
+/* Info boxes */
+.concept-box{background:var(--accent2-light);border-left:3px solid var(--accent2);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.25rem;margin:1rem 0;font-size:14px;}
+.tip-box{background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.25rem;margin:1rem 0;font-size:14px;}
+.warn-box{background:var(--accent3-light);border-left:3px solid var(--accent3);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.25rem;margin:1rem 0;font-size:14px;}
+
+/* Steps */
+.steps{list-style:none;counter-reset:steps;}
+.steps li{counter-increment:steps;display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--surface2);font-size:14px;}
+.steps li:last-child{border-bottom:none;}
+.steps li::before{content:counter(steps);font-family:var(--mono);font-size:11px;background:var(--text);color:var(--bg);min-width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+
+/* Screenshot mockup */
+.sheets-mockup{background:#fff;border:1px solid #C9D1DB;border-radius:var(--r);overflow:hidden;margin:1rem 0;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.sheets-toolbar{background:#F8F9FA;border-bottom:1px solid #E0E0E0;padding:6px 12px;display:flex;align-items:center;gap:8px;}
+.sheets-toolbar-btn{font-family:var(--mono);font-size:11px;background:transparent;border:1px solid #DADCE0;border-radius:3px;padding:3px 8px;color:#444;cursor:default;}
+.sheets-toolbar-btn.highlight{background:#E8F0FE;border-color:#C5D7FB;color:#1967D2;font-weight:500;}
+.sheets-menu{background:#202124;padding:6px 12px;display:flex;gap:16px;}
+.sheets-menu span{font-size:12px;color:#E8EAED;cursor:default;}
+.sheets-menu span.active{color:#8AB4F8;border-bottom:2px solid #8AB4F8;padding-bottom:4px;}
+.sheets-grid{overflow-x:auto;}
+.sheets-grid table{width:100%;border-collapse:collapse;font-size:11px;}
+.sheets-grid th{background:#F8F9FA;border:1px solid #E0E0E0;padding:4px 8px;text-align:center;color:#666;font-weight:400;font-family:var(--mono);}
+.sheets-grid td{border:1px solid #E0E0E0;padding:4px 8px;white-space:nowrap;color:#333;}
+.sheets-grid tr:nth-child(1) td{background:#E8F0FE;font-weight:500;color:#1967D2;}
+.sheets-grid td.row-num{background:#F8F9FA;color:#666;text-align:center;font-family:var(--mono);}
+
+/* Pivot editor mockup */
+.pivot-editor-wrap{display:grid;grid-template-columns:1fr 240px;gap:0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin:1rem 0;}
+.pivot-result-pane{overflow-x:auto;padding:12px;}
+.pivot-editor-panel{background:var(--surface2);border-left:1px solid var(--border);padding:12px;}
+.editor-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:4px;}
+.zone-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:8px 10px;margin-bottom:8px;}
+.zone-field{background:#E6F1FB;color:#0C447C;font-family:var(--mono);font-size:11px;padding:2px 6px;border-radius:3px;display:inline-block;margin-top:4px;}
+.zone-field.green{background:var(--accent-light);color:#085041;}
+.zone-field.orange{background:#FAEEDA;color:#633806;}
+
+/* Live pivot builder */
+.pivot-builder{background:var(--surface2);border-radius:var(--rl);padding:1.25rem;margin:1rem 0;}
+.pivot-builder h3{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;}
+.pivot-zones{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.pivot-zone{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;}
+.zone-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px;}
+.pivot-zone select{width:100%;font-family:var(--sans);font-size:13px;border:1px solid var(--border);border-radius:var(--r);padding:6px 8px;background:var(--surface);color:var(--text);cursor:pointer;}
+.agg-row{display:flex;gap:8px;align-items:center;margin-top:6px;}
+.agg-row label{font-size:12px;color:var(--text2);white-space:nowrap;}
+.agg-row select{font-family:var(--sans);font-size:12px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;background:var(--surface);color:var(--text);flex:1;}
+.build-btn{width:100%;margin-top:10px;padding:10px;background:var(--accent);color:white;border:none;border-radius:var(--r);font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;transition:opacity .2s;}
+.build-btn:hover{opacity:.88;}
+
+/* Pivot output */
+.pivot-output{margin-top:1rem;overflow-x:auto;}
+.pivot-output table{width:100%;border-collapse:collapse;font-size:13px;}
+.pivot-output th{background:var(--text);color:var(--bg);padding:8px 12px;text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.06em;font-weight:400;}
+.pivot-output td{padding:7px 12px;border-bottom:1px solid var(--surface2);}
+.pivot-output tr:nth-child(even) td{background:var(--surface2);}
+.val-cell{text-align:right;font-family:var(--mono);}
+.top-row td{background:var(--accent-light) !important;font-weight:500;}
+
+/* Questions */
+.q-card{border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:1rem;}
+.q-header{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);cursor:pointer;user-select:none;}
+.q-header:hover{background:var(--surface2);}
+.q-num{font-family:var(--mono);font-size:11px;background:var(--text);color:var(--bg);padding:3px 8px;border-radius:3px;flex-shrink:0;}
+.q-text{flex:1;font-size:14px;font-weight:500;}
+.skill-tag{font-family:var(--mono);font-size:10px;padding:2px 6px;border-radius:3px;border:1px solid var(--border);color:var(--text3);}
+.q-body{padding:16px;border-top:1px solid var(--border);display:none;background:var(--surface);}
+.q-body.open{display:block;}
+.chev{font-size:16px;color:var(--text3);transition:transform .2s;}
+.chev.open{transform:rotate(180deg);}
+.hint-btn{font-family:var(--mono);font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:4px;background:transparent;color:var(--text2);cursor:pointer;margin-top:10px;transition:background .15s;}
+.hint-btn:hover{background:var(--surface2);}
+.hint-text{display:none;margin-top:10px;font-size:13px;color:var(--text2);background:var(--surface2);border-radius:var(--r);padding:10px 12px;font-style:italic;}
+.hint-text.open{display:block;}
+
+/* Answers */
+.answer-area{margin-top:12px;}
+.answer-area label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:6px;}
+.answer-area textarea{width:100%;min-height:80px;font-family:var(--sans);font-size:14px;border:1px solid var(--border);border-radius:var(--r);padding:10px;background:var(--surface);color:var(--text);resize:vertical;}
+.answer-area textarea:focus{outline:none;border-color:var(--accent2);}
+
+/* Dataset table */
+.data-wrap{overflow-x:auto;margin:1rem 0;}
+.data-wrap table{font-size:12px;border-collapse:collapse;white-space:nowrap;width:100%;}
+.data-wrap th{font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:6px 10px;background:var(--text);color:var(--bg);font-weight:400;}
+.data-wrap td{padding:5px 10px;border-bottom:1px solid var(--surface2);}
+.data-wrap tr:nth-child(even) td{background:var(--surface2);}
+
+/* Column guide */
+.col-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin:1rem 0;}
+.col-card{background:var(--surface2);border-radius:var(--r);padding:10px 12px;}
+.col-name{font-family:var(--mono);font-size:11px;color:var(--accent2);margin-bottom:3px;font-weight:500;}
+.col-type{font-size:10px;color:var(--text3);margin-bottom:4px;font-family:var(--mono);}
+.col-desc{font-size:12px;color:var(--text2);}
+
+/* Submit form */
+.form-group{margin-bottom:1rem;}
+.form-group label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:6px;}
+.form-group input[type=text]{width:100%;font-family:var(--sans);font-size:14px;border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;background:var(--surface);color:var(--text);max-width:340px;}
+.form-group input:focus{outline:none;border-color:var(--accent2);}
+
+/* Footer nav */
+.footer-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0 2.5rem;margin-top:1rem;}
+.footer-btn{font-family:var(--sans);font-size:14px;padding:10px 20px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;transition:background .15s;text-decoration:none;display:inline-block;}
+.footer-btn:hover{background:var(--surface2);}
+.footer-btn.next{background:var(--text);color:var(--bg);border-color:var(--text);}
+.footer-btn.next:hover{opacity:.85;}
+.footer-btn:disabled{opacity:.3;cursor:default;}
+.footer-btn.dl{background:var(--accent);color:white;border-color:var(--accent);}
+
+/* Download card */
+.dl-card{background:var(--surface2);border:1px dashed var(--border);border-radius:var(--rl);padding:1.5rem;display:flex;gap:1.25rem;align-items:flex-start;margin-bottom:1.25rem;}
+.dl-icon{font-size:28px;flex-shrink:0;color:var(--accent);}
+.dl-title{font-size:15px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.dl-sub{font-size:13px;color:var(--text2);}
+.dl-btn{margin-top:10px;display:inline-block;font-family:var(--sans);font-size:13px;padding:8px 16px;background:var(--accent);color:white;border:none;border-radius:var(--r);cursor:pointer;transition:opacity .2s;}
+.dl-btn:hover{opacity:.88;}
+
+/* Heading */
+.section-heading{font-family:var(--serif);font-size:1.35rem;font-weight:300;margin-bottom:1.25rem;}
+.section-heading span{color:var(--accent);font-style:italic;}
+.divider{height:.5px;background:var(--border);margin:1.5rem 0;}
+
+/* Arc */
+.arc{display:flex;gap:0;margin-bottom:2rem;overflow:hidden;border-radius:var(--r);border:.5px solid var(--border);}
+.arc-step{flex:1;padding:10px 12px;text-align:center;border-right:.5px solid var(--border);}
+.arc-step:last-child{border-right:none;}
+.arc-label{font-size:11px;color:var(--text3);margin:0 0 2px;}
+.arc-title{font-size:13px;font-weight:500;color:var(--text);margin:0;}
+
+@media(max-width:600px){
+  .main{padding:1rem;}
+  .pivot-zones{grid-template-columns:1fr;}
+  .pivot-editor-wrap{grid-template-columns:1fr;}
+  .arc{flex-wrap:wrap;}
+  .arc-step{border-right:none;border-bottom:.5px solid var(--border);}
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <p class="course-tag">AP Computer Science A · Data Unit · Day 1</p>
+  <h1>Pivot Tables<br><em>Introduction from Scratch</em></h1>
+  <p class="header-sub">Michigan Traffic Crash Data · 500 records · 2022–2024</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-seg active" id="seg0"></div>
+    <div class="progress-seg" id="seg1"></div>
+    <div class="progress-seg" id="seg2"></div>
+    <div class="progress-seg" id="seg3"></div>
+    <div class="progress-seg" id="seg4"></div>
+    <span class="progress-label" id="progress-label">1 / 5</span>
+  </div>
+</div>
+
+<div class="nav-strip">
+  <button class="nav-btn active" data-sec="0">0. The Data</button>
+  <button class="nav-btn" data-sec="1">1. Google Sheets Setup</button>
+  <button class="nav-btn" data-sec="2">2. Build a Pivot Table</button>
+  <button class="nav-btn" data-sec="3">3. Practice</button>
+  <button class="nav-btn" data-sec="4">4. Submit</button>
+</div>
+
+<div class="main">
+
+<!-- ──────────── SEC 0: THE DATA ──────────── -->
+<div class="section active" id="sec0">
+  <h2 class="section-heading">The dataset — <span>what are we working with?</span></h2>
+
+  <p style="font-size:15px;color:var(--text2);margin-bottom:1.25rem;">
+    Before you build anything, you need to understand the raw data. This section walks you through what the dataset contains and what each column means.
+  </p>
+
+  <div class="card">
+    <div class="card-title">Overview</div>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:1rem;">
+      This dataset contains <strong>500 simulated traffic crash records</strong> from Michigan counties between 2022 and 2024. Each row is one crash. It mirrors the structure of real crash data published by the Michigan Department of Transportation.
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1rem;">
+      <div style="background:var(--surface2);border-radius:var(--r);padding:12px;text-align:center;">
+        <div style="font-family:var(--mono);font-size:22px;font-weight:500;color:var(--text);">500</div>
+        <div style="font-size:12px;color:var(--text3);">crash records</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:var(--r);padding:12px;text-align:center;">
+        <div style="font-family:var(--mono);font-size:22px;font-weight:500;color:var(--text);">15</div>
+        <div style="font-size:12px;color:var(--text3);">columns</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:var(--r);padding:12px;text-align:center;">
+        <div style="font-family:var(--mono);font-size:22px;font-weight:500;color:var(--text);">10</div>
+        <div style="font-size:12px;color:var(--text3);">Michigan counties</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:var(--r);padding:12px;text-align:center;">
+        <div style="font-family:var(--mono);font-size:22px;font-weight:500;color:var(--text);">2022–24</div>
+        <div style="font-size:12px;color:var(--text3);">date range</div>
+      </div>
+    </div>
+    <div class="tip-box">
+      <strong>Counties included:</strong> Wayne, Oakland, Macomb, Washtenaw, Livingston, Monroe, St. Clair, Genesee, Ingham, Kent — the Metro Detroit corridor and surrounding areas, including Dearborn.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Column guide — know your data</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Every pivot table question starts with knowing which columns are <em>categorical</em> (good for grouping) and which are <em>numeric</em> (good for aggregating).</p>
+    <div class="col-grid">
+      <div class="col-card">
+        <div class="col-name">crash_id</div>
+        <div class="col-type">numeric · unique ID</div>
+        <div class="col-desc">Row identifier. Don't use this in pivot tables.</div>
+      </div>
+      <div class="col-card">
+        <div class="col-name">date</div>
+        <div class="col-type">text · date string</div>
+        <div class="col-desc">Full date of crash (YYYY-MM-DD).</div>
+      </div>
+      <div class="col-card" style="border-left:3px solid var(--accent2);">
+        <div class="col-name">year</div>
+        <div class="col-type">numeric · 2022–2024 · categorical</div>
+        <div class="col-desc">Good for grouping by year in Rows or Columns.</div>
+      </div>
+      <div class="col-card" style="border-left:3px solid var(--accent2);">
+        <div class="col-name">month</div>
+        <div class="col-type">text · categorical</div>
+        <div class="col-desc">Month name. Good for seasonal patterns.</div>
+      </div>
+      <div class="col-card" style="border-left:3px solid var(--accent2);">
+        <div class="col-name">county</div>
+        <div class="col-type">text · categorical</div>
+        <div class="col-desc">Michigan county. Best row grouping field.</div>
+      </div>
+      <div class="col-card" style="border-left:3px solid var(--accent2);">
+        <div class="col-name">city</div>
+        <div class="col-type">text · categorical</div>
+        <div class="col-desc">City within county. More specific than county.</div>
+      </div>
+      <div class="col-card" style="border-left:3px solid var(--accent2);">
+        <div class="col-name">road_type</div>
+        <div class="col-type">text · categorical · 6 values</div>
+        <div class="col-desc">Interstate, State Hwy, County Rd, City Street, etc.</div>
+      </div>
+      <div class="col-card" style="border-left:3px solid var(--accent2);">
+        <div class="col-name">road_condition</div>
+        <div class="col-type">text · categorical · 8 values</div>
+        <div class="col-desc">Clear, Rain, Snow/Ice, Fog, Dark - Lighted, etc.</div>
+      </div>
+      <div class="col-card" style="border-left:3px solid var(--accent2);">
+        <div class="col-name">time_of_day</div>
+        <div class="col-type">text · categorical · 5 values</div>
+        <div class="col-desc">Morning Rush, Midday, Afternoon Rush, Evening, Late Night.</div>
+      </div>
+      <div class="col-card" style="border-left:3px solid var(--accent2);">
+        <div class="col-name">vehicle_type</div>
+        <div class="col-type">text · categorical · 11 values</div>
+        <div class="col-desc">Passenger Car, SUV/Truck, Motorcycle, Bicycle, etc.</div>
+      </div>
+      <div class="col-card" style="border-left:3px solid var(--accent2);">
+        <div class="col-name">crash_severity</div>
+        <div class="col-type">text · categorical · 4 values</div>
+        <div class="col-desc">Property Damage Only, Minor Injury, Serious Injury, Fatal.</div>
+      </div>
+      <div class="col-card" style="border-left:3px solid var(--accent2);">
+        <div class="col-name">contributing_factor</div>
+        <div class="col-type">text · categorical · 8 values</div>
+        <div class="col-desc">Speeding, Distracted Driving, Alcohol/Drugs, etc.</div>
+      </div>
+      <div class="col-card" style="border-left:3px solid #C4420A;">
+        <div class="col-name">vehicles_involved</div>
+        <div class="col-type">numeric · 1–4 · aggregatable</div>
+        <div class="col-desc">Count of vehicles. Use SUM or AVERAGE in Values.</div>
+      </div>
+      <div class="col-card" style="border-left:3px solid #C4420A;">
+        <div class="col-name">injuries</div>
+        <div class="col-type">numeric · 0–3 · aggregatable</div>
+        <div class="col-desc">Injury count per crash. SUM gives county totals.</div>
+      </div>
+      <div class="col-card" style="border-left:3px solid #C4420A;">
+        <div class="col-name">fatalities</div>
+        <div class="col-type">numeric · 0 or 1 · aggregatable</div>
+        <div class="col-desc">1 = fatal crash. SUM gives total fatality count.</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:8px;font-size:12px;color:var(--text3);">
+      <span style="display:flex;gap:5px;align-items:center;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--accent2);"></span>Categorical — good for Rows/Columns</span>
+      <span style="display:flex;gap:5px;align-items:center;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#C4420A;"></span>Numeric — good for Values</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Preview — first 8 rows</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;">Scroll right to see all columns. This is what the raw data looks like before any pivot table.</p>
+    <div class="data-wrap">
+      <table id="preview-table">
+        <thead><tr id="preview-head"></tr></thead>
+        <tbody id="preview-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The data problem</div>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:.75rem;">
+      Look at those 500 rows. If your teacher asked "which county has the most crashes?" — how would you find out from raw data alone?
+    </p>
+    <div class="answer-area" id="sec0-q1">
+      <label>Your approach (before you know about pivot tables)</label>
+      <textarea placeholder="I would… sort the county column and count by hand / write a loop / use COUNTIF…" rows="3"></textarea>
+    </div>
+    <div class="concept-box" style="margin-top:1rem;">
+      <strong>This is what pivot tables solve.</strong> They automate the groupBy + aggregate operation — the same logic you'd write as a loop in Java. Today you'll learn to do it in seconds using Google Sheets.
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" disabled>← Back</button>
+    <button class="footer-btn next" onclick="goSection(1)">Next: Google Sheets Setup →</button>
+  </div>
+</div>
+
+<!-- ──────────── SEC 1: GOOGLE SHEETS SETUP ──────────── -->
+<div class="section" id="sec1">
+  <h2 class="section-heading">Google Sheets setup — <span>get the data in</span></h2>
+
+  <div class="card">
+    <div class="card-title">Step 1 — Download the dataset</div>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:1rem;">Download the CSV file below. A CSV (Comma-Separated Values) file is just a plain text file where each row is a crash record and each column is separated by a comma. Google Sheets can open it directly.</p>
+    <div class="dl-card">
+      <span class="dl-icon">📄</span>
+      <div>
+        <div class="dl-title">michigan_crashes.csv</div>
+        <div class="dl-sub">500 rows · 15 columns · 2022–2024 · Michigan traffic crash data</div>
+        <button class="dl-btn" onclick="downloadCSV()">Download CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Step 2 — Open in Google Sheets</div>
+    <ol class="steps">
+      <li>Go to <strong>sheets.google.com</strong> and click <strong>+ Blank</strong> to create a new spreadsheet.</li>
+      <li>Click <strong>File → Import</strong> in the top menu.</li>
+      <li>In the import dialog, click the <strong>Upload</strong> tab, then drag your CSV file into the window (or click to browse).</li>
+      <li>Under "Import location," choose <strong>Replace spreadsheet</strong>. Under "Separator type," make sure <strong>Comma</strong> is selected.</li>
+      <li>Click <strong>Import data</strong>. Your data will load into the sheet.</li>
+    </ol>
+    <div class="warn-box" style="margin-top:1rem;">
+      <strong>Check your import:</strong> Row 1 should be your column headers (crash_id, date, year, …). If the header row is missing or the data looks jumbled, try importing again and verify "Comma" is the separator type.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">What your sheet should look like</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;">After import, your spreadsheet should look approximately like this:</p>
+    <div class="sheets-mockup">
+      <div class="sheets-menu">
+        <span>File</span><span>Edit</span><span>View</span><span>Insert</span><span class="active">Data</span><span>Tools</span>
+      </div>
+      <div class="sheets-toolbar">
+        <span class="sheets-toolbar-btn">100%</span>
+        <span class="sheets-toolbar-btn">$</span>
+        <span class="sheets-toolbar-btn">%</span>
+        <span style="flex:1"></span>
+        <span class="sheets-toolbar-btn highlight">Insert → Pivot table</span>
+      </div>
+      <div class="sheets-grid">
+        <table>
+          <thead>
+            <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-num">1</td><td>crash_id</td><td>date</td><td>year</td><td>month</td><td>county</td><td>city</td><td>road_type</td><td>road_condition</td></tr>
+            <tr><td class="row-num">2</td><td>1</td><td>2023-02-14</td><td>2023</td><td>February</td><td>Macomb</td><td>St. Clair Shores</td><td>City Street</td><td>Clear</td></tr>
+            <tr><td class="row-num">3</td><td>2</td><td>2022-07-03</td><td>2022</td><td>July</td><td>Monroe</td><td>Dundee</td><td>City Street</td><td>Dark - Unlighted</td></tr>
+            <tr><td class="row-num">4</td><td>3</td><td>2022-11-08</td><td>2022</td><td>November</td><td>Monroe</td><td>Monroe</td><td>City Street</td><td>Clear</td></tr>
+            <tr><td class="row-num">5</td><td>4</td><td>2022-01-16</td><td>2022</td><td>January</td><td>Wayne</td><td>Livonia</td><td>City Street</td><td>Rain</td></tr>
+            <tr><td class="row-num" style="color:var(--text3);">…</td><td style="color:var(--text3);">…</td><td style="color:var(--text3);">…</td><td style="color:var(--text3);">…</td><td style="color:var(--text3);">…</td><td style="color:var(--text3);">…</td><td style="color:var(--text3);">…</td><td style="color:var(--text3);">…</td><td style="color:var(--text3);">…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="tip-box">
+      <strong>Tip:</strong> Freeze row 1 so the headers stay visible as you scroll. Go to <strong>View → Freeze → 1 row</strong>.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Step 3 — Name your sheet</div>
+    <ol class="steps">
+      <li>Double-click the tab at the bottom of the screen (it probably says "Sheet1").</li>
+      <li>Rename it to <strong>Raw Data</strong>.</li>
+      <li>Your pivot tables will go on separate tabs — Sheets creates them automatically when you insert a pivot table.</li>
+    </ol>
+  </div>
+
+  <div class="answer-area" style="margin-top:.5rem;" id="sec1-q1">
+    <label>Confirm: how many rows does your sheet have (not counting the header)?</label>
+    <textarea placeholder="My sheet has ___ rows of data. The first crash is in county ___ and the last crash is in county ___." rows="2"></textarea>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(0)">← Back</button>
+    <button class="footer-btn next" onclick="goSection(2)">Next: Build a Pivot Table →</button>
+  </div>
+</div>
+
+<!-- ──────────── SEC 2: BUILD A PIVOT TABLE ──────────── -->
+<div class="section" id="sec2">
+  <h2 class="section-heading">Build a pivot table — <span>anatomy and steps</span></h2>
+
+  <div class="card">
+    <div class="card-title">What a pivot table actually does</div>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:.75rem;">A pivot table takes raw tabular data and <strong>groups rows by a category</strong>, then <strong>summarizes a value</strong> for each group. In Java terms:</p>
+    <div class="concept-box">
+      <code style="font-family:var(--mono);font-size:12px;display:block;line-height:1.7;">
+        // What a pivot table does, translated to pseudocode:<br>
+        HashMap&lt;String, Integer&gt; counts = new HashMap&lt;&gt;();<br>
+        for (CrashRecord r : data) {<br>
+        &nbsp;&nbsp;String key = r.getCounty();  // ← the Rows field<br>
+        &nbsp;&nbsp;counts.put(key, counts.getOrDefault(key, 0) + 1);  // ← COUNT<br>
+        }<br>
+        // Then sort counts by value descending
+      </code>
+    </div>
+    <p style="font-size:14px;color:var(--text2);margin-top:.75rem;">Pivot tables do this automatically — no code required. But now you know exactly what's happening under the hood.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The four zones</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Every pivot table has four configurable zones. You only need Rows and Values to get started.</p>
+    <div class="pivot-editor-wrap">
+      <div class="pivot-result-pane">
+        <p style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">Example result: county × COUNT</p>
+        <table style="border-collapse:collapse;font-size:12px;width:100%;">
+          <thead><tr><th style="background:var(--text);color:var(--bg);padding:6px 10px;text-align:left;font-family:var(--mono);font-weight:400;">county</th><th style="background:var(--text);color:var(--bg);padding:6px 10px;text-align:right;font-family:var(--mono);font-weight:400;">COUNTA of crash_id</th></tr></thead>
+          <tbody>
+            <tr style="background:#DCF0E4;"><td style="padding:5px 10px;font-weight:500;">Wayne</td><td style="padding:5px 10px;text-align:right;font-family:var(--mono);font-weight:500;">152</td></tr>
+            <tr><td style="padding:5px 10px;border-bottom:1px solid var(--surface2);">Oakland</td><td style="padding:5px 10px;text-align:right;font-family:var(--mono);border-bottom:1px solid var(--surface2);">87</td></tr>
+            <tr style="background:var(--surface2);"><td style="padding:5px 10px;">Macomb</td><td style="padding:5px 10px;text-align:right;font-family:var(--mono);">80</td></tr>
+            <tr><td style="padding:5px 10px;border-bottom:1px solid var(--surface2);">Washtenaw</td><td style="padding:5px 10px;text-align:right;font-family:var(--mono);border-bottom:1px solid var(--surface2);">38</td></tr>
+            <tr style="background:var(--surface2);"><td style="padding:5px 10px;color:var(--text3);font-style:italic;">…</td><td style="padding:5px 10px;text-align:right;font-family:var(--mono);color:var(--text3);">…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pivot-editor-panel">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em;">Pivot table editor</div>
+        <div class="zone-box">
+          <div class="editor-label">Rows</div>
+          <div class="zone-field green">county</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;">Groups data by county</div>
+        </div>
+        <div class="zone-box">
+          <div class="editor-label">Columns</div>
+          <div style="font-size:11px;color:var(--text3);font-style:italic;">(none — adds a 2nd grouping)</div>
+        </div>
+        <div class="zone-box">
+          <div class="editor-label">Values</div>
+          <div class="zone-field orange">COUNTA crash_id</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;">Counts rows per group</div>
+        </div>
+        <div class="zone-box">
+          <div class="editor-label">Filter</div>
+          <div style="font-size:11px;color:var(--text3);font-style:italic;">(none — narrows data first)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How to insert a pivot table in Google Sheets</div>
+    <ol class="steps">
+      <li>Click any cell inside your data (e.g. cell A1).</li>
+      <li>In the top menu, go to <strong>Insert → Pivot table</strong>.</li>
+      <li>A dialog will ask "Insert to" — choose <strong>New sheet</strong>. Click <strong>Create</strong>.</li>
+      <li>A new tab opens (called "Pivot Table 1") with the pivot table editor panel on the right side.</li>
+      <li>In the Rows section, click <strong>Add</strong> and choose <code>county</code>.</li>
+      <li>In the Values section, click <strong>Add</strong> and choose <code>crash_id</code>. Change "Summarize by" to <strong>COUNTA</strong>.</li>
+      <li>Your first pivot table appears — a count of crashes per county.</li>
+    </ol>
+    <div class="tip-box" style="margin-top:1rem;">
+      <strong>Sort it:</strong> In the Rows zone, click the dropdown arrow next to "county" → Sort by → COUNTA of crash_id → Descending. Now the most common county floats to the top.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The aggregation options explained</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">When you set a Values field, you choose how to summarize the numbers. The most common options:</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;">
+      <div style="background:var(--surface2);border-radius:var(--r);padding:10px 12px;">
+        <div style="font-family:var(--mono);font-size:12px;color:var(--accent2);margin-bottom:4px;">COUNTA</div>
+        <div style="font-size:12px;color:var(--text2);">Count of non-empty cells — how many crashes are in each group. Works on any column.</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:var(--r);padding:10px 12px;">
+        <div style="font-family:var(--mono);font-size:12px;color:var(--accent2);margin-bottom:4px;">SUM</div>
+        <div style="font-size:12px;color:var(--text2);">Add up a numeric column — use on injuries, fatalities, or vehicles_involved.</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:var(--r);padding:10px 12px;">
+        <div style="font-family:var(--mono);font-size:12px;color:var(--accent2);margin-bottom:4px;">AVERAGE</div>
+        <div style="font-size:12px;color:var(--text2);">Mean of a numeric column — e.g. average vehicles involved per group.</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:var(--r);padding:10px 12px;">
+        <div style="font-family:var(--mono);font-size:12px;color:var(--accent2);margin-bottom:4px;">MAX / MIN</div>
+        <div style="font-size:12px;color:var(--text2);">Highest or lowest value in the group. Useful for spotting outliers.</div>
+      </div>
+    </div>
+    <div class="warn-box" style="margin-top:1rem;">
+      <strong>Common mistake:</strong> Using SUM on a text column (like county or vehicle_type). Sheets sums nothing and shows 0. Always use COUNTA to count rows, not SUM, when your Values field is categorical.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Try it — live pivot builder</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Use this builder to experiment with the data before building in Sheets. Try different row fields and aggregations — then replicate what you see in your actual spreadsheet.</p>
+
+    <div class="pivot-builder">
+      <h3>Interactive pivot table</h3>
+      <div class="pivot-zones">
+        <div class="pivot-zone">
+          <div class="zone-label">Rows (group by)</div>
+          <select id="p-row">
+            <option value="county">county</option>
+            <option value="vehicle_type">vehicle_type</option>
+            <option value="contributing_factor">contributing_factor</option>
+            <option value="crash_severity">crash_severity</option>
+            <option value="time_of_day">time_of_day</option>
+            <option value="road_type">road_type</option>
+            <option value="road_condition">road_condition</option>
+            <option value="year">year</option>
+            <option value="month">month</option>
+          </select>
+        </div>
+        <div class="pivot-zone">
+          <div class="zone-label">Values</div>
+          <select id="p-agg">
+            <option value="count">COUNTA (crashes)</option>
+            <option value="sum_injuries">SUM of injuries</option>
+            <option value="sum_fatalities">SUM of fatalities</option>
+            <option value="avg_vehicles">AVERAGE vehicles_involved</option>
+          </select>
+          <div style="margin-top:8px;">
+            <label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px;cursor:pointer;">
+              <input type="checkbox" id="p-sort" checked> Sort descending
+            </label>
+          </div>
+        </div>
+      </div>
+      <button class="build-btn" onclick="buildPivot()">Build pivot table</button>
+    </div>
+
+    <div class="pivot-output" id="pivot-out"></div>
+  </div>
+
+  <div class="answer-area" style="margin-top:.5rem;" id="sec2-ref">
+    <label>What did you try? Write one observation from the pivot builder above.</label>
+    <textarea placeholder="When I grouped by vehicle_type and used COUNTA, I found that… The most common vehicle type is… This surprised me because…" rows="3"></textarea>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(1)">← Back</button>
+    <button class="footer-btn next" onclick="goSection(3)">Next: Practice →</button>
+  </div>
+</div>
+
+<!-- ──────────── SEC 3: PRACTICE ──────────── -->
+<div class="section" id="sec3">
+  <h2 class="section-heading">Practice — <span>build these in Google Sheets</span></h2>
+
+  <p style="font-size:14px;color:var(--text2);margin-bottom:1.25rem;">
+    Build each of these pivot tables in your Google Sheets file. Write your answer in the box below each question. Each question tells you exactly which zones to use.
+  </p>
+
+  <div class="q-card">
+    <div class="q-header" onclick="toggleQ(this)">
+      <span class="q-num">Q1</span>
+      <span class="q-text">Which vehicle type was involved in the most crashes?</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="skill-tag">rows</span><span class="skill-tag">count</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px;color:var(--text2);">Setup: <strong>Rows</strong> = vehicle_type · <strong>Values</strong> = COUNTA of crash_id · Sort descending</p>
+      <button class="hint-btn" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-text">Insert a new pivot table. In the editor, click Add next to Rows → choose vehicle_type. Click Add next to Values → choose crash_id → Summarize by COUNTA. Then in the Rows section, click the dropdown → Sort by → COUNTA of crash_id → Descending.</div>
+      <div class="answer-area">
+        <label>Your answer</label>
+        <textarea placeholder="The vehicle type with the most crashes was ___ with ___ crashes. The second most common was ___. I was surprised / not surprised because…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header" onclick="toggleQ(this)">
+      <span class="q-num">Q2</span>
+      <span class="q-text">Which county had the highest total number of injuries?</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="skill-tag">rows</span><span class="skill-tag">sum</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px;color:var(--text2);">Setup: <strong>Rows</strong> = county · <strong>Values</strong> = SUM of injuries · Sort descending</p>
+      <button class="hint-btn" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-text">Create a new pivot table (Insert → Pivot table → New sheet). Rows = county. Values = injuries, Summarize by SUM. Sort by SUM of injuries descending. This is different from Q1 — you're adding up a number, not just counting rows.</div>
+      <div class="answer-area">
+        <label>Your answer</label>
+        <textarea placeholder="The county with the most total injuries was ___ with ___ injuries. This makes sense / doesn't make sense because…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header" onclick="toggleQ(this)">
+      <span class="q-num">Q3</span>
+      <span class="q-text">What was the most common contributing factor across all crashes?</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="skill-tag">rows</span><span class="skill-tag">count</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px;color:var(--text2);">Setup: <strong>Rows</strong> = contributing_factor · <strong>Values</strong> = COUNTA of crash_id · Sort descending</p>
+      <button class="hint-btn" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-text">Same process as Q1 — just change the Rows field to contributing_factor. After sorting, the factor at the top of the list is the most common. Note that "Unknown" may appear near the top — this is a data quality issue, not a real factor.</div>
+      <div class="answer-area">
+        <label>Your answer</label>
+        <textarea placeholder="The most common contributing factor was ___ (___  crashes). The second most common was ___ (___ crashes)."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header" onclick="toggleQ(this)">
+      <span class="q-num">Q4</span>
+      <span class="q-text">Which time of day had the most crashes? Does this surprise you?</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="skill-tag">rows</span><span class="skill-tag">count</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px;color:var(--text2);">Setup: <strong>Rows</strong> = time_of_day · <strong>Values</strong> = COUNTA of crash_id · Sort descending</p>
+      <button class="hint-btn" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-text">Rows = time_of_day. Values = COUNTA crash_id. Sort descending. You'll see 5 rows — one for each time window. Think about why one time of day might dominate. Consider how many hours are in each window vs. how many cars are on the road.</div>
+      <div class="answer-area">
+        <label>Your answer</label>
+        <textarea placeholder="The time period with the most crashes was ___. This does / does not surprise me because…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header" onclick="toggleQ(this)">
+      <span class="q-num">Q5</span>
+      <span class="q-text">Which crash severity category had the highest average number of vehicles involved?</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="skill-tag">rows</span><span class="skill-tag">average</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px;color:var(--text2);">Setup: <strong>Rows</strong> = crash_severity · <strong>Values</strong> = AVERAGE of vehicles_involved · Sort descending</p>
+      <button class="hint-btn" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-text">Rows = crash_severity (4 values). Values = vehicles_involved, Summarize by AVERAGE. Sort descending. You're now asking a different question — not which severity is most common, but which severity tends to involve more vehicles per crash.</div>
+      <div class="answer-area">
+        <label>Your answer</label>
+        <textarea placeholder="The severity with the highest avg vehicles involved was ___ (avg: ___). This suggests that… more / fewer vehicles involved tends to correlate with…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header" onclick="toggleQ(this)">
+      <span class="q-num" style="background:var(--accent2);">Q6 ★</span>
+      <span class="q-text">Design your own question. State it first, then build the pivot table to answer it.</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="skill-tag">open-ended</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px;color:var(--text2);">Choose any row field from the dataset, any aggregation (COUNTA, SUM, AVERAGE), and write the question your pivot table answers. Must use at least one numeric Values field.</p>
+      <div class="answer-area">
+        <label>My question</label>
+        <textarea placeholder="I want to know: which ___ has the most/highest/lowest ___?" rows="2"></textarea>
+      </div>
+      <div class="answer-area">
+        <label>My pivot table setup (Rows, Values, Summarize by)</label>
+        <textarea placeholder="Rows: ___ · Values: ___, summarized by ___" rows="2"></textarea>
+      </div>
+      <div class="answer-area">
+        <label>My answer</label>
+        <textarea placeholder="My pivot table shows that…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(2)">← Back</button>
+    <button class="footer-btn next" onclick="goSection(4)">Next: Submit →</button>
+  </div>
+</div>
+
+<!-- ──────────── SEC 4: SUBMIT ──────────── -->
+<div class="section" id="sec4">
+  <h2 class="section-heading">Submit your work — <span>download and upload</span></h2>
+
+  <p style="font-size:14px;color:var(--text2);margin-bottom:1.25rem;">
+    When you're done with all six questions, fill in your name below and download your PDF. Then submit it to Google Classroom.
+  </p>
+
+  <div class="card">
+    <div class="card-title">Exit ticket — before you submit</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Answer these two questions in your own words.</p>
+    <div class="answer-area" id="exit1">
+      <label>In one sentence: what does a pivot table do?</label>
+      <textarea placeholder="A pivot table takes raw data and… groups rows by… then calculates…" rows="2"></textarea>
+    </div>
+    <div class="answer-area" id="exit2">
+      <label>In one sentence: how is a pivot table similar to a Java loop? How is it different?</label>
+      <textarea placeholder="A pivot table is similar to a Java loop because… but different because…" rows="2"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Ready to submit?</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Enter your name, then download your PDF. Upload it to Google Classroom.</p>
+    <div class="form-group">
+      <label>Your name</label>
+      <input type="text" id="student-name" placeholder="First Last">
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(3)">← Back</button>
+    <button class="footer-btn dl" onclick="generatePDF()">Download PDF &amp; Submit</button>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ── Dataset ──────────────────────────────────────────
+const DATA = window.MICHIGAN_CRASHES;
+// ── Navigation ────────────────────────────────────────
+let cur = 0;
+const secs = document.querySelectorAll('.section');
+const navBtns = document.querySelectorAll('.nav-btn');
+const segs = document.querySelectorAll('.progress-seg');
+
+function goSection(n) {
+  secs[cur].classList.remove('active');
+  navBtns[cur].classList.remove('active');
+  segs[cur].classList.remove('active');
+  segs[cur].classList.add('done');
+  cur = n;
+  secs[cur].classList.add('active');
+  navBtns[cur].classList.add('active');
+  segs[cur].classList.remove('done');
+  segs[cur].classList.add('active');
+  document.getElementById('progress-label').textContent = `${n+1} / 5`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+navBtns.forEach((b,i) => b.addEventListener('click', () => goSection(i)));
+
+// ── Hint / Q toggles ────────────────────────────────
+function toggleHint(btn) {
+  const h = btn.nextElementSibling;
+  const open = h.classList.contains('open');
+  h.classList.toggle('open', !open);
+  btn.textContent = open ? 'Show hint' : 'Hide hint';
+}
+function toggleQ(hdr) {
+  const body = hdr.nextElementSibling;
+  const chev = hdr.querySelector('.chev');
+  const open = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  chev.classList.toggle('open', !open);
+}
+
+// ── Data preview table ───────────────────────────────
+const cols = ['crash_id','date','year','month','county','city','road_type','road_condition','time_of_day','vehicle_type','crash_severity','contributing_factor','vehicles_involved','injuries','fatalities'];
+const head = document.getElementById('preview-head');
+const body = document.getElementById('preview-body');
+cols.forEach(c => { const th = document.createElement('th'); th.textContent = c; head.appendChild(th); });
+DATA.slice(0, 8).forEach(r => {
+  const tr = document.createElement('tr');
+  cols.forEach(c => { const td = document.createElement('td'); td.textContent = r[c]; tr.appendChild(td); });
+  body.appendChild(tr);
+});
+
+// ── CSV Download ─────────────────────────────────────
+// Full dataset for CSV — all 500 rows embedded
+const FULL_CSV_ROWS = [["crash_id","date","year","month","county","city","road_type","road_condition","time_of_day","vehicle_type","crash_severity","contributing_factor","vehicles_involved","injuries","fatalities"]];
+// We'll generate from the full JSON embedded data
+function downloadCSV() {
+  // Build CSV from the unified dataset
+  const headers = ['crash_id','date','year','month','county','city','road_type','road_condition','time_of_day','vehicle_type','crash_severity','contributing_factor','vehicles_involved','injuries','fatalities'];
+  const rows = [headers.join(',')];
+  window.MICHIGAN_CRASHES.forEach(r => {
+    rows.push(headers.map(h => {
+      const v = String(r[h]);
+      return v.includes(',') ? `"${v}"` : v;
+    }).join(','));
+  });
+  const blob = new Blob([rows.join('\n')], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'michigan_crashes.csv';
+  a.click();
+}
+
+// ── Pivot builder ─────────────────────────────────────
+function buildPivot() {
+  const rowField = document.getElementById('p-row').value;
+  const agg = document.getElementById('p-agg').value;
+  const sortDesc = document.getElementById('p-sort').checked;
+
+  const isAvg = agg === 'avg_vehicles';
+  const fn = {
+    count: r => 1,
+    sum_injuries: r => r.injuries,
+    sum_fatalities: r => r.fatalities,
+    avg_vehicles: r => r.vehicles_involved
+  }[agg];
+
+  const aggLabel = {
+    count: 'COUNTA',
+    sum_injuries: 'SUM injuries',
+    sum_fatalities: 'SUM fatalities',
+    avg_vehicles: 'AVERAGE vehicles'
+  }[agg];
+
+  const groups = {};
+  DATA.forEach(r => {
+    const k = String(r[rowField]);
+    if (!groups[k]) groups[k] = [];
+    groups[k].push(r);
+  });
+
+  let results = Object.entries(groups).map(([k, recs]) => {
+    const total = recs.reduce((s, r) => s + fn(r), 0);
+    return { key: k, val: isAvg ? total / recs.length : total };
+  });
+
+  if (sortDesc) results.sort((a,b) => b.val - a.val);
+  else results.sort((a,b) => a.key.localeCompare(b.key));
+
+  let html = `<p style="font-size:12px;color:var(--text3);margin-bottom:8px;font-family:var(--mono);">Rows: ${rowField} · Values: ${aggLabel} · ${results.length} groups · ${DATA.length} total records</p>`;
+  html += `<table><thead><tr><th>${rowField}</th><th>${aggLabel}</th></tr></thead><tbody>`;
+  results.forEach((r, i) => {
+    const v = isAvg ? r.val.toFixed(2) : r.val;
+    html += `<tr class="${i===0?'top-row':''}"><td>${r.key}</td><td class="val-cell">${v}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('pivot-out').innerHTML = html;
+}
+
+// Build default on load
+window.addEventListener('load', buildPivot);
+
+// ── PDF Generation ─────────────────────────────────────
+function generatePDF() {
+  const name = document.getElementById('student-name').value.trim();
+  if (!name) { alert('Please enter your name before downloading.'); return; }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'pt', format:'letter' });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const margin = 54;
+  const cw = pageW - margin * 2;
+  let y = margin;
+
+  const C = {
+    dark:[26,23,20], accent:[43,95,62], mid:[90,86,80],
+    light:[237,233,224], white:[255,253,248], blue:[26,58,107]
+  };
+
+  function checkPage(need=40) {
+    if (y + need > pageH - margin) { doc.addPage(); y = margin; pageHdr(); }
+  }
+  function pageHdr() {
+    doc.setFillColor(...C.light);
+    doc.rect(0,0,pageW,28,'F');
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...C.mid);
+    doc.text('AP Computer Science A  ·  Pivot Tables Day 1  ·  Michigan Crash Data', margin, 18);
+    doc.text(name, pageW-margin, 18, {align:'right'});
+    y = Math.max(y, 44);
+  }
+  function secHdr(title, sub) {
+    checkPage(60);
+    doc.setFillColor(...C.accent);
+    doc.rect(margin, y, 4, 22, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(...C.dark);
+    doc.text(title, margin+12, y+15);
+    if (sub) {
+      doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...C.mid);
+      doc.text(sub, margin+12, y+26);
+      y += 38;
+    } else { y += 30; }
+  }
+  function qBlock(num, prompt, answer) {
+    checkPage(50);
+    doc.setFillColor(...C.dark);
+    doc.roundedRect(margin, y, 30, 16, 3, 3, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(255,253,248);
+    doc.text(num, margin+15, y+11, {align:'center'});
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...C.dark);
+    const pLines = doc.splitTextToSize(prompt, cw-38);
+    checkPage(pLines.length*14+40);
+    doc.text(pLines, margin+38, y+11);
+    y += pLines.length*14+6;
+    const ans = answer.trim() || '(no answer)';
+    const aLines = doc.splitTextToSize(ans, cw-12);
+    checkPage(aLines.length*13+20);
+    doc.setFillColor(...C.white); doc.setDrawColor(...C.light);
+    doc.roundedRect(margin, y, cw, aLines.length*13+14, 3, 3, 'FD');
+    doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+    doc.setTextColor(ans==='(no answer)'?C.mid[0]:C.dark[0], ans==='(no answer)'?C.mid[1]:C.dark[1], ans==='(no answer)'?C.mid[2]:C.dark[2]);
+    doc.text(aLines, margin+8, y+12);
+    y += aLines.length*13+22;
+  }
+  function fldBlock(label, val) {
+    checkPage(44);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...C.mid);
+    doc.text(label.toUpperCase(), margin, y+10);
+    y += 14;
+    const t = val.trim() || '(no answer)';
+    const lines = doc.splitTextToSize(t, cw-12);
+    checkPage(lines.length*13+14);
+    doc.setFillColor(...C.white); doc.setDrawColor(...C.light);
+    doc.roundedRect(margin, y, cw, lines.length*13+14, 3, 3, 'FD');
+    doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+    doc.setTextColor(t==='(no answer)'?C.mid[0]:C.dark[0], t==='(no answer)'?C.mid[1]:C.dark[1], t==='(no answer)'?C.mid[2]:C.dark[2]);
+    doc.text(lines, margin+8, y+12);
+    y += lines.length*13+20;
+  }
+  function divider() {
+    checkPage(20); doc.setDrawColor(...C.light); doc.setLineWidth(.5);
+    doc.line(margin, y, pageW-margin, y); y += 16;
+  }
+
+  // Cover
+  doc.setFillColor(...C.dark); doc.rect(0,0,pageW,110,'F');
+  doc.setFillColor(...C.accent); doc.circle(pageW-30,-20,80,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(22); doc.setTextColor(255,253,248);
+  doc.text('Pivot Tables: Day One', margin, 52);
+  doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(160,152,144);
+  doc.text('Michigan Traffic Crash Data  ·  AP Computer Science A', margin, 70);
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(158,201,173);
+  doc.text(name, margin, 90);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(160,152,144);
+  const now = new Date();
+  doc.text(`Submitted ${now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`, margin, 104);
+
+  y = 130; pageHdr(); y = 130;
+
+  // Sec 0
+  secHdr('Section 0', 'The data problem');
+  const s0q1 = document.querySelector('#sec0-q1 textarea');
+  fldBlock('How would you find the most common county without a pivot table?', s0q1 ? s0q1.value : '');
+
+  divider();
+
+  // Sec 1
+  secHdr('Section 1', 'Google Sheets setup');
+  const s1q1 = document.querySelector('#sec1-q1 textarea');
+  fldBlock('How many rows does your sheet have, and what is the first/last county?', s1q1 ? s1q1.value : '');
+
+  divider();
+
+  // Sec 2
+  secHdr('Section 2', 'Building a pivot table — observation');
+  const s2ref = document.querySelector('#sec2-ref textarea');
+  fldBlock('What did you observe from the live pivot builder?', s2ref ? s2ref.value : '');
+
+  divider();
+
+  // Sec 3
+  secHdr('Section 3', 'Practice questions');
+  const qBodies = document.querySelectorAll('.q-body');
+  const prompts = [
+    'Q1 — Which vehicle type was involved in the most crashes? (Rows: vehicle_type, Values: COUNTA)',
+    'Q2 — Which county had the highest total number of injuries? (Rows: county, Values: SUM injuries)',
+    'Q3 — What was the most common contributing factor? (Rows: contributing_factor, Values: COUNTA)',
+    'Q4 — Which time of day had the most crashes? (Rows: time_of_day, Values: COUNTA)',
+    'Q5 — Which crash severity had the highest avg vehicles involved? (Rows: crash_severity, Values: AVERAGE)',
+    'Q6 ★ — Design your own question (state question + setup + answer)'
+  ];
+  qBodies.forEach((body, i) => {
+    const tas = body.querySelectorAll('textarea');
+    if (i < 5) {
+      qBlock(`Q${i+1}`, prompts[i], tas[0] ? tas[0].value : '');
+    } else {
+      const parts = Array.from(tas).map(t => t.value.trim()).filter(Boolean).join('\n\n');
+      qBlock('Q6★', prompts[5], parts);
+    }
+  });
+
+  divider();
+
+  // Exit ticket
+  secHdr('Section 4', 'Exit ticket');
+  const e1 = document.querySelector('#exit1 textarea');
+  const e2 = document.querySelector('#exit2 textarea');
+  fldBlock('In one sentence: what does a pivot table do?', e1 ? e1.value : '');
+  fldBlock('How is a pivot table similar to a Java loop? How is it different?', e2 ? e2.value : '');
+
+  // Footer
+  checkPage(30);
+  doc.setFillColor(...C.light);
+  doc.rect(margin, y, cw, 28, 'F');
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...C.mid);
+  doc.text('AP CS A  ·  Pivot Tables Day 1  ·  Divine Child High School', margin+10, y+17);
+  doc.text(name, pageW-margin-10, y+17, {align:'right'});
+
+  doc.save(`PivotTables_Day1_${name.replace(/\s+/g,'_')}.pdf`);
+}
+</script>
+</body>
+</html>

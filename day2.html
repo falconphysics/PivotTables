@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pivot Tables: Day Two — Michigan Crash Data</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,500;1,300&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="data/michigan_crashes.js"></script>
+<style>
+  :root {
+    --bg: #F5F2EC;
+    --surface: #FFFDF8;
+    --surface2: #EDE9E0;
+    --border: #D4CFC4;
+    --text: #1A1714;
+    --text2: #5A5650;
+    --text3: #8A8580;
+    --accent: #C4420A;
+    --accent-light: #FAE8DF;
+    --accent2: #2B5F3E;
+    --accent2-light: #DCF0E4;
+    --accent3: #1A3A6B;
+    --accent3-light: #DDE8F5;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --radius: 6px;
+    --radius-lg: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    background: var(--text);
+    color: var(--bg);
+    padding: 2.5rem 2rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.12;
+  }
+  .course-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #A09890;
+    margin-bottom: 0.5rem;
+  }
+  .page-header h1 {
+    font-family: var(--serif);
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+  .page-header h1 em { color: #E8A882; font-style: italic; }
+  .header-sub {
+    font-size: 14px;
+    color: #A09890;
+    margin-bottom: 1.5rem;
+  }
+  .progress-bar-wrap {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .progress-seg {
+    height: 4px;
+    flex: 1;
+    border-radius: 2px;
+    background: #3A3630;
+    transition: background 0.4s;
+  }
+  .progress-seg.done { background: var(--accent); }
+  .progress-seg.active { background: #E8A882; }
+  .progress-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #A09890;
+    margin-left: 8px;
+    white-space: nowrap;
+  }
+
+  /* ── Nav ── */
+  .nav-strip {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .nav-btn {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 14px 16px;
+    border: none;
+    background: transparent;
+    color: var(--text3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    letter-spacing: 0.04em;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── Main layout ── */
+  .main { max-width: 860px; margin: 0 auto; padding: 2rem; }
+
+  /* ── Section panels ── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .card-title {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-weight: 300;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .num {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--accent);
+    color: white;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+
+  /* ── Concept box ── */
+  .concept-box {
+    background: var(--accent3-light);
+    border-left: 3px solid var(--accent3);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .concept-box strong { font-weight: 500; }
+
+  .tip-box {
+    background: var(--accent2-light);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    font-size: 14px;
+  }
+
+  .warn-box {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    font-size: 14px;
+  }
+
+  /* ── Steps ── */
+  .steps { list-style: none; counter-reset: steps; }
+  .steps li {
+    counter-increment: steps;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--surface2);
+    font-size: 14px;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .steps li::before {
+    content: counter(steps);
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--text);
+    color: var(--bg);
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── Interactive pivot builder ── */
+  .pivot-builder {
+    background: var(--surface2);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin: 1rem 0;
+  }
+  .pivot-builder h3 {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 1rem;
+  }
+  .pivot-zones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .pivot-zone {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+  }
+  .zone-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    margin-bottom: 6px;
+  }
+  .pivot-zone select {
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px 8px;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .agg-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 6px;
+  }
+  .agg-row label { font-size: 12px; color: var(--text2); white-space: nowrap; }
+  .agg-row select {
+    font-family: var(--sans);
+    font-size: 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 6px;
+    background: var(--surface);
+    color: var(--text);
+    flex: 1;
+  }
+  .build-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .build-btn:hover { opacity: 0.88; }
+
+  /* ── Pivot table output ── */
+  .pivot-output {
+    margin-top: 1rem;
+    overflow-x: auto;
+  }
+  .pivot-output table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .pivot-output th {
+    background: var(--text);
+    color: var(--bg);
+    padding: 8px 12px;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    font-weight: 400;
+  }
+  .pivot-output td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--surface2);
+    color: var(--text);
+  }
+  .pivot-output tr:nth-child(even) td { background: var(--surface2); }
+  .pivot-output tr:first-child td { font-weight: 500; }
+  .val-cell { text-align: right; font-family: var(--mono); }
+  .top-row td { background: var(--accent-light) !important; font-weight: 500; }
+
+  /* ── Questions ── */
+  .q-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .q-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--surface);
+    cursor: pointer;
+    user-select: none;
+  }
+  .q-header:hover { background: var(--surface2); }
+  .q-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--text);
+    color: var(--bg);
+    padding: 3px 8px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .q-num.star { background: var(--accent2); }
+  .q-text { flex: 1; font-size: 14px; font-weight: 500; }
+  .q-skills {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .skill-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--text3);
+  }
+  .q-body {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    display: none;
+    background: var(--surface);
+  }
+  .q-body.open { display: block; }
+  .chev { font-size: 16px; color: var(--text3); transition: transform 0.2s; }
+  .chev.open { transform: rotate(180deg); }
+  .hint-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.15s;
+  }
+  .hint-btn:hover { background: var(--surface2); }
+  .hint-text {
+    display: none;
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--text2);
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    font-style: italic;
+  }
+  .hint-text.open { display: block; }
+
+  /* ── Answer textarea ── */
+  .answer-area {
+    margin-top: 12px;
+  }
+  .answer-area label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .answer-area textarea {
+    width: 100%;
+    min-height: 80px;
+    font-family: var(--sans);
+    font-size: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px;
+    background: var(--surface);
+    color: var(--text);
+    resize: vertical;
+  }
+  .answer-area textarea:focus {
+    outline: none;
+    border-color: var(--accent3);
+  }
+
+  /* ── Storytelling section ── */
+  .finding-form { margin-top: 1rem; }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .form-group textarea, .form-group input[type=text] {
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    background: var(--surface);
+    color: var(--text);
+  }
+  .form-group textarea { min-height: 90px; resize: vertical; }
+  .form-group textarea:focus, .form-group input:focus {
+    outline: none;
+    border-color: var(--accent3);
+  }
+  .char-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    text-align: right;
+    margin-top: 3px;
+  }
+  .submit-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .submit-btn:hover { opacity: 0.82; }
+  .finding-preview {
+    display: none;
+    background: var(--surface2);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-top: 1rem;
+  }
+  .finding-preview.show { display: block; }
+  .finding-preview h4 {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    margin-bottom: 0.75rem;
+  }
+  .finding-preview blockquote {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.6;
+    border-left: 3px solid var(--accent);
+    padding-left: 1rem;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+  .finding-preview p {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 0.4rem;
+  }
+
+  /* ── Quality checklist ── */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--surface2);
+    font-size: 14px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 2px solid var(--border);
+    margin-top: 2px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .check-icon.pass { background: var(--accent2); border-color: var(--accent2); }
+
+  /* ── Data preview ── */
+  .data-preview-wrap { overflow-x: auto; margin-top: 1rem; }
+  .data-preview-wrap table {
+    font-size: 12px;
+    border-collapse: collapse;
+    white-space: nowrap;
+  }
+  .data-preview-wrap th {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    padding: 6px 10px;
+    background: var(--text);
+    color: var(--bg);
+    font-weight: 400;
+  }
+  .data-preview-wrap td {
+    padding: 5px 10px;
+    border-bottom: 1px solid var(--surface2);
+  }
+  .data-preview-wrap tr:nth-child(even) td { background: var(--surface2); }
+
+  /* ── Footer nav ── */
+  .footer-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0 2.5rem;
+    margin-top: 1rem;
+  }
+  .footer-btn {
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .footer-btn:hover { background: var(--surface2); }
+  .footer-btn.next { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .footer-btn.next:hover { opacity: 0.85; }
+  .footer-btn:disabled { opacity: 0.3; cursor: default; }
+
+  /* ── Model example ── */
+  .model-finding {
+    background: var(--surface2);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0;
+  }
+  .model-finding p.label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    margin-bottom: 0.6rem;
+  }
+  .model-finding blockquote {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 300;
+    font-style: italic;
+    border-left: 3px solid var(--accent2);
+    padding-left: 1rem;
+    line-height: 1.6;
+  }
+
+  .section-heading {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 300;
+    margin-bottom: 1.25rem;
+    color: var(--text);
+  }
+  .section-heading span { color: var(--accent); font-style: italic; }
+
+  .pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--text3);
+    background: var(--surface2);
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
+
+  @media (max-width: 600px) {
+    .main { padding: 1rem; }
+    .pivot-zones { grid-template-columns: 1fr; }
+    .page-header { padding: 1.5rem 1rem; }
+    .nav-strip { padding: 0 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <p class="course-tag">AP Computer Science A · Data Unit · Day 2</p>
+  <h1>Pivot Tables<br><em>Filters, Cross-Tabs & Telling a Story</em></h1>
+  <p class="header-sub">Michigan Traffic Crash Data · 500 records · 2022–2024</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-seg done" id="seg0"></div>
+    <div class="progress-seg" id="seg1"></div>
+    <div class="progress-seg" id="seg2"></div>
+    <div class="progress-seg" id="seg3"></div>
+    <div class="progress-seg" id="seg4"></div>
+    <span class="progress-label" id="progress-label">1 / 5</span>
+  </div>
+</div>
+
+<div class="nav-strip">
+  <button class="nav-btn active" data-sec="0">0. Warm-up</button>
+  <button class="nav-btn" data-sec="1">1. Filters</button>
+  <button class="nav-btn" data-sec="2">2. Cross-tabs</button>
+  <button class="nav-btn" data-sec="3">3. Questions</button>
+  <button class="nav-btn" data-sec="4">4. My Finding</button>
+</div>
+
+<div class="main">
+
+<!-- ────────────── SECTION 0: WARM-UP ────────────── -->
+<div class="section active" id="sec0">
+  <h2 class="section-heading">Warm-up — <span>what do you remember?</span></h2>
+
+  <p style="font-size:15px; color:var(--text2); margin-bottom:1.25rem;">
+    Before you open Google Sheets, answer these three questions from memory. Write your best answer — you'll check them shortly.
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="num">Q1</span> What do you put in the <strong>Rows</strong> zone of a pivot table?</div>
+    <div class="answer-area">
+      <label>Your answer</label>
+      <textarea placeholder="Type your answer here…" id="wu1"></textarea>
+    </div>
+    <button class="hint-btn" onclick="toggleHint(this)">Show answer</button>
+    <div class="hint-text">The <strong>field you want to group by</strong> — each unique value in that column becomes a row in your pivot table. For example, if you put <code>county</code> in Rows, you get one row per county.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="num">Q2</span> What does <strong>COUNT</strong> do in the Values zone — what is it actually counting?</div>
+    <div class="answer-area">
+      <label>Your answer</label>
+      <textarea placeholder="Type your answer here…" id="wu2"></textarea>
+    </div>
+    <button class="hint-btn" onclick="toggleHint(this)">Show answer</button>
+    <div class="hint-text">COUNT counts the <strong>number of rows</strong> in the dataset that belong to each group. It doesn't add up a number — it tallies how many records match. So if you group by <code>county</code> and COUNT, you get the number of crashes per county.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="num">Q3</span> What's the difference between a <strong>filter</strong> and a <strong>row grouping</strong>?</div>
+    <div class="answer-area">
+      <label>Your answer</label>
+      <textarea placeholder="Type your answer here…" id="wu3"></textarea>
+    </div>
+    <button class="hint-btn" onclick="toggleHint(this)">Show answer</button>
+    <div class="hint-text">A <strong>row grouping</strong> shows all categories as separate rows — you can compare them. A <strong>filter</strong> limits which records are included before grouping — it narrows the data so you're only looking at a subset. Filters apply first, then grouping happens on what's left.</div>
+  </div>
+
+  <div class="concept-box">
+    <strong>Today's two new skills:</strong><br>
+    <strong>Filters</strong> — limit your data to a specific subset before aggregating.<br>
+    <strong>Cross-tabs (Rows + Columns)</strong> — group by two categorical variables at once to see patterns across both.
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" disabled>← Back</button>
+    <button class="footer-btn next" onclick="goSection(1)">Next: Filters →</button>
+  </div>
+</div>
+
+<!-- ────────────── SECTION 1: FILTERS ────────────── -->
+<div class="section" id="sec1">
+  <h2 class="section-heading">Lesson 1 — <span>Pivot filters</span></h2>
+
+  <div class="card">
+    <div class="card-title">What is a pivot filter?</div>
+    <p style="font-size:14px; color:var(--text2); margin-bottom:0.75rem;">
+      A filter narrows the data <em>before</em> the grouping happens. Think of it like a WHERE clause or an if-statement that sits in front of your loop. Only matching rows get grouped and counted.
+    </p>
+    <div class="concept-box">
+      <strong>Without a filter:</strong> Group all 500 crashes by county → shows totals for every county.<br>
+      <strong>With a filter (Severity = Fatal):</strong> First keep only fatal crashes, then group by county → shows which county has the most fatal crashes specifically.
+    </div>
+    <p style="font-size:14px; color:var(--text2);">The result is completely different — and answers a much more specific question.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How to add a filter in Google Sheets</div>
+    <ol class="steps">
+      <li>Open your pivot table editor (click anywhere in the pivot table).</li>
+      <li>In the editor panel on the right, find the <strong>Filters</strong> section and click <strong>Add</strong>.</li>
+      <li>Choose the field you want to filter on (e.g. <code>crash_severity</code>).</li>
+      <li>Click the filter dropdown — uncheck <em>Select all</em>, then check only the value(s) you want (e.g. <em>Fatal</em>).</li>
+      <li>Your pivot table will instantly update to show only those rows.</li>
+    </ol>
+    <div class="warn-box" style="margin-top:1rem;">
+      <strong>Common mistake:</strong> Adding the filter field to Rows instead of Filters. If you put <code>crash_severity</code> in Rows, you see all severities as separate rows — you're not filtering, you're grouping. Filters go in the Filters zone.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Try it — live pivot with filters</div>
+    <p style="font-size:13px; color:var(--text2); margin-bottom:1rem;">Use this interactive builder to explore the crash data. Add a filter to narrow results, then choose a row grouping to see what's most common within that subset.</p>
+
+    <div class="pivot-builder">
+      <h3>Build a filtered pivot</h3>
+      <div class="pivot-zones">
+        <div class="pivot-zone">
+          <div class="zone-label">Filter field</div>
+          <select id="f-filter-field">
+            <option value="">— none —</option>
+            <option value="crash_severity">crash_severity</option>
+            <option value="county">county</option>
+            <option value="time_of_day">time_of_day</option>
+            <option value="vehicle_type">vehicle_type</option>
+            <option value="road_condition">road_condition</option>
+            <option value="contributing_factor">contributing_factor</option>
+            <option value="road_type">road_type</option>
+          </select>
+          <div id="f-filter-val-wrap" style="margin-top:6px; display:none;">
+            <div class="zone-label">Filter value</div>
+            <select id="f-filter-val"><option value="">loading…</option></select>
+          </div>
+        </div>
+        <div class="pivot-zone">
+          <div class="zone-label">Rows (group by)</div>
+          <select id="f-row-field">
+            <option value="county">county</option>
+            <option value="vehicle_type">vehicle_type</option>
+            <option value="contributing_factor">contributing_factor</option>
+            <option value="time_of_day">time_of_day</option>
+            <option value="road_type">road_type</option>
+            <option value="road_condition">road_condition</option>
+            <option value="crash_severity">crash_severity</option>
+            <option value="year">year</option>
+            <option value="month">month</option>
+          </select>
+          <div class="agg-row">
+            <label>Values:</label>
+            <select id="f-agg">
+              <option value="count">COUNT (crashes)</option>
+              <option value="sum_injuries">SUM injuries</option>
+              <option value="sum_fatalities">SUM fatalities</option>
+              <option value="avg_vehicles">AVG vehicles involved</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <button class="build-btn" onclick="buildFilteredPivot()">Build pivot table</button>
+    </div>
+
+    <div class="pivot-output" id="filter-output"></div>
+  </div>
+
+  <div class="answer-area" style="margin-top:1rem;">
+    <label>Reflection — what did you notice? Write one observation from your filtered pivot table.</label>
+    <textarea placeholder="Example: When I filter to Fatal crashes and group by vehicle_type, motorcycles appear disproportionately high compared to their overall count…" rows="3"></textarea>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(0)">← Back</button>
+    <button class="footer-btn next" onclick="goSection(2)">Next: Cross-tabs →</button>
+  </div>
+</div>
+
+<!-- ────────────── SECTION 2: CROSS-TABS ────────────── -->
+<div class="section" id="sec2">
+  <h2 class="section-heading">Lesson 2 — <span>Cross-tabs (Rows + Columns)</span></h2>
+
+  <div class="card">
+    <div class="card-title">What is a cross-tab?</div>
+    <p style="font-size:14px; color:var(--text2); margin-bottom:0.75rem;">
+      A cross-tab puts two categorical variables in the same pivot table — one as Rows and one as Columns. Each cell shows the aggregated value for that combination.
+    </p>
+    <div class="concept-box">
+      <strong>Example:</strong> Rows = county, Columns = crash_severity.<br>
+      Each cell answers: "How many crashes in <em>this county</em> had <em>this severity</em>?"<br><br>
+      You can scan across a row to see how severity breaks down for one county, or scan down a column to compare counties for one severity.
+    </div>
+    <div class="tip-box" style="margin-top:0.75rem;">
+      <strong>When to use it:</strong> Cross-tabs work best when you're comparing how two categories relate — not just "which is biggest" but "does the pattern look the same across groups?"
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How to add a Columns field in Google Sheets</div>
+    <ol class="steps">
+      <li>In the pivot table editor, you already have a Rows field set.</li>
+      <li>In the <strong>Columns</strong> section, click <strong>Add</strong>.</li>
+      <li>Choose a second categorical field (e.g. <code>crash_severity</code>).</li>
+      <li>Your table will expand to show each severity as a separate column header.</li>
+      <li>Keep Values set to COUNT — you'll see a count for each row+column combination.</li>
+    </ol>
+    <div class="warn-box" style="margin-top:0.75rem;">
+      <strong>Warning:</strong> If your Columns field has many unique values (like <code>city</code> — 30+ cities), the table becomes unreadably wide. Stick to fields with 5–8 unique values for Columns.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Try it — live cross-tab builder</div>
+    <p style="font-size:13px; color:var(--text2); margin-bottom:1rem;">Build a cross-tab below. Try: Rows = county, Columns = crash_severity. Then try switching one of them to see how the pattern changes.</p>
+
+    <div class="pivot-builder">
+      <h3>Build a cross-tab</h3>
+      <div class="pivot-zones">
+        <div class="pivot-zone">
+          <div class="zone-label">Rows</div>
+          <select id="ct-row">
+            <option value="county">county</option>
+            <option value="vehicle_type">vehicle_type</option>
+            <option value="contributing_factor">contributing_factor</option>
+            <option value="time_of_day">time_of_day</option>
+            <option value="road_type">road_type</option>
+          </select>
+        </div>
+        <div class="pivot-zone">
+          <div class="zone-label">Columns</div>
+          <select id="ct-col">
+            <option value="crash_severity">crash_severity</option>
+            <option value="vehicle_type">vehicle_type</option>
+            <option value="road_condition">road_condition</option>
+            <option value="time_of_day">time_of_day</option>
+            <option value="year">year</option>
+          </select>
+        </div>
+      </div>
+      <button class="build-btn" onclick="buildCrosstab()">Build cross-tab</button>
+    </div>
+
+    <div class="pivot-output" id="ct-output"></div>
+  </div>
+
+  <div class="answer-area" style="margin-top:1rem;">
+    <label>Reflection — write one thing a cross-tab can show that a simple row-only pivot cannot.</label>
+    <textarea placeholder="A cross-tab lets you see how the breakdown changes across groups, not just the totals…" rows="3"></textarea>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(1)">← Back</button>
+    <button class="footer-btn next" onclick="goSection(3)">Next: Questions →</button>
+  </div>
+</div>
+
+<!-- ────────────── SECTION 3: QUESTIONS ────────────── -->
+<div class="section" id="sec3">
+  <h2 class="section-heading">Practice — <span>answer these questions</span></h2>
+
+  <p style="font-size:14px; color:var(--text2); margin-bottom:1.25rem;">
+    Use the pivot builders in the previous sections — or your Google Sheets file — to answer each question. Write your answer and how you built the pivot table that supports it.
+  </p>
+
+  <div class="q-card">
+    <div class="q-header" onclick="toggleQ(this)">
+      <span class="q-num">Q1</span>
+      <span class="q-text">Filter to crashes that happened during "Late Night (10pm–6am)." Which county had the most?</span>
+      <div class="q-skills"><span class="skill-tag">filter</span><span class="skill-tag">rows</span><span class="skill-tag">count</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px; color:var(--text2);">Set up: Filter = time_of_day → "Late Night (10pm–6am)". Rows = county. Values = COUNT. Sort descending.</p>
+      <button class="hint-btn" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-text">In the Filters zone, add <code>time_of_day</code>, then select only "Late Night (10pm–6am)". Then add <code>county</code> to Rows and COUNTA to Values. Sort the Values column Z→A to find the top county.</div>
+      <div class="answer-area">
+        <label>Your answer</label>
+        <textarea placeholder="The county with the most late-night crashes was ___ with ___ crashes. I built this by…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header" onclick="toggleQ(this)">
+      <span class="q-num">Q2</span>
+      <span class="q-text">Create a cross-tab: county × crash_severity. Which county had the highest number of Fatal crashes?</span>
+      <div class="q-skills"><span class="skill-tag">cross-tab</span><span class="skill-tag">rows+columns</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px; color:var(--text2);">Set up: Rows = county. Columns = crash_severity. Values = COUNTA. Find the Fatal column and scan down for the highest number.</p>
+      <button class="hint-btn" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-text">After building the cross-tab, look for the "Fatal" column header. The row with the highest number in that column is your answer. You can also sort the rows by the Fatal column if Sheets lets you — click the column header.</div>
+      <div class="answer-area">
+        <label>Your answer</label>
+        <textarea placeholder="The county with the most fatal crashes was ___ with ___ fatalities in the dataset. I found this by…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header" onclick="toggleQ(this)">
+      <span class="q-num">Q3</span>
+      <span class="q-text">Filter to Wayne County only. What was the most common contributing factor?</span>
+      <div class="q-skills"><span class="skill-tag">filter</span><span class="skill-tag">rows</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px; color:var(--text2);">Set up: Filter = county → Wayne. Rows = contributing_factor. Values = COUNT. Sort descending.</p>
+      <button class="hint-btn" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-text">Filter zone: add <code>county</code>, select only "Wayne". Then Rows = <code>contributing_factor</code>, Values = COUNTA. Sort descending to see the top factor rise to the top.</div>
+      <div class="answer-area">
+        <label>Your answer</label>
+        <textarea placeholder="In Wayne County, the most common contributing factor was ___ appearing ___ times. I built this by…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header" onclick="toggleQ(this)">
+      <span class="q-num">Q4</span>
+      <span class="q-text">Filter to Serious Injury or Fatal crashes. Compare average vehicles involved by road type.</span>
+      <div class="q-skills"><span class="skill-tag">filter</span><span class="skill-tag">rows</span><span class="skill-tag">average</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px; color:var(--text2);">Set up: Filter = crash_severity → select "Serious Injury" AND "Fatal" (check both). Rows = road_type. Values = AVERAGE of vehicles_involved.</p>
+      <button class="hint-btn" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-text">In the filter, you can check multiple values — check both "Serious Injury" and "Fatal". Then for Values, choose <code>vehicles_involved</code> and change the aggregation from COUNTA to AVERAGE. Which road type has the highest average?</div>
+      <div class="answer-area">
+        <label>Your answer</label>
+        <textarea placeholder="Among serious/fatal crashes, the road type with the highest avg vehicles involved was ___ (avg: ___). This was surprising/not surprising because…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header" onclick="toggleQ(this)">
+      <span class="q-num star">Q5 ★</span>
+      <span class="q-text">Design your own question that requires both a filter AND a cross-tab. State the question first, then answer it.</span>
+      <div class="q-skills"><span class="skill-tag">filter</span><span class="skill-tag">cross-tab</span><span class="skill-tag">open-ended</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px; color:var(--text2);">Your question must require filtering to a specific subset AND using both Rows and Columns. Example: "Among late-night crashes, how does vehicle type break down by county?" (filter: time_of_day = Late Night, rows: county, columns: vehicle_type)</p>
+      <div class="answer-area">
+        <label>My question</label>
+        <textarea placeholder="I want to know: …"></textarea>
+      </div>
+      <div class="answer-area">
+        <label>My filter, row, and column settings</label>
+        <textarea placeholder="Filter: ___ = ___. Rows: ___. Columns: ___. Values: ___." rows="2"></textarea>
+      </div>
+      <div class="answer-area">
+        <label>My answer</label>
+        <textarea placeholder="My pivot table shows that…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(2)">← Back</button>
+    <button class="footer-btn next" onclick="goSection(4)">Next: My Finding →</button>
+  </div>
+</div>
+
+<!-- ────────────── SECTION 4: STORYTELLING ────────────── -->
+<div class="section" id="sec4">
+  <h2 class="section-heading">My Finding — <span>data storytelling</span></h2>
+
+  <p style="font-size:14px; color:var(--text2); margin-bottom:1.25rem;">
+    Explore the dataset on your own. Find one thing that surprises you. Then write it up as a clear, specific finding a non-technical reader could understand.
+  </p>
+
+  <div class="card">
+    <div class="card-title">What makes a good finding?</div>
+    <ul class="checklist" id="checklist">
+      <li><div class="check-icon" id="chk0"></div><div><strong>Specific</strong> — names a number, a place, or a category. Not "there were lots of crashes."</div></li>
+      <li><div class="check-icon" id="chk1"></div><div><strong>Surprising or non-obvious</strong> — something you wouldn't have guessed without the data.</div></li>
+      <li><div class="check-icon" id="chk2"></div><div><strong>Supported by a pivot table</strong> — you can show the table that proves it.</div></li>
+      <li><div class="check-icon" id="chk3"></div><div><strong>In plain language</strong> — written for a local news reader, not a data scientist.</div></li>
+    </ul>
+  </div>
+
+  <div class="model-finding">
+    <p class="label">Example finding (model)</p>
+    <blockquote>
+      "Motorcycles made up only 4% of all crashes in Wayne County, but accounted for 21% of fatal crashes — more than five times their expected share. This suggests that motorcycle crashes are disproportionately deadly even when they happen less often."
+    </blockquote>
+  </div>
+
+  <div class="card" style="margin-top:1.25rem;">
+    <div class="card-title">Write your finding</div>
+
+    <div class="finding-form">
+      <div class="form-group">
+        <label>Sentence 1 — the specific finding (name a number)</label>
+        <textarea id="finding1" placeholder="Example: Distracted driving was the leading factor in ___ of ___ serious injury crashes in Oakland County…" oninput="updateFinding()"></textarea>
+        <div class="char-count" id="fc1">0 characters</div>
+      </div>
+      <div class="form-group">
+        <label>Sentence 2 — why it matters or what question it raises</label>
+        <textarea id="finding2" placeholder="Example: This suggests that… / This raises the question of whether…" oninput="updateFinding()"></textarea>
+        <div class="char-count" id="fc2">0 characters</div>
+      </div>
+      <div class="form-group">
+        <label>Pivot table description (Filter, Rows, Columns, Values used)</label>
+        <input type="text" id="finding-pivot" placeholder="e.g. Filter: county=Oakland, Severity=Serious Injury; Rows: contributing_factor; Values: COUNT" oninput="updateFinding()">
+      </div>
+
+      <div style="margin-top:1rem;">
+        <p style="font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text3); margin-bottom:8px;">Quality check</p>
+        <ul class="checklist">
+          <li><div class="check-icon" id="qc0"></div><div>Does sentence 1 include a specific number or percentage?</div></li>
+          <li><div class="check-icon" id="qc1"></div><div>Is the finding non-obvious — something you couldn't guess without data?</div></li>
+          <li><div class="check-icon" id="qc2"></div><div>Did you describe the pivot table that proves it?</div></li>
+          <li><div class="check-icon" id="qc3"></div><div>Is it written in plain language (no jargon)?</div></li>
+        </ul>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:1.25rem; flex-wrap:wrap;">
+        <button class="submit-btn" onclick="previewFinding()">Preview my finding</button>
+        <button class="footer-btn" onclick="copyFinding()">Copy to clipboard</button>
+      </div>
+    </div>
+
+    <div class="finding-preview" id="finding-preview">
+      <h4>Your finding</h4>
+      <blockquote id="preview-text"></blockquote>
+      <p id="preview-pivot"></p>
+    </div>
+  </div>
+
+  <div class="concept-box" style="margin-top:1rem;">
+    <strong>Before you submit — think about this:</strong><br>
+    What can your pivot table NOT tell you? (Causation? Context? Whether the data is accurate? Why the pattern exists?)
+    <div class="answer-area" style="margin-top:10px;">
+      <label style="font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#1A3A6B;display:block;margin-bottom:6px;">Your reflection</label>
+      <textarea id="limitation-reflection" placeholder="My pivot table can't tell me… because…" rows="2" style="width:100%;font-family:var(--sans);font-size:13px;border:1px solid #9BB5D8;border-radius:6px;padding:8px 10px;background:#EEF4FB;color:#1A1714;"></textarea>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1rem;">
+    <div class="card-title">Ready to submit?</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Enter your name, then click the button below to download a PDF of all your work from today. Upload that PDF to Google Classroom.</p>
+    <div class="form-group">
+      <label>Your name</label>
+      <input type="text" id="student-name" placeholder="First Last" style="max-width:320px;">
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(3)">← Back</button>
+    <button class="footer-btn" style="background:var(--accent); color:white; border-color:var(--accent);" onclick="generatePDF()">Download PDF &amp; Submit</button>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ── Data ──────────────────────────────────────────────
+const DATA = window.MICHIGAN_CRASHES;
+// ── Navigation ────────────────────────────────────────
+let current = 0;
+const sections = document.querySelectorAll('.section');
+const navBtns = document.querySelectorAll('.nav-btn');
+const segs = document.querySelectorAll('.progress-seg');
+
+function goSection(n) {
+  sections[current].classList.remove('active');
+  navBtns[current].classList.remove('active');
+  segs[current].classList.remove('active');
+  segs[current].classList.add('done');
+  current = n;
+  sections[current].classList.add('active');
+  navBtns[current].classList.add('active');
+  segs[current].classList.remove('done');
+  segs[current].classList.add('active');
+  document.getElementById('progress-label').textContent = `${n+1} / 5`;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+navBtns.forEach((btn, i) => {
+  btn.addEventListener('click', () => goSection(i));
+});
+
+// ── Hint / Q toggles ─────────────────────────────────
+function toggleHint(btn) {
+  const hint = btn.nextElementSibling;
+  const open = hint.classList.contains('open');
+  hint.classList.toggle('open', !open);
+  btn.textContent = open ? 'Show hint' : 'Hide hint';
+  if (btn.textContent === 'Show answer' || btn.textContent === 'Hide answer') {
+    btn.textContent = open ? 'Show answer' : 'Hide answer';
+  }
+}
+
+function toggleQ(header) {
+  const body = header.nextElementSibling;
+  const chev = header.querySelector('.chev');
+  const open = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  chev.classList.toggle('open', !open);
+}
+
+// ── Pivot builders ────────────────────────────────────
+const numericFields = {
+  count: r => 1,
+  sum_injuries: r => r.injuries,
+  sum_fatalities: r => r.fatalities,
+  avg_vehicles: r => r.vehicles_involved
+};
+
+const aggLabels = {
+  count: 'COUNT',
+  sum_injuries: 'SUM injuries',
+  sum_fatalities: 'SUM fatalities',
+  avg_vehicles: 'AVG vehicles'
+};
+
+function getUnique(field) {
+  return [...new Set(DATA.map(r => String(r[field])))].sort();
+}
+
+// Filter field → populate filter val dropdown
+document.getElementById('f-filter-field').addEventListener('change', function() {
+  const wrap = document.getElementById('f-filter-val-wrap');
+  const sel = document.getElementById('f-filter-val');
+  if (!this.value) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  const vals = getUnique(this.value);
+  sel.innerHTML = vals.map(v => `<option value="${v}">${v}</option>`).join('');
+});
+
+function buildFilteredPivot() {
+  const filterField = document.getElementById('f-filter-field').value;
+  const filterVal = document.getElementById('f-filter-val').value;
+  const rowField = document.getElementById('f-row-field').value;
+  const agg = document.getElementById('f-agg').value;
+
+  let rows = DATA;
+  if (filterField && filterVal) {
+    rows = rows.filter(r => String(r[filterField]) === filterVal);
+  }
+
+  const groups = {};
+  rows.forEach(r => {
+    const key = String(r[rowField]);
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(r);
+  });
+
+  const isAvg = agg === 'avg_vehicles';
+  const fn = numericFields[agg];
+  const results = Object.entries(groups).map(([k, recs]) => {
+    const total = recs.reduce((s, r) => s + fn(r), 0);
+    return { key: k, val: isAvg ? total / recs.length : total, count: recs.length };
+  }).sort((a, b) => b.val - a.val);
+
+  const label = aggLabels[agg];
+  const filterNote = filterField ? `<p style="font-size:12px;color:var(--text3);margin-bottom:8px;font-family:var(--mono);">Filter: ${filterField} = "${filterVal}" — ${rows.length} records</p>` : `<p style="font-size:12px;color:var(--text3);margin-bottom:8px;font-family:var(--mono);">No filter — all ${DATA.length} records</p>`;
+
+  let html = filterNote + `<table><thead><tr><th>${rowField}</th><th>${label}</th></tr></thead><tbody>`;
+  results.forEach((r, i) => {
+    const v = isAvg ? r.val.toFixed(2) : r.val;
+    html += `<tr class="${i===0?'top-row':''}"><td>${r.key}</td><td class="val-cell">${v}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('filter-output').innerHTML = html;
+}
+
+function buildCrosstab() {
+  const rowField = document.getElementById('ct-row').value;
+  const colField = document.getElementById('ct-col').value;
+
+  const rows = getUnique(rowField);
+  const cols = getUnique(colField);
+
+  const counts = {};
+  DATA.forEach(r => {
+    const rk = String(r[rowField]);
+    const ck = String(r[colField]);
+    if (!counts[rk]) counts[rk] = {};
+    counts[rk][ck] = (counts[rk][ck] || 0) + 1;
+  });
+
+  const rowTotals = {};
+  rows.forEach(r => { rowTotals[r] = cols.reduce((s, c) => s + (counts[r]?.[c] || 0), 0); });
+  const sortedRows = [...rows].sort((a, b) => rowTotals[b] - rowTotals[a]);
+
+  let html = `<p style="font-size:12px;color:var(--text3);margin-bottom:8px;font-family:var(--mono);">Rows: ${rowField} | Columns: ${colField} | Values: COUNT</p>`;
+  html += `<div style="overflow-x:auto"><table><thead><tr><th>${rowField}</th>`;
+  cols.forEach(c => html += `<th>${c}</th>`);
+  html += `<th>Total</th></tr></thead><tbody>`;
+
+  sortedRows.forEach((r, i) => {
+    html += `<tr class="${i===0?'top-row':''}"><td>${r}</td>`;
+    cols.forEach(c => {
+      html += `<td class="val-cell">${counts[r]?.[c] || 0}</td>`;
+    });
+    html += `<td class="val-cell" style="font-weight:500;">${rowTotals[r]}</td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('ct-output').innerHTML = html;
+}
+
+// ── Finding / storytelling ────────────────────────────
+function updateFinding() {
+  const f1 = document.getElementById('finding1').value;
+  const f2 = document.getElementById('finding2').value;
+  const pivot = document.getElementById('finding-pivot').value;
+
+  document.getElementById('fc1').textContent = f1.length + ' characters';
+  document.getElementById('fc2').textContent = f2.length + ' characters';
+
+  // Quick quality checks
+  const hasNumber = /\d/.test(f1);
+  document.getElementById('qc0').classList.toggle('pass', hasNumber);
+  document.getElementById('qc1').classList.toggle('pass', f1.length > 30);
+  document.getElementById('qc2').classList.toggle('pass', pivot.length > 10);
+  document.getElementById('qc3').classList.toggle('pass', f2.length > 20);
+}
+
+function previewFinding() {
+  const f1 = document.getElementById('finding1').value.trim();
+  const f2 = document.getElementById('finding2').value.trim();
+  const pivot = document.getElementById('finding-pivot').value.trim();
+
+  if (!f1 || !f2) { alert('Please write both sentences before previewing.'); return; }
+
+  const preview = document.getElementById('finding-preview');
+  document.getElementById('preview-text').textContent = f1 + ' ' + f2;
+  document.getElementById('preview-pivot').textContent = pivot ? '📊 ' + pivot : '';
+  preview.classList.add('show');
+  preview.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function copyFinding() {
+  const f1 = document.getElementById('finding1').value.trim();
+  const f2 = document.getElementById('finding2').value.trim();
+  const pivot = document.getElementById('finding-pivot').value.trim();
+  const text = [f1, f2, pivot ? 'Pivot: ' + pivot : ''].filter(Boolean).join('\n\n');
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Copied to clipboard!');
+  }).catch(() => {
+    alert('Could not copy — please select and copy manually.');
+  });
+}
+
+// Init progress
+segs[0].classList.add('active');
+
+// ── PDF Generation ────────────────────────────────────
+function generatePDF() {
+  const name = document.getElementById('student-name').value.trim();
+  if (!name) { alert('Please enter your name before downloading.'); return; }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const margin = 54;
+  const contentW = pageW - margin * 2;
+  let y = margin;
+
+  const colors = {
+    dark:    [26, 23, 20],
+    accent:  [196, 66, 10],
+    mid:     [90, 86, 80],
+    light:   [237, 233, 224],
+    white:   [255, 253, 248],
+    blue:    [26, 58, 107],
+    green:   [43, 95, 62],
+  };
+
+  function checkPage(needed = 40) {
+    if (y + needed > pageH - margin) {
+      doc.addPage();
+      y = margin;
+      drawPageHeader();
+    }
+  }
+
+  function drawPageHeader() {
+    doc.setFillColor(...colors.light);
+    doc.rect(0, 0, pageW, 28, 'F');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...colors.mid);
+    doc.text('AP Computer Science A  ·  Pivot Tables Day 2  ·  Michigan Crash Data', margin, 18);
+    doc.text(name, pageW - margin, 18, { align: 'right' });
+    y = Math.max(y, 44);
+  }
+
+  function sectionHeading(title, sub) {
+    checkPage(60);
+    doc.setFillColor(...colors.accent);
+    doc.rect(margin, y, 4, 22, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(...colors.dark);
+    doc.text(title, margin + 12, y + 15);
+    if (sub) {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(...colors.mid);
+      doc.text(sub, margin + 12, y + 26);
+      y += 38;
+    } else {
+      y += 30;
+    }
+  }
+
+  function questionBlock(num, prompt, answer, isStarred) {
+    checkPage(50);
+    const numColor = isStarred ? colors.green : colors.dark;
+    doc.setFillColor(...numColor);
+    doc.roundedRect(margin, y, 26, 16, 3, 3, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(255, 253, 248);
+    doc.text(num, margin + 13, y + 11, { align: 'center' });
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(...colors.dark);
+    const promptLines = doc.splitTextToSize(prompt, contentW - 34);
+    checkPage(promptLines.length * 14 + 40);
+    doc.text(promptLines, margin + 34, y + 11);
+    y += promptLines.length * 14 + 6;
+
+    const answerText = answer.trim() || '(no answer)';
+    const ansLines = doc.splitTextToSize(answerText, contentW - 12);
+    checkPage(ansLines.length * 13 + 20);
+    doc.setFillColor(...colors.white);
+    doc.setDrawColor(...colors.light);
+    doc.roundedRect(margin, y, contentW, ansLines.length * 13 + 14, 3, 3, 'FD');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9.5);
+    doc.setTextColor(answerText === '(no answer)' ? colors.mid[0] : colors.dark[0],
+                     answerText === '(no answer)' ? colors.mid[1] : colors.dark[1],
+                     answerText === '(no answer)' ? colors.mid[2] : colors.dark[2]);
+    doc.text(ansLines, margin + 8, y + 12);
+    y += ansLines.length * 13 + 22;
+  }
+
+  function fieldBlock(label, value) {
+    checkPage(44);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...colors.mid);
+    doc.text(label.toUpperCase(), margin, y + 10);
+    y += 14;
+    const text = value.trim() || '(no answer)';
+    const lines = doc.splitTextToSize(text, contentW - 12);
+    checkPage(lines.length * 13 + 14);
+    doc.setFillColor(...colors.white);
+    doc.setDrawColor(...colors.light);
+    doc.roundedRect(margin, y, contentW, lines.length * 13 + 14, 3, 3, 'FD');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9.5);
+    doc.setTextColor(text === '(no answer)' ? colors.mid[0] : colors.dark[0],
+                     text === '(no answer)' ? colors.mid[1] : colors.dark[1],
+                     text === '(no answer)' ? colors.mid[2] : colors.dark[2]);
+    doc.text(lines, margin + 8, y + 12);
+    y += lines.length * 13 + 20;
+  }
+
+  function divider() {
+    checkPage(20);
+    doc.setDrawColor(...colors.light);
+    doc.setLineWidth(0.5);
+    doc.line(margin, y, pageW - margin, y);
+    y += 16;
+  }
+
+  // ── Cover block ──
+  doc.setFillColor(...colors.dark);
+  doc.rect(0, 0, pageW, 110, 'F');
+  doc.setFillColor(...colors.accent);
+  doc.circle(pageW - 30, -20, 80, 'F');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(22);
+  doc.setTextColor(255, 253, 248);
+  doc.text('Pivot Tables: Day Two', margin, 52);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.setTextColor(160, 152, 144);
+  doc.text('Michigan Traffic Crash Data  ·  AP Computer Science A', margin, 70);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(232, 168, 130);
+  doc.text(name, margin, 90);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(160, 152, 144);
+  const now = new Date();
+  doc.text(`Submitted ${now.toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'})}`, margin, 104);
+
+  y = 130;
+  drawPageHeader();
+  y = 130;
+
+  // ── Section 0: Warm-up ──
+  sectionHeading('Section 0', 'Warm-up — recall questions');
+  questionBlock('Q1', 'What do you put in the Rows zone of a pivot table?',
+    document.getElementById('wu1').value, false);
+  questionBlock('Q2', 'What does COUNT do in the Values zone — what is it actually counting?',
+    document.getElementById('wu2').value, false);
+  questionBlock('Q3', "What's the difference between a filter and a row grouping?",
+    document.getElementById('wu3').value, false);
+
+  divider();
+
+  // ── Section 1: Filters reflection ──
+  sectionHeading('Section 1', 'Filters — reflection');
+  const filterRef = document.querySelector('#sec1 .answer-area textarea');
+  fieldBlock('Observation from your filtered pivot table', filterRef ? filterRef.value : '');
+
+  divider();
+
+  // ── Section 2: Cross-tabs reflection ──
+  sectionHeading('Section 2', 'Cross-tabs — reflection');
+  const ctRef = document.querySelector('#sec2 .answer-area textarea');
+  fieldBlock('What a cross-tab shows that a row-only pivot cannot', ctRef ? ctRef.value : '');
+
+  divider();
+
+  // ── Section 3: Practice questions ──
+  sectionHeading('Section 3', 'Practice questions');
+  const qBodies = document.querySelectorAll('.q-body');
+  const qTexts = [
+    'Filter to Late Night crashes. Which county had the most?',
+    'Cross-tab: county × crash_severity. Which county had the most Fatal crashes?',
+    'Filter to Wayne County. What was the most common contributing factor?',
+    'Filter to Serious Injury or Fatal. Compare avg vehicles by road type.',
+    'Design your own question requiring a filter AND cross-tab.'
+  ];
+  const qNums = ['Q1','Q2','Q3','Q4','Q5 ★'];
+  qBodies.forEach((body, i) => {
+    const textareas = body.querySelectorAll('textarea');
+    if (i < 4) {
+      const ans = textareas[0] ? textareas[0].value : '';
+      questionBlock(qNums[i], qTexts[i], ans, i === 4);
+    } else {
+      // Q5 has 3 textareas
+      const parts = Array.from(textareas).map(t => t.value.trim()).filter(Boolean);
+      questionBlock(qNums[i], qTexts[i], parts.join('\n\n') || '', true);
+    }
+  });
+
+  divider();
+
+  // ── Section 4: Finding ──
+  sectionHeading('Section 4', 'My data finding');
+  fieldBlock('Sentence 1 — the specific finding', document.getElementById('finding1').value);
+  fieldBlock('Sentence 2 — why it matters or what question it raises', document.getElementById('finding2').value);
+  fieldBlock('Pivot table used (filter, rows, columns, values)', document.getElementById('finding-pivot').value);
+  fieldBlock('What my pivot table cannot tell me', document.getElementById('limitation-reflection').value);
+
+  // ── Footer on last page ──
+  checkPage(30);
+  doc.setFillColor(...colors.light);
+  doc.rect(margin, y, contentW, 28, 'F');
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...colors.mid);
+  doc.text('AP CS A  ·  Pivot Tables Day 2  ·  Divine Child High School', margin + 10, y + 17);
+  doc.text(name, pageW - margin - 10, y + 17, { align: 'right' });
+
+  // Save
+  const filename = `PivotTables_Day2_${name.replace(/\s+/g,'_')}.pdf`;
+  doc.save(filename);
+}
+</script>
+</body>
+</html>

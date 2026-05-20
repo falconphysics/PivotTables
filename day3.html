@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pivot Tables: Day Three — Michigan Crash Data</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,500;1,300&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="vendor/chart.umd.min.js"></script>
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="data/michigan_crashes.js"></script>
+<style>
+:root {
+  --bg:#F5F2EC; --surface:#FFFDF8; --surface2:#EDE9E0; --border:#D4CFC4;
+  --text:#1A1714; --text2:#5A5650; --text3:#8A8580;
+  --accent:#7B3FA0; --accent-light:#F0E6F8;
+  --accent2:#1A3A6B; --accent2-light:#DDE8F5;
+  --accent3:#C4420A; --accent3-light:#FAE8DF;
+  --green:#2B5F3E; --green-light:#DCF0E4;
+  --mono:'DM Mono',monospace; --serif:'Fraunces',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif;
+  --r:6px; --rl:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.65;min-height:100vh;}
+
+.page-header{background:var(--text);color:var(--bg);padding:2.5rem 2rem 2rem;position:relative;overflow:hidden;}
+.page-header::before{content:'';position:absolute;top:-40px;right:-40px;width:220px;height:220px;border-radius:50%;background:var(--accent);opacity:.12;}
+.course-tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#A09890;margin-bottom:.5rem;}
+.page-header h1{font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.4rem);font-weight:300;line-height:1.2;margin-bottom:.5rem;}
+.page-header h1 em{color:#C9A0E0;font-style:italic;}
+.header-sub{font-size:14px;color:#A09890;margin-bottom:1.5rem;}
+.progress-bar-wrap{display:flex;gap:4px;align-items:center;}
+.progress-seg{height:4px;flex:1;border-radius:2px;background:#3A3630;transition:background .4s;}
+.progress-seg.done{background:var(--accent);}
+.progress-seg.active{background:#C9A0E0;}
+.progress-label{font-family:var(--mono);font-size:11px;color:#A09890;margin-left:8px;white-space:nowrap;}
+
+.nav-strip{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;gap:0;overflow-x:auto;}
+.nav-btn{font-family:var(--mono);font-size:12px;padding:14px 16px;border:none;background:transparent;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;letter-spacing:.04em;}
+.nav-btn:hover{color:var(--text);}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+.main{max-width:860px;margin:0 auto;padding:2rem;}
+.section{display:none;}
+.section.active{display:block;}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;margin-bottom:1.25rem;}
+.card-title{font-family:var(--serif);font-size:1.1rem;font-weight:300;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.num-badge{font-family:var(--mono);font-size:11px;background:var(--accent);color:white;padding:2px 7px;border-radius:3px;}
+
+.concept-box{background:var(--accent2-light);border-left:3px solid var(--accent2);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.25rem;margin:1rem 0;font-size:14px;}
+.tip-box{background:var(--green-light);border-left:3px solid var(--green);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.25rem;margin:1rem 0;font-size:14px;}
+.warn-box{background:var(--accent3-light);border-left:3px solid var(--accent3);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.25rem;margin:1rem 0;font-size:14px;}
+.purple-box{background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.25rem;margin:1rem 0;font-size:14px;}
+
+.steps{list-style:none;counter-reset:steps;}
+.steps li{counter-increment:steps;display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--surface2);font-size:14px;}
+.steps li:last-child{border-bottom:none;}
+.steps li::before{content:counter(steps);font-family:var(--mono);font-size:11px;background:var(--text);color:var(--bg);min-width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+
+/* Chart containers */
+.chart-wrap{position:relative;margin:1rem 0;border:1px solid var(--border);border-radius:var(--rl);background:var(--surface);padding:1.25rem;}
+.chart-wrap canvas{display:block;}
+.chart-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem;align-items:center;}
+.chart-controls label{font-family:var(--mono);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;}
+.chart-controls select{font-family:var(--sans);font-size:13px;border:1px solid var(--border);border-radius:var(--r);padding:5px 8px;background:var(--surface);color:var(--text);cursor:pointer;}
+.chart-controls button{font-family:var(--sans);font-size:12px;padding:5px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface2);color:var(--text);cursor:pointer;transition:background .15s;}
+.chart-controls button:hover{background:var(--border);}
+.chart-controls button.active-btn{background:var(--accent);color:white;border-color:var(--accent);}
+.chart-title{font-family:var(--serif);font-size:14px;font-weight:300;color:var(--text2);margin-bottom:.5rem;}
+
+/* Pivot builder */
+.pivot-builder{background:var(--surface2);border-radius:var(--rl);padding:1.25rem;margin:1rem 0;}
+.pivot-builder h3{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;}
+.pivot-zones{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.pivot-zone{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;}
+.zone-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px;}
+.pivot-zone select{width:100%;font-family:var(--sans);font-size:13px;border:1px solid var(--border);border-radius:var(--r);padding:6px 8px;background:var(--surface);color:var(--text);}
+.agg-row{display:flex;gap:8px;align-items:center;margin-top:6px;}
+.agg-row label{font-size:12px;color:var(--text2);white-space:nowrap;}
+.agg-row select{font-family:var(--sans);font-size:12px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;background:var(--surface);color:var(--text);flex:1;}
+.build-btn{width:100%;margin-top:10px;padding:10px;background:var(--accent);color:white;border:none;border-radius:var(--r);font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;transition:opacity .2s;}
+.build-btn:hover{opacity:.88;}
+.pivot-output{margin-top:1rem;overflow-x:auto;}
+.pivot-output table{width:100%;border-collapse:collapse;font-size:13px;}
+.pivot-output th{background:var(--text);color:var(--bg);padding:8px 12px;text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.06em;font-weight:400;}
+.pivot-output td{padding:7px 12px;border-bottom:1px solid var(--surface2);}
+.pivot-output tr:nth-child(even) td{background:var(--surface2);}
+.val-cell{text-align:right;font-family:var(--mono);}
+.top-row td{background:var(--accent-light) !important;font-weight:500;}
+
+/* Q cards */
+.q-card{border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:1rem;}
+.q-hdr{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);cursor:pointer;user-select:none;}
+.q-hdr:hover{background:var(--surface2);}
+.q-num{font-family:var(--mono);font-size:11px;background:var(--text);color:var(--bg);padding:3px 8px;border-radius:3px;flex-shrink:0;}
+.q-num.star{background:var(--accent);}
+.q-text{flex:1;font-size:14px;font-weight:500;}
+.skill-tag{font-family:var(--mono);font-size:10px;padding:2px 6px;border-radius:3px;border:1px solid var(--border);color:var(--text3);}
+.q-body{padding:16px;border-top:1px solid var(--border);display:none;background:var(--surface);}
+.q-body.open{display:block;}
+.chev{font-size:16px;color:var(--text3);transition:transform .2s;}
+.chev.open{transform:rotate(180deg);}
+.hint-btn{font-family:var(--mono);font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:4px;background:transparent;color:var(--text2);cursor:pointer;margin-top:10px;transition:background .15s;}
+.hint-btn:hover{background:var(--surface2);}
+.hint-text{display:none;margin-top:10px;font-size:13px;color:var(--text2);background:var(--surface2);border-radius:var(--r);padding:10px 12px;font-style:italic;}
+.hint-text.open{display:block;}
+
+.answer-area{margin-top:12px;}
+.answer-area label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:6px;}
+.answer-area textarea{width:100%;min-height:80px;font-family:var(--sans);font-size:14px;border:1px solid var(--border);border-radius:var(--r);padding:10px;background:var(--surface);color:var(--text);resize:vertical;}
+.answer-area textarea:focus{outline:none;border-color:var(--accent);}
+
+/* Chart type picker */
+.chart-type-row{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;}
+.ct-btn{font-family:var(--mono);font-size:11px;padding:5px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface2);color:var(--text2);cursor:pointer;transition:all .15s;}
+.ct-btn:hover{border-color:var(--accent);color:var(--accent);}
+.ct-btn.active{background:var(--accent);color:white;border-color:var(--accent);}
+
+/* Submit */
+.form-group{margin-bottom:1rem;}
+.form-group label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:6px;}
+.form-group input{width:100%;max-width:340px;font-family:var(--sans);font-size:14px;border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;background:var(--surface);color:var(--text);}
+.form-group input:focus{outline:none;border-color:var(--accent);}
+
+.footer-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0 2.5rem;margin-top:1rem;}
+.footer-btn{font-family:var(--sans);font-size:14px;padding:10px 20px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;transition:background .15s;}
+.footer-btn:hover{background:var(--surface2);}
+.footer-btn.next{background:var(--text);color:var(--bg);border-color:var(--text);}
+.footer-btn.next:hover{opacity:.85;}
+.footer-btn:disabled{opacity:.3;cursor:default;}
+.footer-btn.dl{background:var(--accent);color:white;border-color:var(--accent);}
+
+.section-heading{font-family:var(--serif);font-size:1.35rem;font-weight:300;margin-bottom:1.25rem;}
+.section-heading span{color:var(--accent);font-style:italic;}
+.divider{height:.5px;background:var(--border);margin:1.5rem 0;}
+
+/* Sheets chart mockup */
+.sheets-chart-mockup{background:#fff;border:1px solid #C9D1DB;border-radius:var(--r);overflow:hidden;margin:1rem 0;}
+.scm-bar{background:#F8F9FA;border-bottom:1px solid #E0E0E0;padding:8px 12px;font-size:11px;color:#555;display:flex;align-items:center;gap:8px;}
+.scm-inner{padding:12px 16px;}
+
+/* Checklist */
+.checklist{list-style:none;padding:0;margin:0;}
+.checklist li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:.5px solid var(--surface2);font-size:14px;}
+.checklist li:last-child{border-bottom:none;}
+.checklist li::before{content:"✓";color:var(--accent);font-weight:500;flex-shrink:0;margin-top:1px;}
+
+@media(max-width:600px){
+  .main{padding:1rem;}
+  .pivot-zones{grid-template-columns:1fr;}
+  .chart-controls{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <p class="course-tag">AP Computer Science A · Data Unit · Day 3</p>
+  <h1>Pivot Tables<br><em>Advanced Skills &amp; Visualizations</em></h1>
+  <p class="header-sub">Michigan Traffic Crash Data · 500 records · 2022–2024</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-seg active" id="seg0"></div>
+    <div class="progress-seg" id="seg1"></div>
+    <div class="progress-seg" id="seg2"></div>
+    <div class="progress-seg" id="seg3"></div>
+    <div class="progress-seg" id="seg4"></div>
+    <span class="progress-label" id="progress-label">1 / 5</span>
+  </div>
+</div>
+
+<div class="nav-strip">
+  <button class="nav-btn active" data-sec="0">0. Advanced Pivots</button>
+  <button class="nav-btn" data-sec="1">1. Chart Types</button>
+  <button class="nav-btn" data-sec="2">2. Charts in Sheets</button>
+  <button class="nav-btn" data-sec="3">3. Practice</button>
+  <button class="nav-btn" data-sec="4">4. Submit</button>
+</div>
+
+<div class="main">
+
+<!-- ══════════ SEC 0: ADVANCED PIVOTS ══════════ -->
+<div class="section active" id="sec0">
+  <h2 class="section-heading">Advanced pivot skills — <span>going deeper</span></h2>
+
+  <p style="font-size:15px;color:var(--text2);margin-bottom:1.25rem;">
+    Day 1 covered grouping and counting. Day 2 added filters and cross-tabs. Today you'll add three new techniques — then turn your results into charts.
+  </p>
+
+  <!-- SKILL A: Calculated fields -->
+  <div class="card">
+    <div class="card-title"><span class="num-badge">A</span> Calculated fields — percentages and ratios</div>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:.75rem;">
+      A calculated field lets you define a custom formula that runs on the aggregated values in your pivot table — not on the raw data. The most useful one: turning counts into percentages.
+    </p>
+    <div class="concept-box">
+      <strong>Example goal:</strong> What percentage of crashes in each county were fatal?<br><br>
+      You can't just COUNT fatalities — you need fatalities ÷ total crashes per county.<br>
+      In Google Sheets, add a helper column next to your pivot table:<br>
+      <code style="font-family:var(--mono);font-size:12px;">= B2 / SUM($B$2:$B$11)</code> — where B2 is the count for one row and $B$2:$B$11 is the full Values column.
+    </div>
+    <p style="font-size:14px;color:var(--text2);margin:.75rem 0;">There's a second approach: add <strong>two value fields</strong> to the same pivot table — one COUNTA for total crashes, one SUM for fatalities — then calculate the ratio in a helper column alongside.</p>
+    <div class="tip-box">
+      <strong>Sheets tip:</strong> After building the pivot table, click an empty cell in the same row (column C or D). Type <code>=B2/GETPIVOTDATA("COUNTA of crash_id", $A$1)</code> — or simply reference the cells directly. Format the helper column as a percentage: Format → Number → Percent.
+    </div>
+
+    <!-- Live: fatality rate by county -->
+    <div class="chart-wrap" style="margin-top:1rem;">
+      <p class="chart-title">Live explorer: fatal crash rate by county</p>
+      <div class="chart-controls">
+        <label>Sort by</label>
+        <select id="fatal-sort" onchange="drawFatalRate()">
+          <option value="rate">Fatality rate (desc)</option>
+          <option value="total">Total crashes (desc)</option>
+          <option value="alpha">County name (A–Z)</option>
+        </select>
+      </div>
+      <canvas id="fatal-chart" height="260"></canvas>
+      <p style="font-size:11px;color:var(--text3);margin-top:8px;font-family:var(--mono);">Fatal crashes ÷ total crashes per county · hover bars for exact values</p>
+    </div>
+    <div class="answer-area">
+      <label>Observation — which county has the highest fatality rate? Does that surprise you given its total crash count?</label>
+      <textarea id="obs-a" placeholder="The county with the highest fatality rate is ___ at ___%. This is surprising / not surprising because Wayne County has far more total crashes but…" rows="3"></textarea>
+    </div>
+  </div>
+
+  <!-- SKILL B: Year-over-year -->
+  <div class="card">
+    <div class="card-title"><span class="num-badge">B</span> Year-over-year comparison</div>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:.75rem;">
+      A cross-tab with <code>year</code> in the Columns zone turns a single-variable pivot into a year-over-year comparison. You can immediately see whether a category is trending up or down.
+    </p>
+    <div class="concept-box">
+      <strong>Setup:</strong> Rows = contributing_factor · Columns = year · Values = COUNTA of crash_id<br><br>
+      You'll get a table where each row is a factor and each column is a year (2022, 2023, 2024). Reading across a row tells you whether that factor increased or decreased over time.
+    </div>
+    <div class="warn-box">
+      <strong>Watch out for unequal time windows.</strong> If your dataset has more data from one year than others, raw counts aren't comparable. Always check whether the totals per year are similar before drawing trend conclusions.
+    </div>
+
+    <div class="chart-wrap" style="margin-top:1rem;">
+      <p class="chart-title">Live explorer: crashes by contributing factor, year over year</p>
+      <div class="chart-controls">
+        <label>Group by</label>
+        <select id="yoy-field" onchange="drawYOY()">
+          <option value="contributing_factor">contributing_factor</option>
+          <option value="vehicle_type">vehicle_type</option>
+          <option value="crash_severity">crash_severity</option>
+          <option value="road_type">road_type</option>
+          <option value="time_of_day">time_of_day</option>
+        </select>
+        <label style="margin-left:8px;">Top</label>
+        <select id="yoy-top" onchange="drawYOY()">
+          <option value="5">5 categories</option>
+          <option value="8">8 categories</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+      <canvas id="yoy-chart" height="300"></canvas>
+    </div>
+    <div class="answer-area">
+      <label>Observation — pick one category that changed notably between 2022 and 2024. What trend do you see?</label>
+      <textarea id="obs-b" placeholder="Between 2022 and 2024, ___ increased / decreased from ___ to ___. One possible explanation is…" rows="3"></textarea>
+    </div>
+  </div>
+
+  <!-- SKILL C: Nested row groups -->
+  <div class="card">
+    <div class="card-title"><span class="num-badge">C</span> Nested row groups</div>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:.75rem;">
+      You can add multiple fields to the Rows zone — the second field nests <em>inside</em> the first. This creates a hierarchy: group A contains group B.
+    </p>
+    <div class="concept-box">
+      <strong>Example:</strong> Rows = county, then road_type · Values = COUNTA<br><br>
+      Result: each county expands into sub-rows showing how its crashes break down by road type. You can see that Wayne County's crashes concentrate on City Streets, while Livingston's are more spread across highways.
+    </div>
+    <ol class="steps" style="margin-top:.75rem;">
+      <li>Build a pivot table with Rows = county.</li>
+      <li>In the Rows section, click <strong>Add</strong> again and choose <code>road_type</code>.</li>
+      <li>Google Sheets automatically nests road_type inside county — each county row expands into road type sub-rows.</li>
+      <li>Click the triangle arrows to collapse/expand individual counties.</li>
+    </ol>
+
+    <div class="chart-wrap" style="margin-top:1rem;">
+      <p class="chart-title">Live explorer: nested breakdown — county × second field</p>
+      <div class="chart-controls">
+        <label>Outer group (Rows)</label>
+        <select id="nest-outer" onchange="drawNested()">
+          <option value="county">county</option>
+          <option value="crash_severity">crash_severity</option>
+          <option value="vehicle_type">vehicle_type</option>
+          <option value="time_of_day">time_of_day</option>
+        </select>
+        <label style="margin-left:8px;">Inner group</label>
+        <select id="nest-inner" onchange="drawNested()">
+          <option value="crash_severity">crash_severity</option>
+          <option value="road_type">road_type</option>
+          <option value="vehicle_type">vehicle_type</option>
+          <option value="contributing_factor">contributing_factor</option>
+        </select>
+        <label style="margin-left:8px;">Show top</label>
+        <select id="nest-limit" onchange="drawNested()">
+          <option value="4">4 outer groups</option>
+          <option value="6">6 outer groups</option>
+        </select>
+      </div>
+      <canvas id="nested-chart" height="340"></canvas>
+    </div>
+    <div class="answer-area">
+      <label>Observation — what does the nested breakdown reveal that a simple one-level pivot can't show?</label>
+      <textarea id="obs-c" placeholder="The nested breakdown shows that within ___, the distribution of ___ is different from what I expected because…" rows="3"></textarea>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" disabled>← Back</button>
+    <button class="footer-btn next" onclick="goSection(1)">Next: Chart Types →</button>
+  </div>
+</div>
+
+<!-- ══════════ SEC 1: CHART TYPES ══════════ -->
+<div class="section" id="sec1">
+  <h2 class="section-heading">Chart types — <span>choosing the right one</span></h2>
+
+  <p style="font-size:14px;color:var(--text2);margin-bottom:1.25rem;">Not every chart type works for every question. The wrong chart can hide the pattern or actively mislead. Here's how to choose.</p>
+
+  <div class="card">
+    <div class="card-title">The decision framework</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:.75rem 0;">
+      <div style="background:var(--accent-light);border-radius:var(--r);padding:12px 14px;">
+        <div style="font-family:var(--mono);font-size:12px;color:var(--accent);margin-bottom:5px;font-weight:500;">BAR CHART</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:6px;">Comparing categories side by side. Best for ranked pivot results.</div>
+        <div style="font-size:11px;font-family:var(--mono);color:var(--text3);">→ crashes per county<br>→ top contributing factors</div>
+      </div>
+      <div style="background:var(--accent2-light);border-radius:var(--r);padding:12px 14px;">
+        <div style="font-family:var(--mono);font-size:12px;color:var(--accent2);margin-bottom:5px;font-weight:500;">STACKED BAR</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:6px;">Comparing totals AND composition at the same time. Best for cross-tab results.</div>
+        <div style="font-size:11px;font-family:var(--mono);color:var(--text3);">→ severity by county<br>→ vehicle type by year</div>
+      </div>
+      <div style="background:var(--green-light);border-radius:var(--r);padding:12px 14px;">
+        <div style="font-family:var(--mono);font-size:12px;color:var(--green);margin-bottom:5px;font-weight:500;">LINE CHART</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:6px;">Showing change over time. Best for year, month, or time-of-day data.</div>
+        <div style="font-size:11px;font-family:var(--mono);color:var(--text3);">→ crashes per month<br>→ year-over-year trends</div>
+      </div>
+      <div style="background:var(--accent3-light);border-radius:var(--r);padding:12px 14px;">
+        <div style="font-family:var(--mono);font-size:12px;color:var(--accent3);margin-bottom:5px;font-weight:500;">PIE / DONUT</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:6px;">Showing part-of-whole. Only works with 5 or fewer categories.</div>
+        <div style="font-size:11px;font-family:var(--mono);color:var(--text3);">→ crash severity share<br>→ road type breakdown</div>
+      </div>
+    </div>
+    <div class="warn-box">
+      <strong>Pie chart trap:</strong> Never use a pie chart with more than 5–6 slices. With 11 vehicle types, a pie chart is unreadable. Use a bar chart instead.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Interactive comparison — same data, four chart types</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Use the buttons to switch between chart types on the same pivot result (crashes by crash severity). Notice how each one emphasizes different things.</p>
+    <div class="chart-type-row">
+      <button class="ct-btn active" onclick="switchChartType('bar', this)">Bar</button>
+      <button class="ct-btn" onclick="switchChartType('horizontalBar', this)">Horizontal bar</button>
+      <button class="ct-btn" onclick="switchChartType('pie', this)">Pie</button>
+      <button class="ct-btn" onclick="switchChartType('doughnut', this)">Donut</button>
+      <button class="ct-btn" onclick="switchChartType('polarArea', this)">Polar area</button>
+    </div>
+    <div class="chart-wrap" style="margin-top:0;">
+      <canvas id="type-compare-chart" height="280"></canvas>
+    </div>
+    <div class="answer-area">
+      <label>Which chart type works best for crash severity data, and why?</label>
+      <textarea id="obs-chart-type" placeholder="I think ___ works best for this data because… The pie chart is / isn't a good choice here because there are only ___ categories and…" rows="3"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">When to use stacked vs. grouped bars</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Both use bars with multiple colors. The difference is what question they answer.</p>
+    <div class="chart-controls" style="margin-bottom:.5rem;">
+      <button class="ct-btn active" id="stack-toggle" onclick="toggleStack(this)">Stacked</button>
+      <button class="ct-btn" id="group-toggle" onclick="toggleGroup(this)">Grouped</button>
+    </div>
+    <div class="chart-wrap" style="margin-top:0;">
+      <canvas id="stack-compare-chart" height="280"></canvas>
+    </div>
+    <div class="purple-box" style="margin-top:.75rem;">
+      <strong>Stacked</strong> = "What is the total, and how is it composed?" — good for seeing that Wayne has far more crashes overall, and that most are property damage.<br><br>
+      <strong>Grouped</strong> = "How does each severity compare across counties?" — good for seeing that Wayne has more of every severity, not just one.
+    </div>
+    <div class="answer-area">
+      <label>When would grouped bars be better than stacked bars? Give a specific example using this dataset.</label>
+      <textarea id="obs-stack" placeholder="I would use grouped bars when I want to compare… For example, if I wanted to know which county had the most fatal crashes specifically, grouped bars would be better because…" rows="3"></textarea>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(0)">← Back</button>
+    <button class="footer-btn next" onclick="goSection(2)">Next: Charts in Sheets →</button>
+  </div>
+</div>
+
+<!-- ══════════ SEC 2: CHARTS IN SHEETS ══════════ -->
+<div class="section" id="sec2">
+  <h2 class="section-heading">Charts in Google Sheets — <span>step by step</span></h2>
+
+  <div class="card">
+    <div class="card-title">How to create a chart from a pivot table</div>
+    <ol class="steps">
+      <li>Go to your pivot table tab. Click any cell inside the pivot table results (not the editor panel — click the actual data).</li>
+      <li>Select the data you want to chart. For a simple bar chart of county counts: click the county column header, then hold Ctrl (or Cmd on Mac) and click the Values column header. Both columns should be highlighted.</li>
+      <li>Go to <strong>Insert → Chart</strong>. Google Sheets will guess a chart type — it's often wrong. You'll fix this in the next step.</li>
+      <li>In the Chart editor that opens on the right, change <strong>Chart type</strong> to the one you want (Column chart for vertical bars, Bar chart for horizontal).</li>
+      <li>Under <strong>Customize</strong> tab: add a chart title, axis labels, and adjust colors. A chart without a title is unusable.</li>
+      <li>Click outside the chart editor to close it. Your chart is now embedded in the sheet.</li>
+    </ol>
+    <div class="tip-box">
+      <strong>Pro move:</strong> Right-click the chart → Move to own sheet. This gives your chart its own full-size tab, which is much easier to read and present.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Chart titles and axis labels — required, not optional</div>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:.75rem;">A chart without context is meaningless. Every chart you submit must have:</p>
+    <ul class="checklist">
+      <li>A title that states what the chart shows (not just "Chart 1"). Example: <em>Michigan Traffic Crashes by County, 2022–2024</em></li>
+      <li>An X-axis label describing the categories</li>
+      <li>A Y-axis label describing the values and units (e.g. "Number of crashes")</li>
+      <li>A legend if there are multiple data series (e.g. one bar per year)</li>
+    </ul>
+    <div class="warn-box" style="margin-top:1rem;">
+      <strong>Watch the scale.</strong> Google Sheets sometimes starts the Y-axis at a non-zero value, which can make small differences look enormous. Check: Chart editor → Customize → Vertical axis → Min value → set to 0.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Making a stacked bar from a cross-tab</div>
+    <ol class="steps">
+      <li>Build a cross-tab: Rows = county · Columns = crash_severity · Values = COUNTA.</li>
+      <li>Select all the data in the pivot result — county names, severity column headers, and all the counts.</li>
+      <li>Insert → Chart. In Chart type, choose <strong>Stacked column chart</strong>.</li>
+      <li>Sheets should automatically use county as the X-axis and each severity as a separate color series. If it doesn't, go to Setup → X-axis and manually set it.</li>
+      <li>Filter to just the top 5–6 counties first to keep the chart readable — too many bars is hard to interpret.</li>
+    </ol>
+    <div class="tip-box">
+      <strong>Color tip:</strong> In the Customize tab, assign meaningful colors: Fatal = dark red, Serious Injury = orange, Minor Injury = yellow, Property Damage = green. Colors that encode severity create immediate visual hierarchy.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Making a line chart for time trends</div>
+    <ol class="steps">
+      <li>Build a pivot table: Rows = month · Values = COUNTA of crash_id. This gives crashes per month (all years combined).</li>
+      <li>For year-over-year: Rows = month · Columns = year · Values = COUNTA. Now you have 3 lines — one per year.</li>
+      <li>Select all the data. Insert → Chart → Line chart.</li>
+      <li>The X-axis should be month. If Sheets puts year on the X-axis instead, go to Setup and swap the rows/columns toggle.</li>
+    </ol>
+    <div class="warn-box">
+      <strong>Month ordering problem:</strong> Sheets sorts months alphabetically (April, August, December…) instead of chronologically. Fix this: in your raw pivot table, add a helper column with month numbers (January=1, February=2, …) and sort by that before charting.
+    </div>
+
+    <!-- Live line chart -->
+    <div class="chart-wrap" style="margin-top:1rem;">
+      <p class="chart-title">Live: crashes per month, year over year</p>
+      <div class="chart-controls">
+        <label>Show years</label>
+        <label style="display:flex;gap:4px;align-items:center;font-family:var(--sans);font-size:13px;cursor:pointer;">
+          <input type="checkbox" id="yr2022" checked onchange="drawMonthly()"> 2022
+        </label>
+        <label style="display:flex;gap:4px;align-items:center;font-family:var(--sans);font-size:13px;cursor:pointer;">
+          <input type="checkbox" id="yr2023" checked onchange="drawMonthly()"> 2023
+        </label>
+        <label style="display:flex;gap:4px;align-items:center;font-family:var(--sans);font-size:13px;cursor:pointer;">
+          <input type="checkbox" id="yr2024" checked onchange="drawMonthly()"> 2024
+        </label>
+      </div>
+      <canvas id="monthly-chart" height="260"></canvas>
+    </div>
+    <div class="answer-area">
+      <label>Observation — what seasonal pattern do you notice? Does the pattern hold consistently across all three years?</label>
+      <textarea id="obs-line" placeholder="Crashes seem to peak in ___ and dip in ___. This pattern does / doesn't hold across all years because…" rows="3"></textarea>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(1)">← Back</button>
+    <button class="footer-btn next" onclick="goSection(3)">Next: Practice →</button>
+  </div>
+</div>
+
+<!-- ══════════ SEC 3: PRACTICE ══════════ -->
+<div class="section" id="sec3">
+  <h2 class="section-heading">Practice — <span>build pivots and charts in Google Sheets</span></h2>
+
+  <p style="font-size:14px;color:var(--text2);margin-bottom:1.25rem;">
+    Each question requires both a pivot table and a chart built in your Google Sheets file. Write your observations and describe your chart choices.
+  </p>
+
+  <div class="q-card">
+    <div class="q-hdr" onclick="toggleQ(this)">
+      <span class="q-num">Q1</span>
+      <span class="q-text">What percentage of each county's crashes were fatal? Create a bar chart showing fatality rate per county.</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="skill-tag">calculated %</span><span class="skill-tag">bar chart</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px;color:var(--text2);">Pivot setup: Rows = county · Values = COUNTA crash_id AND SUM fatalities (add both). Then in a helper column: = fatalities / total. Chart: bar, sorted descending by fatality rate. Title: "Fatal Crash Rate by County, 2022–2024".</p>
+      <button class="hint-btn" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-text">Add two value fields to the same pivot: first COUNTA of crash_id (total crashes), then SUM of fatalities. Your pivot now has two value columns. In column D, type =C2/B2 (fatalities ÷ total) and drag it down. Format as percentage. Build your bar chart from columns A and D only.</div>
+      <div class="answer-area"><label>Your answer + chart description</label>
+        <textarea placeholder="The county with the highest fatality rate was ___ (___%). I chose a bar chart because… My chart title is…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-hdr" onclick="toggleQ(this)">
+      <span class="q-num">Q2</span>
+      <span class="q-text">How did the top 5 contributing factors change year over year? Build a grouped bar chart.</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="skill-tag">year-over-year</span><span class="skill-tag">grouped bar</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px;color:var(--text2);">Pivot setup: Rows = contributing_factor · Columns = year · Values = COUNTA. Filter to top 5 factors. Chart: grouped column chart (each year = one color). Title: "Contributing Factors by Year, 2022–2024".</p>
+      <button class="hint-btn" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-text">Build the cross-tab. Then manually select only the rows for your top 5 factors (hold Ctrl and click each row). Insert chart. In the chart editor Setup tab, check that "Use row 1 as headers" and "Use column A as labels" are both on. Switch to Grouped column chart.</div>
+      <div class="answer-area"><label>Your answer + chart description</label>
+        <textarea placeholder="The factor that changed most between 2022 and 2024 was ___. I used a grouped bar chart instead of stacked because…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-hdr" onclick="toggleQ(this)">
+      <span class="q-num">Q3</span>
+      <span class="q-text">What does crash severity look like by vehicle type? Build a stacked bar chart.</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="skill-tag">cross-tab</span><span class="skill-tag">stacked bar</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px;color:var(--text2);">Pivot setup: Rows = vehicle_type · Columns = crash_severity · Values = COUNTA. Chart: stacked column chart. Assign severity colors manually (dark red = Fatal, etc.). Title: "Crash Severity by Vehicle Type".</p>
+      <button class="hint-btn" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-text">The cross-tab gives you each severity as a separate column — exactly what you need for a stacked bar. Select the whole pivot result, insert chart, choose Stacked column chart. In Customize → Series, click each severity label and assign your chosen color.</div>
+      <div class="answer-area"><label>Your answer + chart description</label>
+        <textarea placeholder="Looking at the stacked bar chart, motorcycles stand out because… Compared to passenger cars, motorcycles have a higher proportion of ___ severity because…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-hdr" onclick="toggleQ(this)">
+      <span class="q-num">Q4</span>
+      <span class="q-text">How do crash counts change across the months of the year? Build a line chart.</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="skill-tag">time trend</span><span class="skill-tag">line chart</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px;color:var(--text2);">Pivot setup: Rows = month · Columns = year · Values = COUNTA. Fix month ordering by adding a sort helper column. Chart: line chart (one line per year). Title: "Monthly Crash Counts by Year".</p>
+      <button class="hint-btn" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-text">After building the pivot, the months will be in alphabetical order. Add a helper column in your pivot sheet with the month number (Jan=1, Feb=2, etc.) and sort ascending by that column. Then select month name + the three year columns → Insert chart → Line chart.</div>
+      <div class="answer-area"><label>Your answer + chart description</label>
+        <textarea placeholder="The line chart shows that crashes tend to peak in ___ and reach a low in ___. The three years do / don't follow similar patterns because…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-hdr" onclick="toggleQ(this)">
+      <span class="q-num star">Q5 ★</span>
+      <span class="q-text">Find a pattern that surprised you. State a question, build the pivot + chart, and write 2–3 sentences interpreting it.</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;"><span class="skill-tag">open-ended</span><span class="skill-tag">any chart type</span></div>
+      <span class="chev">▾</span>
+    </div>
+    <div class="q-body">
+      <p style="font-size:13px;color:var(--text2);">Your choice of pivot setup, chart type, and interpretation. Justify your chart type choice. Use any technique from Days 1–3.</p>
+      <div class="answer-area"><label>My question</label>
+        <textarea placeholder="I want to know whether…" rows="2"></textarea>
+      </div>
+      <div class="answer-area"><label>My pivot and chart setup</label>
+        <textarea placeholder="Rows: ___ · Columns: ___ · Values: ___ · Chart type: ___ because…" rows="2"></textarea>
+      </div>
+      <div class="answer-area"><label>My 2–3 sentence interpretation</label>
+        <textarea placeholder="My chart shows that… This is surprising because… One limitation of this chart is…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(2)">← Back</button>
+    <button class="footer-btn next" onclick="goSection(4)">Next: Submit →</button>
+  </div>
+</div>
+
+<!-- ══════════ SEC 4: SUBMIT ══════════ -->
+<div class="section" id="sec4">
+  <h2 class="section-heading">Submit your work — <span>download and upload</span></h2>
+
+  <div class="card">
+    <div class="card-title">Exit ticket — synthesis</div>
+    <div class="answer-area" id="exit1">
+      <label>In one sentence: when would you use a stacked bar chart instead of a regular bar chart?</label>
+      <textarea placeholder="I would use a stacked bar when I want to show both the total AND the breakdown of…" rows="2"></textarea>
+    </div>
+    <div class="answer-area" id="exit2">
+      <label>What's one thing a chart can show that a pivot table number cannot?</label>
+      <textarea placeholder="A chart can show… whereas a pivot table only shows individual numbers without…" rows="2"></textarea>
+    </div>
+    <div class="answer-area" id="exit3">
+      <label>What's one thing a chart can hide or distort that you need to watch for?</label>
+      <textarea placeholder="A chart can mislead by… For example, a pie chart with too many slices…" rows="2"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Ready to submit?</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Enter your name and download your PDF. Upload it to Google Classroom along with a screenshot of your best chart from today.</p>
+    <div class="form-group">
+      <label>Your name</label>
+      <input type="text" id="student-name" placeholder="First Last">
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(3)">← Back</button>
+    <button class="footer-btn dl" onclick="generatePDF()">Download PDF &amp; Submit</button>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ── Dataset (500 rows — use Day 2's dataset for continuity) ──────────────
+const DATA = window.MICHIGAN_CRASHES;
+// ── Chart palette ─────────────────────────────────────
+const PALETTE = ['#7B3FA0','#2B5F3E','#1A3A6B','#C4420A','#BA7517','#2E7D8A','#8B4A4A','#3D7A5C','#6B3D8A','#A0522D'];
+const SEV_COLORS = {'Property Damage Only':'#4CAF50','Minor Injury':'#FFC107','Serious Injury':'#FF7043','Fatal':'#B71C1C'};
+const MONTHS_ORDER = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// ── Chart instances ──────────────────────────────────
+let charts = {};
+
+function mkChart(id, cfg) {
+  if (charts[id]) charts[id].destroy();
+  const ctx = document.getElementById(id).getContext('2d');
+  charts[id] = new Chart(ctx, cfg);
+  return charts[id];
+}
+
+Chart.defaults.font.family = "'DM Sans', system-ui, sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.color = '#5A5650';
+
+// ── Aggregate helpers ─────────────────────────────────
+function groupBy(data, field, val) {
+  const g = {};
+  data.forEach(r => {
+    const k = String(r[field]);
+    if (!g[k]) g[k] = { count:0, injuries:0, fatalities:0, vehicles:0, n:0 };
+    g[k].count++;
+    g[k].injuries += r.injuries;
+    g[k].fatalities += r.fatalities;
+    g[k].vehicles += r.vehicles_involved;
+    g[k].n++;
+  });
+  return g;
+}
+function getUniq(field) { return [...new Set(DATA.map(r=>r[field]))].sort(); }
+
+// ── SEC 0 CHARTS ──────────────────────────────────────
+
+function drawFatalRate() {
+  const sort = document.getElementById('fatal-sort').value;
+  const g = groupBy(DATA, 'county');
+  let counties = Object.keys(g).map(c => ({
+    county: c,
+    total: g[c].count,
+    fatals: g[c].fatalities,
+    rate: g[c].fatalities / g[c].count
+  }));
+  if (sort === 'rate') counties.sort((a,b) => b.rate - a.rate);
+  else if (sort === 'total') counties.sort((a,b) => b.total - a.total);
+  else counties.sort((a,b) => a.county.localeCompare(b.county));
+
+  mkChart('fatal-chart', {
+    type: 'bar',
+    data: {
+      labels: counties.map(c => c.county),
+      datasets: [{
+        label: 'Fatality rate',
+        data: counties.map(c => +(c.rate * 100).toFixed(1)),
+        backgroundColor: counties.map(c => `rgba(123,63,160,${0.3 + c.rate * 2})`),
+        borderColor: '#7B3FA0',
+        borderWidth: 1.5,
+        borderRadius: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => `${ctx.parsed.y}% fatal (${counties[ctx.dataIndex].fatals} of ${counties[ctx.dataIndex].total})` }}
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { callback: v => v + '%' }, title: { display: true, text: 'Fatal crash rate (%)' }},
+        x: { title: { display: true, text: 'County' }}
+      }
+    }
+  });
+}
+
+function drawYOY() {
+  const field = document.getElementById('yoy-field').value;
+  const topN = document.getElementById('yoy-top').value;
+  const years = [2022, 2023, 2024];
+
+  const totals = {};
+  DATA.forEach(r => { const k = String(r[field]); totals[k] = (totals[k]||0) + 1; });
+  let cats = Object.keys(totals).sort((a,b) => totals[b]-totals[a]);
+  if (topN !== 'all') cats = cats.slice(0, parseInt(topN));
+
+  const datasets = years.map((yr, i) => {
+    const sub = DATA.filter(r => r.year === yr);
+    const g = groupBy(sub, field);
+    return {
+      label: String(yr),
+      data: cats.map(c => g[c]?.count || 0),
+      backgroundColor: PALETTE[i],
+      borderColor: PALETTE[i],
+      borderWidth: 1.5,
+      borderRadius: 3
+    };
+  });
+
+  mkChart('yoy-chart', {
+    type: 'bar',
+    data: { labels: cats, datasets },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top' }},
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: 'Number of crashes' }},
+        x: { title: { display: true, text: field.replace(/_/g,' ') }}
+      }
+    }
+  });
+}
+
+function drawNested() {
+  const outer = document.getElementById('nest-outer').value;
+  const inner = document.getElementById('nest-inner').value;
+  const limit = parseInt(document.getElementById('nest-limit').value);
+
+  const outerTotals = {};
+  DATA.forEach(r => { const k = r[outer]; outerTotals[k] = (outerTotals[k]||0)+1; });
+  const topOuter = Object.keys(outerTotals).sort((a,b)=>outerTotals[b]-outerTotals[a]).slice(0,limit);
+  const innerVals = [...new Set(DATA.map(r=>r[inner]))].sort();
+
+  const datasets = innerVals.map((iv, i) => ({
+    label: iv,
+    data: topOuter.map(ov => DATA.filter(r=>r[outer]===ov && r[inner]===iv).length),
+    backgroundColor: PALETTE[i % PALETTE.length],
+    borderRadius: 2
+  }));
+
+  mkChart('nested-chart', {
+    type: 'bar',
+    data: { labels: topOuter, datasets },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } }}},
+      scales: {
+        x: { stacked: true, title: { display: true, text: outer.replace(/_/g,' ') }},
+        y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Crashes' }}
+      }
+    }
+  });
+}
+
+// ── SEC 1 CHARTS ──────────────────────────────────────
+
+let typeCompareMode = 'bar';
+function switchChartType(mode, btn) {
+  typeCompareMode = mode;
+  document.querySelectorAll('.chart-type-row .ct-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  drawTypeCompare();
+}
+
+function drawTypeCompare() {
+  const g = groupBy(DATA, 'crash_severity');
+  const sevOrder = ['Property Damage Only','Minor Injury','Serious Injury','Fatal'];
+  const labels = sevOrder.filter(s => g[s]);
+  const values = labels.map(s => g[s].count);
+  const colors = labels.map(s => SEV_COLORS[s] || '#888');
+
+  let type = typeCompareMode;
+  let indexAxis = 'x';
+  if (type === 'horizontalBar') { type = 'bar'; indexAxis = 'y'; }
+
+  mkChart('type-compare-chart', {
+    type,
+    data: {
+      labels,
+      datasets: [{
+        label: 'Crashes',
+        data: values,
+        backgroundColor: colors,
+        borderColor: colors.map(c => c + 'CC'),
+        borderWidth: 1.5,
+        borderRadius: type === 'bar' ? 3 : 0
+      }]
+    },
+    options: {
+      responsive: true,
+      indexAxis,
+      plugins: { legend: { display: type !== 'bar' }},
+      scales: ['bar'].includes(type) ? {
+        y: { beginAtZero: true, title: { display: true, text: 'Number of crashes' }},
+        x: { title: { display: true, text: 'Crash severity' }}
+      } : {}
+    }
+  });
+}
+
+let stackedMode = true;
+function toggleStack(btn) {
+  stackedMode = true;
+  document.getElementById('stack-toggle').classList.add('active');
+  document.getElementById('group-toggle').classList.remove('active');
+  drawStackCompare();
+}
+function toggleGroup(btn) {
+  stackedMode = false;
+  document.getElementById('group-toggle').classList.add('active');
+  document.getElementById('stack-toggle').classList.remove('active');
+  drawStackCompare();
+}
+
+function drawStackCompare() {
+  const sevOrder = ['Property Damage Only','Minor Injury','Serious Injury','Fatal'];
+  const counties = ['Wayne','Oakland','Macomb','Washtenaw','Genesee'];
+
+  const datasets = sevOrder.map(sev => ({
+    label: sev,
+    data: counties.map(co => DATA.filter(r=>r.county===co && r.crash_severity===sev).length),
+    backgroundColor: SEV_COLORS[sev],
+    borderRadius: 2,
+    borderWidth: 0.5,
+    borderColor: '#fff'
+  }));
+
+  mkChart('stack-compare-chart', {
+    type: 'bar',
+    data: { labels: counties, datasets },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 }}}},
+      scales: {
+        x: { stacked: stackedMode, title: { display: true, text: 'County' }},
+        y: { stacked: stackedMode, beginAtZero: true, title: { display: true, text: 'Crashes' }}
+      }
+    }
+  });
+}
+
+// ── SEC 2 CHARTS ──────────────────────────────────────
+
+function drawMonthly() {
+  const show = {
+    2022: document.getElementById('yr2022').checked,
+    2023: document.getElementById('yr2023').checked,
+    2024: document.getElementById('yr2024').checked
+  };
+  const colors = { 2022: '#7B3FA0', 2023: '#2B5F3E', 2024: '#C4420A' };
+
+  const datasets = [2022,2023,2024].filter(yr => show[yr]).map(yr => {
+    const sub = DATA.filter(r=>r.year===yr);
+    return {
+      label: String(yr),
+      data: MONTHS_ORDER.map(m => sub.filter(r=>r.month===m).length),
+      borderColor: colors[yr],
+      backgroundColor: colors[yr] + '22',
+      fill: false,
+      tension: 0.35,
+      pointRadius: 4,
+      pointHoverRadius: 6,
+      borderWidth: 2
+    };
+  });
+
+  mkChart('monthly-chart', {
+    type: 'line',
+    data: { labels: MONTHS_ORDER.map(m=>m.slice(0,3)), datasets },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { position: 'top' }},
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: 'Number of crashes' }},
+        x: { title: { display: true, text: 'Month' }}
+      }
+    }
+  });
+}
+
+// ── Navigation ─────────────────────────────────────────
+let cur = 0;
+const secs = document.querySelectorAll('.section');
+const navBtns = document.querySelectorAll('.nav-btn');
+const segs = document.querySelectorAll('.progress-seg');
+
+function goSection(n) {
+  secs[cur].classList.remove('active');
+  navBtns[cur].classList.remove('active');
+  segs[cur].classList.remove('active');
+  segs[cur].classList.add('done');
+  cur = n;
+  secs[cur].classList.add('active');
+  navBtns[cur].classList.add('active');
+  segs[cur].classList.remove('done');
+  segs[cur].classList.add('active');
+  document.getElementById('progress-label').textContent = `${n+1} / 5`;
+  window.scrollTo({top:0,behavior:'smooth'});
+  // Draw charts when their section is first shown
+  if (n === 0) { drawFatalRate(); drawYOY(); drawNested(); }
+  if (n === 1) { drawTypeCompare(); drawStackCompare(); }
+  if (n === 2) { drawMonthly(); }
+}
+navBtns.forEach((b,i) => b.addEventListener('click', () => goSection(i)));
+
+function toggleQ(hdr) {
+  const body = hdr.nextElementSibling;
+  const chev = hdr.querySelector('.chev');
+  const open = body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  chev.classList.toggle('open',!open);
+}
+function toggleHint(btn) {
+  const h = btn.nextElementSibling;
+  const open = h.classList.contains('open');
+  h.classList.toggle('open',!open);
+  btn.textContent = open ? 'Show hint' : 'Hide hint';
+}
+
+// Draw initial charts when page loads
+window.addEventListener('load', () => {
+  drawFatalRate(); drawYOY(); drawNested();
+});
+
+// ── PDF ────────────────────────────────────────────────
+function generatePDF() {
+  const name = document.getElementById('student-name').value.trim();
+  if (!name) { alert('Please enter your name before downloading.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'pt', format:'letter' });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const margin = 54, cw = pageW - margin*2;
+  let y = margin;
+  const C = { dark:[26,23,20], accent:[123,63,160], mid:[90,86,80], light:[237,233,224], white:[255,253,248] };
+
+  function chk(need=40){ if(y+need>pageH-margin){doc.addPage();y=margin;phdr();} }
+  function phdr(){
+    doc.setFillColor(...C.light); doc.rect(0,0,pageW,28,'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...C.mid);
+    doc.text('AP CS A  ·  Pivot Tables Day 3  ·  Visualizations', margin, 18);
+    doc.text(name, pageW-margin, 18, {align:'right'});
+    y = Math.max(y, 44);
+  }
+  function secHdr(t,s){
+    chk(60); doc.setFillColor(...C.accent); doc.rect(margin,y,4,22,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(...C.dark);
+    doc.text(t, margin+12, y+15);
+    if(s){ doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...C.mid); doc.text(s,margin+12,y+26); y+=38; }
+    else y+=30;
+  }
+  function fld(label, val){
+    chk(44); doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...C.mid);
+    doc.text(label.toUpperCase(), margin, y+10); y+=14;
+    const t=val.trim()||'(no answer)';
+    const lines=doc.splitTextToSize(t,cw-12); chk(lines.length*13+14);
+    doc.setFillColor(...C.white); doc.setDrawColor(...C.light);
+    doc.roundedRect(margin,y,cw,lines.length*13+14,3,3,'FD');
+    doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+    doc.setTextColor(t==='(no answer)'?C.mid[0]:C.dark[0],t==='(no answer)'?C.mid[1]:C.dark[1],t==='(no answer)'?C.mid[2]:C.dark[2]);
+    doc.text(lines, margin+8, y+12); y+=lines.length*13+20;
+  }
+  function div(){ chk(20); doc.setDrawColor(...C.light); doc.setLineWidth(.5); doc.line(margin,y,pageW-margin,y); y+=16; }
+
+  // Cover
+  doc.setFillColor(...C.dark); doc.rect(0,0,pageW,110,'F');
+  doc.setFillColor(...C.accent); doc.circle(pageW-30,-20,80,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(22); doc.setTextColor(255,253,248);
+  doc.text('Pivot Tables: Day Three', margin, 52);
+  doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(160,152,144);
+  doc.text('Advanced Skills & Visualizations  ·  AP Computer Science A', margin, 70);
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(201,160,224);
+  doc.text(name, margin, 90);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(160,152,144);
+  const now = new Date();
+  doc.text(`Submitted ${now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`, margin, 104);
+  y=130; phdr(); y=130;
+
+  secHdr('Section 0','Advanced pivot skills — observations');
+  fld('A: Fatality rate — which county surprised you?', document.getElementById('obs-a').value);
+  fld('B: Year-over-year — what trend did you notice?', document.getElementById('obs-b').value);
+  fld('C: Nested groups — what did it reveal?', document.getElementById('obs-c').value);
+  div();
+
+  secHdr('Section 1','Chart types — observations');
+  fld('Which chart type worked best for crash severity, and why?', document.getElementById('obs-chart-type').value);
+  fld('When would grouped bars be better than stacked?', document.getElementById('obs-stack').value);
+  div();
+
+  secHdr('Section 2','Line chart — seasonal pattern');
+  fld('What seasonal pattern did you notice in monthly crash counts?', document.getElementById('obs-line').value);
+  div();
+
+  secHdr('Section 3','Practice questions');
+  const qBodies = document.querySelectorAll('.q-body');
+  const prompts = [
+    'Q1 — Fatality rate bar chart: which county + chart description',
+    'Q2 — Year-over-year contributing factors grouped bar chart',
+    'Q3 — Vehicle type × crash severity stacked bar chart',
+    'Q4 — Monthly crash line chart with seasonal observation',
+    'Q5 ★ — Your own question, pivot, chart type, and interpretation'
+  ];
+  qBodies.forEach((body,i) => {
+    const tas = body.querySelectorAll('textarea');
+    if (i < 4) {
+      fld(prompts[i], tas[0]?.value||'');
+    } else {
+      const parts = Array.from(tas).map(t=>t.value.trim()).filter(Boolean).join('\n\n');
+      fld(prompts[i], parts);
+    }
+  });
+  div();
+
+  secHdr('Section 4','Exit ticket');
+  const e1 = document.querySelector('#exit1 textarea');
+  const e2 = document.querySelector('#exit2 textarea');
+  const e3 = document.querySelector('#exit3 textarea');
+  fld('When would you use a stacked bar instead of a regular bar?', e1?.value||'');
+  fld('What can a chart show that a pivot table number cannot?', e2?.value||'');
+  fld('What can a chart hide or distort?', e3?.value||'');
+
+  // Footer
+  chk(30); doc.setFillColor(...C.light); doc.rect(margin,y,cw,28,'F');
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...C.mid);
+  doc.text('AP CS A  ·  Pivot Tables Day 3  ·  Divine Child High School', margin+10, y+17);
+  doc.text(name, pageW-margin-10, y+17, {align:'right'});
+
+  doc.save(`PivotTables_Day3_${name.replace(/\s+/g,'_')}.pdf`);
+}
+</script>
+</body>
+</html>

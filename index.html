@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pivot Tables Unit — AP Computer Science A</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,500;1,300&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F5F2EC; --surface:#FFFDF8; --surface2:#EDE9E0; --border:#D4CFC4;
+  --text:#1A1714; --text2:#5A5650; --text3:#8A8580;
+  --accent:#2B5F3E; --accent-light:#DCF0E4;
+  --accent2:#1A3A6B; --accent2-light:#DDE8F5;
+  --accent3:#C4420A; --accent3-light:#FAE8DF;
+  --mono:'DM Mono',monospace; --serif:'Fraunces',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif;
+  --r:6px; --rl:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.65;min-height:100vh;}
+
+/* Header */
+.hero{background:var(--text);color:var(--bg);padding:4rem 2rem 5rem;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:320px;height:320px;border-radius:50%;background:var(--accent);opacity:.14;}
+.hero::after{content:'';position:absolute;bottom:-100px;left:-40px;width:240px;height:240px;border-radius:50%;background:var(--accent3);opacity:.08;}
+.hero-inner{max-width:980px;margin:0 auto;position:relative;z-index:1;}
+.course-tag{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#A09890;margin-bottom:1rem;}
+.hero h1{font-family:var(--serif);font-size:clamp(2.4rem,6vw,4rem);font-weight:300;line-height:1.05;margin-bottom:1rem;letter-spacing:-.01em;}
+.hero h1 em{color:#9EC9AD;font-style:italic;}
+.hero-sub{font-size:clamp(1rem,1.4vw,1.15rem);color:#C5BDB2;max-width:580px;margin-bottom:2rem;line-height:1.55;}
+.hero-meta{display:flex;gap:2rem;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:#A09890;letter-spacing:.06em;}
+.hero-meta span strong{color:#DCF0E4;font-weight:500;}
+
+/* Main */
+.main{max-width:980px;margin:0 auto;padding:3rem 2rem 4rem;}
+
+/* Section heading */
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;}
+.section-title{font-family:var(--serif);font-size:clamp(1.5rem,2.6vw,1.9rem);font-weight:300;line-height:1.2;margin-bottom:.5rem;}
+.section-title em{color:var(--accent);font-style:italic;}
+.section-intro{color:var(--text2);font-size:15px;max-width:680px;margin-bottom:2rem;}
+
+/* Day cards */
+.days{display:grid;grid-template-columns:1fr;gap:1rem;margin-bottom:3rem;}
+@media(min-width:760px){.days{grid-template-columns:repeat(3,1fr);}}
+
+.day-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--rl);
+  padding:1.75rem 1.5rem;
+  text-decoration:none;
+  color:var(--text);
+  display:flex;
+  flex-direction:column;
+  gap:.85rem;
+  transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+  position:relative;
+  overflow:hidden;
+}
+.day-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .35s ease;
+}
+.day-card:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 8px 24px rgba(43,95,62,.08);}
+.day-card:hover::before{transform:scaleX(1);}
+
+.day-card.two::before{background:var(--accent3);}
+.day-card.three::before{background:var(--accent2);}
+.day-card.two:hover{border-color:var(--accent3);box-shadow:0 8px 24px rgba(196,66,10,.08);}
+.day-card.three:hover{border-color:var(--accent2);box-shadow:0 8px 24px rgba(26,58,107,.08);}
+
+.day-num{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);}
+.day-num strong{color:var(--accent);font-weight:500;}
+.day-card.two .day-num strong{color:var(--accent3);}
+.day-card.three .day-num strong{color:var(--accent2);}
+
+.day-title{font-family:var(--serif);font-size:1.35rem;font-weight:300;line-height:1.25;}
+.day-title em{font-style:italic;color:var(--text2);}
+.day-desc{font-size:13.5px;color:var(--text2);line-height:1.55;flex:1;}
+.day-cta{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:12px;letter-spacing:.06em;
+  color:var(--accent);margin-top:.25rem;
+}
+.day-card.two .day-cta{color:var(--accent3);}
+.day-card.three .day-cta{color:var(--accent2);}
+.day-cta::after{content:'→';transition:transform .2s ease;}
+.day-card:hover .day-cta::after{transform:translateX(3px);}
+
+/* Resources */
+.resources{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--rl);
+  padding:1.75rem;
+  margin-bottom:2.5rem;
+}
+.resources-grid{display:grid;grid-template-columns:1fr;gap:1rem;margin-top:1rem;}
+@media(min-width:600px){.resources-grid{grid-template-columns:1fr 1fr;}}
+
+.res-item{
+  display:flex;gap:14px;align-items:flex-start;
+  padding:14px;border:1px solid var(--surface2);border-radius:var(--r);
+  background:var(--bg);
+  text-decoration:none;color:inherit;
+  transition:border-color .2s ease,background .2s ease;
+}
+.res-item:hover{border-color:var(--accent);background:var(--accent-light);}
+.res-icon{
+  font-family:var(--mono);font-size:18px;
+  width:38px;height:38px;border-radius:6px;
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.res-text{display:flex;flex-direction:column;gap:2px;}
+.res-title{font-weight:500;font-size:14px;}
+.res-sub{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.04em;}
+
+/* Footer */
+.footer{
+  border-top:1px solid var(--border);
+  padding:2rem;
+  text-align:center;
+  font-family:var(--mono);font-size:11px;color:var(--text3);
+  letter-spacing:.06em;
+}
+.footer span{color:var(--accent);}
+
+/* Decorative quote */
+.pull{
+  border-left:3px solid var(--accent2);
+  background:var(--accent2-light);
+  padding:1.25rem 1.5rem;
+  border-radius:0 var(--r) var(--r) 0;
+  margin-bottom:2.5rem;
+  font-family:var(--serif);
+  font-size:16px;
+  font-style:italic;
+  font-weight:300;
+  color:var(--text);
+  line-height:1.55;
+}
+.pull strong{font-style:normal;font-weight:500;color:var(--accent2);}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="course-tag">AP Computer Science A · Data Unit</p>
+    <h1>Pivot Tables<br><em>a three-day unit</em></h1>
+    <p class="hero-sub">A hands-on introduction to grouping, aggregation, and data storytelling — built around real Michigan traffic crash data from 2022 to 2024.</p>
+    <div class="hero-meta">
+      <span><strong>500</strong> &nbsp;records</span>
+      <span><strong>15</strong> &nbsp;columns</span>
+      <span><strong>10</strong> &nbsp;counties</span>
+      <span><strong>3</strong> &nbsp;days</span>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <p class="eyebrow">The Unit</p>
+  <h2 class="section-title">Pick a day to <em>begin</em></h2>
+  <p class="section-intro">Each day is a self-contained interactive page. Work through the lessons, answer the questions, then download a PDF of your work to upload to Google Classroom.</p>
+
+  <div class="days">
+    <a class="day-card one" href="day1.html">
+      <span class="day-num"><strong>Day 1</strong> &nbsp;·&nbsp; Introduction</span>
+      <h3 class="day-title">From scratch <em>— rows, values, and the first pivot table</em></h3>
+      <p class="day-desc">Understand the dataset, learn to build a pivot table in Google Sheets, and answer six questions using row groupings and aggregations.</p>
+      <span class="day-cta">Open Day 1</span>
+    </a>
+
+    <a class="day-card two" href="day2.html">
+      <span class="day-num"><strong>Day 2</strong> &nbsp;·&nbsp; Filters & Cross-tabs</span>
+      <h3 class="day-title">Sharper questions <em>— narrowing the data, two ways</em></h3>
+      <p class="day-desc">Add filters to slice the dataset, build cross-tabs that group on two dimensions at once, and write your own finding from the data.</p>
+      <span class="day-cta">Open Day 2</span>
+    </a>
+
+    <a class="day-card three" href="day3.html">
+      <span class="day-num"><strong>Day 3</strong> &nbsp;·&nbsp; Visualizing</span>
+      <h3 class="day-title">Charts from pivots <em>— picking the right shape</em></h3>
+      <p class="day-desc">Turn pivot tables into charts. Learn when a bar chart, stacked bar, or line chart tells the truth — and when it lies.</p>
+      <span class="day-cta">Open Day 3</span>
+    </a>
+  </div>
+
+  <div class="pull">
+    <strong>One dataset, three days.</strong>&nbsp; All three days use the same 500 Michigan traffic crash records. The patterns you discover on Day 1 are the foundation for the filters, cross-tabs, and charts you'll build on Days 2 and 3.
+  </div>
+
+  <p class="eyebrow">Resources</p>
+  <h2 class="section-title">Downloads &amp; <em>references</em></h2>
+  <p class="section-intro">The dataset and supporting materials, in case you need them outside the lessons.</p>
+
+  <div class="resources">
+    <div class="resources-grid">
+      <a class="res-item" href="data/michigan_crashes.csv" download>
+        <div class="res-icon">📄</div>
+        <div class="res-text">
+          <span class="res-title">michigan_crashes.csv</span>
+          <span class="res-sub">500 rows · 15 columns · 2022–2024</span>
+        </div>
+      </a>
+      <a class="res-item" href="https://sheets.google.com" target="_blank" rel="noopener">
+        <div class="res-icon">↗</div>
+        <div class="res-text">
+          <span class="res-title">Google Sheets</span>
+          <span class="res-sub">Open a new spreadsheet</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  AP CS A &nbsp;·&nbsp; Pivot Tables Unit &nbsp;·&nbsp; <span>Divine Child High School</span>
+</footer>
+
+</body>
+</html>

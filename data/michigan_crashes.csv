@@ -1,0 +1,501 @@
+crash_id,date,year,month,county,city,road_type,road_condition,time_of_day,vehicle_type,crash_severity,contributing_factor,vehicles_involved,injuries,fatalities
+1,2023-02-14,2023,February,Macomb,St. Clair Shores,City Street,Clear,Midday (9am–3pm),SUV/Truck,Property Damage Only,Failure to Yield,3,3,0
+2,2022-07-03,2022,July,Monroe,Dundee,City Street,Dark - Unlighted,Midday (9am–3pm),Motorcycle,Serious Injury,Alcohol/Drugs,3,3,1
+3,2022-11-08,2022,November,Monroe,Monroe,City Street,Clear,Late Night (10pm–6am),Pickup Truck,Property Damage Only,Failure to Yield,4,0,0
+4,2022-01-16,2022,January,Wayne,Livonia,City Street,Rain,Afternoon Rush (3–6pm),Bus,Property Damage Only,Unknown,2,3,0
+5,2023-03-19,2023,March,Oakland,Southfield,City Street,Clear,Evening (6–10pm),Bicycle,Property Damage Only,Distracted Driving,1,0,0
+6,2024-05-08,2024,May,Wayne,Westland,Interstate/US Highway,Dark - Lighted,Morning Rush (6–9am),Passenger Car,Property Damage Only,Speeding,4,0,0
+7,2023-02-16,2023,February,Washtenaw,Ypsilanti,Interstate/US Highway,Rain,Evening (6–10pm),SUV/Truck,Minor Injury,Following Too Closely,2,0,0
+8,2022-09-26,2022,September,Macomb,Sterling Heights,City Street,Clear,Late Night (10pm–6am),Motorcycle,Property Damage Only,Failure to Yield,1,0,0
+9,2024-04-19,2024,April,Wayne,Dearborn,State Highway,Rain,Late Night (10pm–6am),Pickup Truck,Fatal,Unknown,2,2,0
+10,2023-01-16,2023,January,Ingham,East Lansing,City Street,Clear,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Speeding,3,0,0
+11,2024-03-28,2024,March,Macomb,Roseville,City Street,Dark - Lighted,Afternoon Rush (3–6pm),Bus,Property Damage Only,Distracted Driving,1,0,0
+12,2024-06-28,2024,June,Ingham,East Lansing,State Highway,Snow/Ice,Midday (9am–3pm),Pedestrian,Serious Injury,Weather Conditions,1,2,0
+13,2023-05-27,2023,May,Genesee,Grand Blanc,City Street,Snow/Ice,Evening (6–10pm),Passenger Car,Minor Injury,Following Too Closely,3,0,0
+14,2023-10-19,2023,October,Oakland,Auburn Hills,City Street,Clear,Afternoon Rush (3–6pm),Motorcycle,Property Damage Only,Following Too Closely,2,0,0
+15,2024-06-20,2024,June,Monroe,Dundee,State Highway,Dark - Lighted,Afternoon Rush (3–6pm),SUV/Truck,Property Damage Only,Speeding,3,2,1
+16,2022-12-18,2022,December,Wayne,Dearborn Heights,City Street,Snow/Ice,Evening (6–10pm),SUV/Truck,Minor Injury,Running Red Light,4,0,0
+17,2023-02-19,2023,February,Washtenaw,Saline,Interstate/US Highway,Snow/Ice,Midday (9am–3pm),Bus,Fatal,Unknown,2,0,0
+18,2024-05-03,2024,May,Ingham,Okemos,City Street,Snow/Ice,Midday (9am–3pm),Passenger Car,Property Damage Only,Weather Conditions,1,0,0
+19,2024-01-27,2024,January,Macomb,Roseville,City Street,Snow/Ice,Midday (9am–3pm),Passenger Car,Fatal,Following Too Closely,4,1,0
+20,2022-09-21,2022,September,Macomb,Roseville,State Highway,Dark - Unlighted,Evening (6–10pm),Motorcycle,Minor Injury,Distracted Driving,3,0,0
+21,2024-02-23,2024,February,Oakland,Royal Oak,State Highway,Dark - Unlighted,Late Night (10pm–6am),Pedestrian,Minor Injury,Distracted Driving,1,1,0
+22,2022-08-24,2022,August,Washtenaw,Ann Arbor,County Road,Dark - Unlighted,Morning Rush (6–9am),Pickup Truck,Serious Injury,Speeding,3,0,0
+23,2023-06-20,2023,June,Oakland,Royal Oak,State Highway,Clear,Late Night (10pm–6am),Passenger Car,Minor Injury,Speeding,1,0,0
+24,2023-08-22,2023,August,Wayne,Taylor,State Highway,Dark - Unlighted,Morning Rush (6–9am),Motorcycle,Property Damage Only,Alcohol/Drugs,1,1,0
+25,2024-01-18,2024,January,Oakland,Auburn Hills,Interstate/US Highway,Rain,Late Night (10pm–6am),Passenger Car,Serious Injury,Running Red Light,1,0,0
+26,2022-10-08,2022,October,Wayne,Warren,State Highway,Clear,Morning Rush (6–9am),Bus,Serious Injury,Following Too Closely,2,0,1
+27,2023-04-20,2023,April,Genesee,Grand Blanc,City Street,Clear,Afternoon Rush (3–6pm),Passenger Car,Property Damage Only,Following Too Closely,2,0,0
+28,2022-10-28,2022,October,St. Clair,Port Huron,City Street,Clear,Midday (9am–3pm),Motorcycle,Serious Injury,Failure to Yield,2,3,0
+29,2022-06-14,2022,June,Genesee,Grand Blanc,State Highway,Clear,Evening (6–10pm),Pickup Truck,Property Damage Only,Running Red Light,1,3,0
+30,2022-09-29,2022,September,Oakland,Southfield,Interstate/US Highway,Snow/Ice,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Failure to Yield,4,0,0
+31,2023-10-12,2023,October,Oakland,Southfield,County Road,Fog,Morning Rush (6–9am),Motorcycle,Fatal,Weather Conditions,2,1,0
+32,2023-08-15,2023,August,Monroe,Monroe,City Street,Dark - Lighted,Evening (6–10pm),Bus,Serious Injury,Alcohol/Drugs,2,3,0
+33,2023-06-17,2023,June,Wayne,Dearborn,State Highway,Clear,Evening (6–10pm),Passenger Car,Minor Injury,Speeding,2,0,0
+34,2022-05-06,2022,May,Monroe,Carleton,County Road,Clear,Late Night (10pm–6am),Motorcycle,Property Damage Only,Speeding,1,3,0
+35,2023-04-23,2023,April,Wayne,Dearborn,County Road,Dark - Lighted,Midday (9am–3pm),Commercial Truck,Minor Injury,Failure to Yield,3,1,0
+36,2024-09-19,2024,September,St. Clair,St. Clair,State Highway,Clear,Evening (6–10pm),Bicycle,Property Damage Only,Distracted Driving,2,1,0
+37,2023-06-10,2023,June,Ingham,Okemos,State Highway,Clear,Midday (9am–3pm),SUV/Truck,Minor Injury,Alcohol/Drugs,4,0,0
+38,2023-11-16,2023,November,Oakland,Pontiac,City Street,Rain,Morning Rush (6–9am),Pedestrian,Property Damage Only,Speeding,4,0,0
+39,2023-08-23,2023,August,Wayne,Detroit,State Highway,Snow/Ice,Afternoon Rush (3–6pm),Passenger Car,Minor Injury,Weather Conditions,2,2,0
+40,2024-03-08,2024,March,Wayne,Livonia,State Highway,Snow/Ice,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Unknown,1,0,0
+41,2022-06-10,2022,June,Wayne,Dearborn,City Street,Clear,Afternoon Rush (3–6pm),Pickup Truck,Minor Injury,Alcohol/Drugs,2,0,0
+42,2023-03-10,2023,March,Wayne,Dearborn,State Highway,Fog,Late Night (10pm–6am),SUV/Truck,Fatal,Failure to Yield,1,0,0
+43,2024-01-28,2024,January,Macomb,Sterling Heights,City Street,Dark - Lighted,Late Night (10pm–6am),Motorcycle,Fatal,Weather Conditions,3,2,1
+44,2024-12-23,2024,December,Wayne,Livonia,State Highway,Clear,Morning Rush (6–9am),SUV/Truck,Property Damage Only,Running Red Light,1,0,0
+45,2023-05-13,2023,May,Livingston,Pinckney,State Highway,Dark - Unlighted,Evening (6–10pm),Bus,Property Damage Only,Weather Conditions,1,3,0
+46,2023-08-02,2023,August,St. Clair,Port Huron,City Street,Dark - Unlighted,Evening (6–10pm),Pickup Truck,Minor Injury,Alcohol/Drugs,1,0,0
+47,2022-05-20,2022,May,Genesee,Flint,City Street,Snow/Ice,Evening (6–10pm),Commercial Truck,Property Damage Only,Failure to Yield,1,0,0
+48,2022-09-23,2022,September,Wayne,Dearborn Heights,City Street,Rain,Evening (6–10pm),Pedestrian,Serious Injury,Speeding,1,0,1
+49,2023-02-22,2023,February,Oakland,Southfield,City Street,Clear,Morning Rush (6–9am),Motorcycle,Fatal,Weather Conditions,2,1,1
+50,2023-08-11,2023,August,Genesee,Grand Blanc,State Highway,Dark - Lighted,Morning Rush (6–9am),SUV/Truck,Fatal,Distracted Driving,4,0,0
+51,2023-09-15,2023,September,Oakland,Farmington Hills,County Road,Clear,Afternoon Rush (3–6pm),Passenger Car,Property Damage Only,Failure to Yield,3,3,0
+52,2024-09-18,2024,September,Kent,Wyoming,State Highway,Snow/Ice,Evening (6–10pm),SUV/Truck,Minor Injury,Weather Conditions,2,2,0
+53,2024-11-11,2024,November,Wayne,Livonia,State Highway,Rain,Late Night (10pm–6am),Pickup Truck,Minor Injury,Failure to Yield,2,3,1
+54,2022-01-01,2022,January,Wayne,Taylor,County Road,Dark - Lighted,Late Night (10pm–6am),Passenger Car,Property Damage Only,Following Too Closely,1,3,0
+55,2023-02-04,2023,February,Wayne,Detroit,Interstate/US Highway,Rain,Afternoon Rush (3–6pm),SUV/Truck,Property Damage Only,Distracted Driving,3,2,0
+56,2023-01-25,2023,January,Ingham,Okemos,Interstate/US Highway,Clear,Afternoon Rush (3–6pm),Passenger Car,Fatal,Alcohol/Drugs,3,2,0
+57,2023-05-28,2023,May,Wayne,Westland,City Street,Fog,Midday (9am–3pm),Pickup Truck,Property Damage Only,Speeding,3,1,1
+58,2024-12-07,2024,December,Wayne,Warren,City Street,Dark - Lighted,Evening (6–10pm),Passenger Car,Minor Injury,Running Red Light,2,2,0
+59,2023-12-06,2023,December,Wayne,Taylor,State Highway,Clear,Evening (6–10pm),Passenger Car,Property Damage Only,Running Red Light,3,2,0
+60,2022-07-25,2022,July,Washtenaw,Ypsilanti,City Street,Snow/Ice,Morning Rush (6–9am),Pedestrian,Property Damage Only,Following Too Closely,2,1,0
+61,2022-07-09,2022,July,Wayne,Dearborn Heights,City Street,Dark - Lighted,Evening (6–10pm),Bus,Minor Injury,Following Too Closely,3,3,0
+62,2023-12-22,2023,December,Wayne,Dearborn,State Highway,Clear,Afternoon Rush (3–6pm),Pedestrian,Property Damage Only,Speeding,3,2,0
+63,2022-09-12,2022,September,Wayne,Taylor,City Street,Snow/Ice,Afternoon Rush (3–6pm),Motorcycle,Property Damage Only,Distracted Driving,2,0,0
+64,2024-11-06,2024,November,Monroe,Monroe,City Street,Snow/Ice,Midday (9am–3pm),SUV/Truck,Minor Injury,Distracted Driving,3,0,0
+65,2022-07-09,2022,July,St. Clair,Marysville,County Road,Clear,Evening (6–10pm),SUV/Truck,Minor Injury,Failure to Yield,4,0,0
+66,2022-03-19,2022,March,Genesee,Grand Blanc,State Highway,Dark - Unlighted,Morning Rush (6–9am),Pickup Truck,Minor Injury,Distracted Driving,3,0,0
+67,2023-03-19,2023,March,Wayne,Warren,City Street,Clear,Evening (6–10pm),SUV/Truck,Serious Injury,Unknown,4,0,0
+68,2023-03-27,2023,March,St. Clair,Port Huron,State Highway,Dark - Lighted,Midday (9am–3pm),Passenger Car,Fatal,Unknown,3,0,1
+69,2022-03-08,2022,March,Ingham,Okemos,County Road,Clear,Morning Rush (6–9am),Pedestrian,Property Damage Only,Following Too Closely,3,3,1
+70,2023-12-15,2023,December,Wayne,Livonia,City Street,Clear,Morning Rush (6–9am),Pickup Truck,Minor Injury,Running Red Light,2,3,0
+71,2024-11-15,2024,November,Oakland,Southfield,County Road,Dark - Unlighted,Morning Rush (6–9am),Motorcycle,Serious Injury,Following Too Closely,3,2,0
+72,2022-12-19,2022,December,Wayne,Taylor,Interstate/US Highway,Snow/Ice,Midday (9am–3pm),Passenger Car,Serious Injury,Speeding,2,1,0
+73,2024-03-16,2024,March,Oakland,Pontiac,County Road,Dark - Lighted,Midday (9am–3pm),SUV/Truck,Property Damage Only,Distracted Driving,1,0,0
+74,2023-07-23,2023,July,Macomb,St. Clair Shores,City Street,Dark - Unlighted,Afternoon Rush (3–6pm),Pedestrian,Property Damage Only,Running Red Light,2,0,0
+75,2022-11-11,2022,November,Macomb,Utica,City Street,Rain,Late Night (10pm–6am),Passenger Car,Fatal,Following Too Closely,3,3,0
+76,2023-03-18,2023,March,Oakland,Pontiac,City Street,Clear,Morning Rush (6–9am),SUV/Truck,Serious Injury,Alcohol/Drugs,4,0,0
+77,2023-04-17,2023,April,St. Clair,Marysville,County Road,Clear,Midday (9am–3pm),Passenger Car,Serious Injury,Speeding,1,3,0
+78,2023-06-21,2023,June,Wayne,Dearborn Heights,City Street,Fog,Late Night (10pm–6am),Passenger Car,Property Damage Only,Following Too Closely,4,0,0
+79,2022-10-21,2022,October,St. Clair,Port Huron,City Street,Fog,Midday (9am–3pm),Commercial Truck,Minor Injury,Unknown,2,3,0
+80,2024-07-03,2024,July,Livingston,Brighton,City Street,Dark - Unlighted,Morning Rush (6–9am),Commercial Truck,Property Damage Only,Unknown,2,0,0
+81,2024-02-20,2024,February,Macomb,Sterling Heights,City Street,Fog,Morning Rush (6–9am),SUV/Truck,Property Damage Only,Failure to Yield,4,0,0
+82,2023-01-22,2023,January,Wayne,Taylor,State Highway,Rain,Afternoon Rush (3–6pm),Passenger Car,Property Damage Only,Speeding,1,1,0
+83,2023-02-28,2023,February,Wayne,Dearborn,State Highway,Clear,Midday (9am–3pm),Commercial Truck,Property Damage Only,Unknown,3,2,0
+84,2023-05-15,2023,May,Kent,Wyoming,County Road,Clear,Evening (6–10pm),Passenger Car,Property Damage Only,Speeding,2,3,1
+85,2023-11-28,2023,November,Oakland,Pontiac,State Highway,Dark - Unlighted,Afternoon Rush (3–6pm),Pedestrian,Property Damage Only,Unknown,4,0,0
+86,2022-07-04,2022,July,Wayne,Livonia,County Road,Clear,Morning Rush (6–9am),Motorcycle,Serious Injury,Running Red Light,1,0,0
+87,2023-11-26,2023,November,Oakland,Pontiac,City Street,Snow/Ice,Afternoon Rush (3–6pm),SUV/Truck,Minor Injury,Distracted Driving,2,2,1
+88,2022-06-11,2022,June,Kent,Kentwood,Interstate/US Highway,Dark - Unlighted,Morning Rush (6–9am),Passenger Car,Serious Injury,Alcohol/Drugs,1,0,0
+89,2023-03-29,2023,March,Ingham,East Lansing,State Highway,Clear,Midday (9am–3pm),Bus,Property Damage Only,Following Too Closely,2,0,1
+90,2023-01-26,2023,January,Oakland,Pontiac,City Street,Snow/Ice,Evening (6–10pm),Passenger Car,Property Damage Only,Speeding,1,0,0
+91,2024-08-19,2024,August,Oakland,Pontiac,State Highway,Clear,Midday (9am–3pm),SUV/Truck,Serious Injury,Running Red Light,3,0,0
+92,2022-05-08,2022,May,Kent,Grand Rapids,State Highway,Snow/Ice,Evening (6–10pm),Passenger Car,Fatal,Failure to Yield,2,0,0
+93,2023-01-30,2023,January,Livingston,Pinckney,County Road,Dark - Unlighted,Evening (6–10pm),Pickup Truck,Property Damage Only,Alcohol/Drugs,2,3,0
+94,2024-07-03,2024,July,Macomb,Clinton Township,State Highway,Snow/Ice,Late Night (10pm–6am),Passenger Car,Serious Injury,Alcohol/Drugs,3,1,0
+95,2022-03-20,2022,March,Washtenaw,Saline,State Highway,Clear,Midday (9am–3pm),SUV/Truck,Fatal,Following Too Closely,1,0,0
+96,2023-05-25,2023,May,Wayne,Detroit,Interstate/US Highway,Clear,Morning Rush (6–9am),Passenger Car,Property Damage Only,Speeding,3,2,1
+97,2024-06-30,2024,June,Oakland,Southfield,City Street,Clear,Evening (6–10pm),Passenger Car,Minor Injury,Alcohol/Drugs,4,0,0
+98,2023-09-29,2023,September,Oakland,Southfield,City Street,Snow/Ice,Late Night (10pm–6am),Passenger Car,Serious Injury,Alcohol/Drugs,2,0,0
+99,2023-04-28,2023,April,Washtenaw,Ypsilanti,City Street,Dark - Unlighted,Morning Rush (6–9am),SUV/Truck,Fatal,Following Too Closely,2,0,0
+100,2022-09-02,2022,September,Wayne,Westland,State Highway,Rain,Midday (9am–3pm),Passenger Car,Serious Injury,Following Too Closely,1,2,0
+101,2023-03-04,2023,March,Genesee,Flint,City Street,Clear,Late Night (10pm–6am),Commercial Truck,Serious Injury,Unknown,3,2,0
+102,2024-08-09,2024,August,Macomb,Clinton Township,City Street,Fog,Evening (6–10pm),SUV/Truck,Fatal,Failure to Yield,2,0,1
+103,2022-05-23,2022,May,Kent,Kentwood,State Highway,Rain,Late Night (10pm–6am),Passenger Car,Minor Injury,Following Too Closely,3,0,0
+104,2024-01-10,2024,January,Macomb,Clinton Township,City Street,Clear,Morning Rush (6–9am),Bicycle,Property Damage Only,Weather Conditions,3,0,0
+105,2023-12-16,2023,December,Monroe,Carleton,City Street,Dark - Unlighted,Midday (9am–3pm),Pickup Truck,Property Damage Only,Alcohol/Drugs,2,2,0
+106,2024-11-04,2024,November,Wayne,Taylor,City Street,Clear,Evening (6–10pm),Bicycle,Property Damage Only,Unknown,3,2,0
+107,2023-03-17,2023,March,Ingham,Lansing,City Street,Snow/Ice,Morning Rush (6–9am),Bus,Minor Injury,Weather Conditions,1,2,0
+108,2022-09-19,2022,September,Genesee,Burton,City Street,Snow/Ice,Late Night (10pm–6am),Passenger Car,Property Damage Only,Following Too Closely,2,2,0
+109,2022-02-19,2022,February,Wayne,Warren,City Street,Clear,Evening (6–10pm),Passenger Car,Minor Injury,Following Too Closely,3,3,1
+110,2024-09-23,2024,September,Livingston,Pinckney,Interstate/US Highway,Clear,Evening (6–10pm),Bicycle,Fatal,Running Red Light,2,0,0
+111,2022-02-20,2022,February,Wayne,Dearborn Heights,City Street,Clear,Midday (9am–3pm),SUV/Truck,Serious Injury,Weather Conditions,2,1,0
+112,2023-09-25,2023,September,Macomb,Sterling Heights,State Highway,Dark - Lighted,Evening (6–10pm),SUV/Truck,Fatal,Speeding,2,0,0
+113,2024-02-21,2024,February,Wayne,Detroit,State Highway,Dark - Lighted,Late Night (10pm–6am),Passenger Car,Property Damage Only,Following Too Closely,3,0,0
+114,2023-11-10,2023,November,Kent,Grand Rapids,City Street,Clear,Midday (9am–3pm),Bus,Property Damage Only,Failure to Yield,4,0,0
+115,2023-02-12,2023,February,Oakland,Royal Oak,City Street,Fog,Late Night (10pm–6am),Motorcycle,Minor Injury,Running Red Light,2,1,0
+116,2024-04-15,2024,April,Wayne,Dearborn,City Street,Dark - Unlighted,Afternoon Rush (3–6pm),Pickup Truck,Serious Injury,Following Too Closely,3,0,0
+117,2023-03-14,2023,March,Washtenaw,Ann Arbor,City Street,Clear,Evening (6–10pm),Pedestrian,Minor Injury,Speeding,2,0,0
+118,2024-04-20,2024,April,Livingston,Pinckney,City Street,Clear,Midday (9am–3pm),SUV/Truck,Property Damage Only,Alcohol/Drugs,4,0,0
+119,2023-10-04,2023,October,Monroe,Monroe,City Street,Fog,Morning Rush (6–9am),Bicycle,Fatal,Unknown,1,1,0
+120,2022-10-02,2022,October,Washtenaw,Ypsilanti,Interstate/US Highway,Fog,Late Night (10pm–6am),Pickup Truck,Property Damage Only,Weather Conditions,3,0,0
+121,2024-07-30,2024,July,Macomb,Roseville,County Road,Dark - Lighted,Midday (9am–3pm),Passenger Car,Property Damage Only,Speeding,3,2,0
+122,2022-04-03,2022,April,Wayne,Warren,City Street,Clear,Midday (9am–3pm),SUV/Truck,Serious Injury,Following Too Closely,3,0,0
+123,2024-09-08,2024,September,Monroe,Carleton,City Street,Dark - Lighted,Morning Rush (6–9am),SUV/Truck,Minor Injury,Failure to Yield,4,1,0
+124,2024-08-31,2024,August,Wayne,Dearborn Heights,County Road,Clear,Evening (6–10pm),Bus,Property Damage Only,Unknown,2,0,1
+125,2024-03-14,2024,March,Washtenaw,Ann Arbor,State Highway,Rain,Afternoon Rush (3–6pm),Passenger Car,Serious Injury,Distracted Driving,1,0,0
+126,2023-02-11,2023,February,Oakland,Royal Oak,City Street,Dark - Unlighted,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Unknown,1,2,0
+127,2023-10-15,2023,October,Monroe,Monroe,Interstate/US Highway,Clear,Midday (9am–3pm),Motorcycle,Minor Injury,Speeding,3,3,1
+128,2024-01-31,2024,January,Ingham,East Lansing,State Highway,Clear,Afternoon Rush (3–6pm),Bicycle,Serious Injury,Distracted Driving,2,0,1
+129,2023-12-23,2023,December,Wayne,Taylor,City Street,Clear,Afternoon Rush (3–6pm),SUV/Truck,Property Damage Only,Distracted Driving,1,0,0
+130,2022-07-18,2022,July,Wayne,Livonia,City Street,Clear,Late Night (10pm–6am),Motorcycle,Minor Injury,Failure to Yield,3,0,1
+131,2022-11-14,2022,November,Macomb,Clinton Township,City Street,Clear,Afternoon Rush (3–6pm),Pedestrian,Property Damage Only,Running Red Light,3,3,0
+132,2024-10-01,2024,October,Wayne,Warren,City Street,Clear,Afternoon Rush (3–6pm),Pedestrian,Serious Injury,Weather Conditions,4,0,0
+133,2022-03-23,2022,March,Wayne,Dearborn,Interstate/US Highway,Rain,Afternoon Rush (3–6pm),Bus,Minor Injury,Alcohol/Drugs,4,3,0
+134,2023-11-21,2023,November,Wayne,Westland,County Road,Dark - Unlighted,Morning Rush (6–9am),Passenger Car,Minor Injury,Speeding,3,2,0
+135,2022-07-05,2022,July,Oakland,Pontiac,State Highway,Clear,Morning Rush (6–9am),Pickup Truck,Fatal,Running Red Light,2,0,0
+136,2022-12-19,2022,December,St. Clair,Marysville,State Highway,Clear,Late Night (10pm–6am),Passenger Car,Serious Injury,Speeding,3,0,0
+137,2024-01-30,2024,January,Macomb,Roseville,State Highway,Rain,Evening (6–10pm),SUV/Truck,Serious Injury,Weather Conditions,2,0,0
+138,2022-06-18,2022,June,Wayne,Detroit,Interstate/US Highway,Clear,Evening (6–10pm),Passenger Car,Property Damage Only,Failure to Yield,2,0,0
+139,2024-04-15,2024,April,Kent,Kentwood,State Highway,Snow/Ice,Evening (6–10pm),SUV/Truck,Minor Injury,Weather Conditions,4,2,0
+140,2024-12-01,2024,December,Macomb,Utica,State Highway,Dark - Unlighted,Late Night (10pm–6am),Passenger Car,Property Damage Only,Alcohol/Drugs,4,2,0
+141,2023-09-08,2023,September,Washtenaw,Ypsilanti,County Road,Fog,Midday (9am–3pm),SUV/Truck,Property Damage Only,Weather Conditions,1,0,0
+142,2023-02-01,2023,February,Oakland,Royal Oak,City Street,Clear,Evening (6–10pm),Passenger Car,Minor Injury,Failure to Yield,4,3,0
+143,2024-10-08,2024,October,Wayne,Detroit,City Street,Rain,Morning Rush (6–9am),Passenger Car,Property Damage Only,Running Red Light,4,1,0
+144,2023-06-15,2023,June,Oakland,Southfield,City Street,Fog,Late Night (10pm–6am),Motorcycle,Property Damage Only,Failure to Yield,1,1,0
+145,2022-01-12,2022,January,Washtenaw,Ann Arbor,State Highway,Rain,Afternoon Rush (3–6pm),Passenger Car,Property Damage Only,Distracted Driving,1,0,0
+146,2022-05-13,2022,May,Oakland,Troy,State Highway,Fog,Afternoon Rush (3–6pm),Motorcycle,Serious Injury,Alcohol/Drugs,3,0,0
+147,2022-06-27,2022,June,Oakland,Farmington Hills,City Street,Dark - Lighted,Morning Rush (6–9am),Pickup Truck,Minor Injury,Speeding,4,0,1
+148,2023-01-14,2023,January,Oakland,Southfield,City Street,Dark - Unlighted,Afternoon Rush (3–6pm),Passenger Car,Minor Injury,Distracted Driving,4,3,0
+149,2024-06-13,2024,June,Macomb,Utica,State Highway,Dark - Unlighted,Afternoon Rush (3–6pm),Passenger Car,Fatal,Failure to Yield,2,2,0
+150,2024-03-03,2024,March,Genesee,Burton,Interstate/US Highway,Clear,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Speeding,1,0,0
+151,2023-09-26,2023,September,Macomb,St. Clair Shores,City Street,Fog,Evening (6–10pm),Passenger Car,Minor Injury,Distracted Driving,4,0,0
+152,2022-09-27,2022,September,Macomb,Clinton Township,City Street,Clear,Evening (6–10pm),Passenger Car,Property Damage Only,Speeding,1,0,0
+153,2024-03-27,2024,March,Wayne,Detroit,City Street,Clear,Afternoon Rush (3–6pm),SUV/Truck,Serious Injury,Alcohol/Drugs,3,2,1
+154,2024-11-22,2024,November,Livingston,Howell,County Road,Clear,Morning Rush (6–9am),Pickup Truck,Serious Injury,Distracted Driving,3,0,0
+155,2023-01-07,2023,January,Macomb,Utica,City Street,Clear,Morning Rush (6–9am),Passenger Car,Minor Injury,Weather Conditions,2,0,1
+156,2024-03-13,2024,March,Kent,Wyoming,State Highway,Fog,Afternoon Rush (3–6pm),Passenger Car,Property Damage Only,Weather Conditions,2,3,1
+157,2022-08-24,2022,August,Wayne,Detroit,City Street,Fog,Late Night (10pm–6am),Bicycle,Property Damage Only,Speeding,2,0,0
+158,2024-02-06,2024,February,Oakland,Southfield,Interstate/US Highway,Clear,Midday (9am–3pm),Pedestrian,Minor Injury,Weather Conditions,2,1,0
+159,2022-01-29,2022,January,Macomb,Utica,State Highway,Clear,Evening (6–10pm),SUV/Truck,Serious Injury,Running Red Light,1,1,0
+160,2024-03-07,2024,March,Macomb,St. Clair Shores,State Highway,Clear,Midday (9am–3pm),SUV/Truck,Minor Injury,Following Too Closely,1,0,0
+161,2022-08-12,2022,August,Macomb,Sterling Heights,County Road,Rain,Midday (9am–3pm),Bicycle,Minor Injury,Unknown,4,0,0
+162,2023-09-22,2023,September,Genesee,Grand Blanc,State Highway,Clear,Morning Rush (6–9am),Pedestrian,Property Damage Only,Speeding,3,0,0
+163,2023-02-27,2023,February,Kent,Kentwood,County Road,Dark - Lighted,Midday (9am–3pm),Commercial Truck,Property Damage Only,Speeding,2,0,0
+164,2024-09-20,2024,September,Kent,Grand Rapids,County Road,Rain,Evening (6–10pm),Pickup Truck,Minor Injury,Following Too Closely,2,1,1
+165,2022-02-16,2022,February,Ingham,Lansing,City Street,Snow/Ice,Evening (6–10pm),Pedestrian,Fatal,Weather Conditions,1,1,0
+166,2022-02-14,2022,February,Oakland,Auburn Hills,City Street,Rain,Evening (6–10pm),SUV/Truck,Serious Injury,Failure to Yield,4,1,0
+167,2022-08-14,2022,August,Macomb,Clinton Township,State Highway,Dark - Unlighted,Morning Rush (6–9am),Motorcycle,Property Damage Only,Running Red Light,3,0,0
+168,2023-11-05,2023,November,Ingham,Lansing,County Road,Clear,Evening (6–10pm),Commercial Truck,Property Damage Only,Alcohol/Drugs,4,1,0
+169,2022-08-16,2022,August,Macomb,St. Clair Shores,County Road,Clear,Midday (9am–3pm),Passenger Car,Property Damage Only,Distracted Driving,3,2,0
+170,2023-12-06,2023,December,Genesee,Grand Blanc,Interstate/US Highway,Fog,Morning Rush (6–9am),Passenger Car,Minor Injury,Alcohol/Drugs,2,0,0
+171,2024-04-22,2024,April,Oakland,Royal Oak,State Highway,Dark - Lighted,Evening (6–10pm),Bicycle,Property Damage Only,Weather Conditions,3,0,0
+172,2023-03-13,2023,March,Genesee,Flint,City Street,Dark - Unlighted,Late Night (10pm–6am),Bicycle,Serious Injury,Running Red Light,1,3,1
+173,2023-09-12,2023,September,Macomb,Sterling Heights,County Road,Clear,Evening (6–10pm),Commercial Truck,Property Damage Only,Weather Conditions,4,0,0
+174,2023-09-28,2023,September,Wayne,Warren,County Road,Dark - Lighted,Evening (6–10pm),Passenger Car,Fatal,Alcohol/Drugs,4,3,0
+175,2024-06-15,2024,June,Oakland,Royal Oak,State Highway,Fog,Afternoon Rush (3–6pm),Commercial Truck,Property Damage Only,Speeding,2,0,0
+176,2023-10-26,2023,October,St. Clair,St. Clair,State Highway,Dark - Lighted,Morning Rush (6–9am),SUV/Truck,Property Damage Only,Running Red Light,3,0,0
+177,2022-10-24,2022,October,Ingham,East Lansing,County Road,Snow/Ice,Evening (6–10pm),Passenger Car,Minor Injury,Weather Conditions,2,0,1
+178,2022-04-12,2022,April,Wayne,Dearborn Heights,County Road,Dark - Unlighted,Midday (9am–3pm),Passenger Car,Property Damage Only,Speeding,4,0,0
+179,2023-07-30,2023,July,Wayne,Taylor,City Street,Clear,Morning Rush (6–9am),Passenger Car,Property Damage Only,Running Red Light,2,1,0
+180,2022-07-16,2022,July,St. Clair,Port Huron,County Road,Dark - Unlighted,Late Night (10pm–6am),Passenger Car,Property Damage Only,Speeding,2,0,0
+181,2022-04-02,2022,April,Ingham,Okemos,City Street,Rain,Morning Rush (6–9am),Motorcycle,Property Damage Only,Failure to Yield,3,3,0
+182,2023-09-06,2023,September,Macomb,Sterling Heights,Interstate/US Highway,Clear,Evening (6–10pm),Passenger Car,Fatal,Unknown,2,1,1
+183,2022-11-11,2022,November,Oakland,Southfield,City Street,Clear,Afternoon Rush (3–6pm),Bus,Property Damage Only,Distracted Driving,4,3,0
+184,2022-09-04,2022,September,Monroe,Monroe,City Street,Fog,Late Night (10pm–6am),SUV/Truck,Fatal,Alcohol/Drugs,3,3,1
+185,2023-01-21,2023,January,St. Clair,St. Clair,Interstate/US Highway,Clear,Late Night (10pm–6am),Pickup Truck,Property Damage Only,Running Red Light,2,2,0
+186,2023-09-07,2023,September,Washtenaw,Ypsilanti,City Street,Clear,Midday (9am–3pm),SUV/Truck,Property Damage Only,Alcohol/Drugs,3,0,0
+187,2022-07-26,2022,July,Kent,Kentwood,City Street,Rain,Evening (6–10pm),Commercial Truck,Property Damage Only,Running Red Light,3,2,0
+188,2023-11-27,2023,November,Macomb,Utica,City Street,Snow/Ice,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Weather Conditions,4,0,0
+189,2024-06-21,2024,June,Oakland,Royal Oak,Interstate/US Highway,Clear,Evening (6–10pm),SUV/Truck,Minor Injury,Alcohol/Drugs,4,2,0
+190,2024-06-13,2024,June,Kent,Wyoming,County Road,Fog,Midday (9am–3pm),SUV/Truck,Property Damage Only,Following Too Closely,4,1,0
+191,2022-12-21,2022,December,Ingham,Lansing,City Street,Dark - Unlighted,Afternoon Rush (3–6pm),Passenger Car,Minor Injury,Speeding,4,3,0
+192,2024-06-15,2024,June,Genesee,Grand Blanc,City Street,Dark - Unlighted,Morning Rush (6–9am),Bicycle,Property Damage Only,Weather Conditions,1,1,0
+193,2023-12-14,2023,December,Kent,Wyoming,State Highway,Clear,Midday (9am–3pm),Passenger Car,Minor Injury,Alcohol/Drugs,3,0,0
+194,2023-01-18,2023,January,Livingston,Pinckney,City Street,Clear,Morning Rush (6–9am),Motorcycle,Fatal,Following Too Closely,3,0,0
+195,2023-11-09,2023,November,Wayne,Westland,State Highway,Clear,Afternoon Rush (3–6pm),Pickup Truck,Property Damage Only,Speeding,3,0,0
+196,2024-01-27,2024,January,Macomb,Utica,State Highway,Clear,Evening (6–10pm),Passenger Car,Minor Injury,Distracted Driving,1,3,1
+197,2022-06-29,2022,June,Wayne,Dearborn,City Street,Clear,Midday (9am–3pm),Commercial Truck,Minor Injury,Weather Conditions,3,3,0
+198,2023-02-14,2023,February,Oakland,Royal Oak,Interstate/US Highway,Clear,Evening (6–10pm),Bus,Minor Injury,Failure to Yield,2,1,0
+199,2022-12-18,2022,December,Oakland,Royal Oak,County Road,Rain,Late Night (10pm–6am),Commercial Truck,Minor Injury,Running Red Light,1,0,0
+200,2022-08-04,2022,August,Wayne,Westland,City Street,Clear,Evening (6–10pm),Passenger Car,Property Damage Only,Unknown,4,2,0
+201,2023-03-01,2023,March,Wayne,Taylor,City Street,Clear,Midday (9am–3pm),Passenger Car,Property Damage Only,Alcohol/Drugs,2,0,0
+202,2023-11-01,2023,November,Oakland,Auburn Hills,Interstate/US Highway,Dark - Unlighted,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Unknown,2,3,0
+203,2023-01-03,2023,January,Kent,Grand Rapids,County Road,Dark - Lighted,Morning Rush (6–9am),Pedestrian,Minor Injury,Failure to Yield,2,0,0
+204,2024-12-09,2024,December,Oakland,Auburn Hills,City Street,Snow/Ice,Late Night (10pm–6am),SUV/Truck,Minor Injury,Following Too Closely,1,1,1
+205,2023-05-25,2023,May,St. Clair,Port Huron,Interstate/US Highway,Clear,Morning Rush (6–9am),Passenger Car,Minor Injury,Alcohol/Drugs,4,3,0
+206,2022-06-29,2022,June,Wayne,Detroit,Interstate/US Highway,Clear,Evening (6–10pm),Bicycle,Fatal,Weather Conditions,3,2,1
+207,2023-06-06,2023,June,Oakland,Royal Oak,City Street,Dark - Lighted,Evening (6–10pm),SUV/Truck,Fatal,Speeding,1,0,0
+208,2024-04-12,2024,April,Oakland,Auburn Hills,City Street,Clear,Evening (6–10pm),Pedestrian,Minor Injury,Distracted Driving,2,0,0
+209,2022-05-27,2022,May,St. Clair,St. Clair,State Highway,Dark - Lighted,Late Night (10pm–6am),Passenger Car,Minor Injury,Running Red Light,3,0,0
+210,2022-10-06,2022,October,Wayne,Warren,Interstate/US Highway,Clear,Morning Rush (6–9am),Pickup Truck,Property Damage Only,Following Too Closely,3,2,0
+211,2023-02-17,2023,February,Washtenaw,Saline,City Street,Clear,Evening (6–10pm),SUV/Truck,Property Damage Only,Failure to Yield,2,1,1
+212,2024-04-20,2024,April,Genesee,Flint,Interstate/US Highway,Clear,Afternoon Rush (3–6pm),Motorcycle,Minor Injury,Failure to Yield,2,0,0
+213,2024-12-21,2024,December,Wayne,Dearborn Heights,City Street,Fog,Midday (9am–3pm),Pickup Truck,Fatal,Alcohol/Drugs,1,2,0
+214,2023-09-01,2023,September,Oakland,Auburn Hills,City Street,Clear,Evening (6–10pm),Passenger Car,Minor Injury,Distracted Driving,4,0,0
+215,2023-02-22,2023,February,St. Clair,St. Clair,City Street,Clear,Morning Rush (6–9am),Pickup Truck,Property Damage Only,Alcohol/Drugs,3,0,0
+216,2024-07-30,2024,July,Wayne,Dearborn Heights,County Road,Clear,Evening (6–10pm),Passenger Car,Property Damage Only,Failure to Yield,2,0,0
+217,2022-05-28,2022,May,Kent,Grand Rapids,Interstate/US Highway,Fog,Late Night (10pm–6am),Passenger Car,Minor Injury,Speeding,4,0,0
+218,2022-07-12,2022,July,Wayne,Detroit,Interstate/US Highway,Fog,Late Night (10pm–6am),Passenger Car,Property Damage Only,Unknown,4,1,0
+219,2023-02-17,2023,February,Genesee,Grand Blanc,City Street,Dark - Unlighted,Midday (9am–3pm),Passenger Car,Minor Injury,Speeding,1,2,1
+220,2023-12-15,2023,December,Wayne,Taylor,City Street,Rain,Morning Rush (6–9am),SUV/Truck,Minor Injury,Following Too Closely,2,2,0
+221,2023-08-20,2023,August,Ingham,Lansing,Interstate/US Highway,Clear,Midday (9am–3pm),Commercial Truck,Serious Injury,Unknown,1,0,0
+222,2022-11-24,2022,November,St. Clair,St. Clair,County Road,Dark - Unlighted,Late Night (10pm–6am),Passenger Car,Property Damage Only,Weather Conditions,2,0,0
+223,2024-12-06,2024,December,Monroe,Dundee,City Street,Dark - Unlighted,Late Night (10pm–6am),Passenger Car,Fatal,Unknown,2,1,0
+224,2023-06-25,2023,June,Wayne,Taylor,State Highway,Clear,Afternoon Rush (3–6pm),Pedestrian,Serious Injury,Following Too Closely,3,1,0
+225,2024-07-13,2024,July,Kent,Grand Rapids,State Highway,Dark - Unlighted,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Running Red Light,4,3,0
+226,2024-08-12,2024,August,Wayne,Detroit,State Highway,Rain,Midday (9am–3pm),Pedestrian,Property Damage Only,Distracted Driving,2,3,0
+227,2022-04-28,2022,April,Wayne,Detroit,City Street,Rain,Afternoon Rush (3–6pm),Bus,Property Damage Only,Failure to Yield,2,3,0
+228,2022-08-09,2022,August,Macomb,Sterling Heights,City Street,Fog,Morning Rush (6–9am),Bus,Property Damage Only,Weather Conditions,4,0,0
+229,2023-10-05,2023,October,Kent,Kentwood,City Street,Clear,Afternoon Rush (3–6pm),Pedestrian,Fatal,Unknown,3,2,0
+230,2024-03-31,2024,March,Wayne,Warren,Interstate/US Highway,Rain,Midday (9am–3pm),Bicycle,Fatal,Running Red Light,1,0,0
+231,2024-03-01,2024,March,Ingham,Okemos,Interstate/US Highway,Clear,Late Night (10pm–6am),Bicycle,Minor Injury,Distracted Driving,1,2,0
+232,2024-10-14,2024,October,St. Clair,St. Clair,City Street,Clear,Morning Rush (6–9am),Motorcycle,Property Damage Only,Alcohol/Drugs,2,0,1
+233,2023-10-21,2023,October,Kent,Wyoming,State Highway,Clear,Morning Rush (6–9am),Bus,Serious Injury,Weather Conditions,2,0,1
+234,2024-05-20,2024,May,Oakland,Farmington Hills,State Highway,Dark - Unlighted,Late Night (10pm–6am),Passenger Car,Property Damage Only,Running Red Light,4,2,0
+235,2024-09-07,2024,September,Wayne,Dearborn Heights,State Highway,Dark - Unlighted,Evening (6–10pm),Passenger Car,Property Damage Only,Speeding,1,3,0
+236,2024-04-04,2024,April,St. Clair,Port Huron,County Road,Clear,Late Night (10pm–6am),Bicycle,Fatal,Failure to Yield,3,0,1
+237,2022-11-20,2022,November,Ingham,Lansing,County Road,Rain,Afternoon Rush (3–6pm),Motorcycle,Minor Injury,Weather Conditions,3,0,0
+238,2023-10-11,2023,October,Macomb,Utica,County Road,Clear,Evening (6–10pm),Commercial Truck,Fatal,Following Too Closely,4,2,0
+239,2022-05-15,2022,May,Wayne,Warren,City Street,Dark - Lighted,Afternoon Rush (3–6pm),Bicycle,Property Damage Only,Speeding,4,3,0
+240,2023-08-21,2023,August,Oakland,Royal Oak,City Street,Snow/Ice,Late Night (10pm–6am),Commercial Truck,Property Damage Only,Alcohol/Drugs,3,0,0
+241,2023-05-25,2023,May,Wayne,Warren,State Highway,Clear,Late Night (10pm–6am),Motorcycle,Minor Injury,Unknown,4,3,0
+242,2024-10-31,2024,October,Oakland,Southfield,City Street,Dark - Unlighted,Midday (9am–3pm),Passenger Car,Serious Injury,Speeding,4,0,0
+243,2022-08-18,2022,August,Livingston,Pinckney,City Street,Rain,Late Night (10pm–6am),Bus,Minor Injury,Weather Conditions,3,0,1
+244,2023-10-17,2023,October,Wayne,Detroit,City Street,Rain,Evening (6–10pm),Motorcycle,Property Damage Only,Alcohol/Drugs,3,2,0
+245,2022-06-01,2022,June,Ingham,Okemos,City Street,Clear,Evening (6–10pm),Passenger Car,Minor Injury,Following Too Closely,3,0,1
+246,2022-07-29,2022,July,Ingham,Lansing,County Road,Clear,Midday (9am–3pm),SUV/Truck,Property Damage Only,Following Too Closely,4,3,0
+247,2024-04-17,2024,April,Wayne,Taylor,City Street,Clear,Midday (9am–3pm),Bus,Minor Injury,Unknown,2,0,0
+248,2024-08-03,2024,August,Monroe,Monroe,City Street,Dark - Unlighted,Morning Rush (6–9am),SUV/Truck,Property Damage Only,Speeding,4,1,0
+249,2023-05-07,2023,May,Livingston,Pinckney,City Street,Fog,Evening (6–10pm),Bicycle,Minor Injury,Weather Conditions,2,0,0
+250,2022-08-10,2022,August,Wayne,Detroit,State Highway,Clear,Afternoon Rush (3–6pm),Bicycle,Minor Injury,Distracted Driving,3,0,0
+251,2022-10-01,2022,October,Livingston,Pinckney,City Street,Snow/Ice,Afternoon Rush (3–6pm),Pedestrian,Property Damage Only,Distracted Driving,3,2,0
+252,2023-06-03,2023,June,Wayne,Westland,Interstate/US Highway,Clear,Evening (6–10pm),SUV/Truck,Property Damage Only,Weather Conditions,1,3,0
+253,2023-08-31,2023,August,Oakland,Auburn Hills,State Highway,Dark - Unlighted,Afternoon Rush (3–6pm),Passenger Car,Minor Injury,Speeding,4,1,1
+254,2022-03-11,2022,March,Wayne,Warren,State Highway,Snow/Ice,Afternoon Rush (3–6pm),SUV/Truck,Property Damage Only,Weather Conditions,3,0,0
+255,2024-11-03,2024,November,Wayne,Detroit,City Street,Fog,Midday (9am–3pm),Passenger Car,Serious Injury,Unknown,4,0,0
+256,2023-03-05,2023,March,Washtenaw,Saline,City Street,Fog,Late Night (10pm–6am),Passenger Car,Minor Injury,Following Too Closely,4,2,0
+257,2023-03-22,2023,March,Oakland,Royal Oak,City Street,Clear,Late Night (10pm–6am),Pickup Truck,Property Damage Only,Failure to Yield,1,0,0
+258,2022-11-18,2022,November,St. Clair,St. Clair,City Street,Clear,Afternoon Rush (3–6pm),Passenger Car,Property Damage Only,Weather Conditions,1,3,1
+259,2022-01-23,2022,January,Washtenaw,Ypsilanti,County Road,Fog,Evening (6–10pm),Pedestrian,Serious Injury,Unknown,3,0,0
+260,2024-06-29,2024,June,Kent,Grand Rapids,Interstate/US Highway,Clear,Late Night (10pm–6am),Passenger Car,Property Damage Only,Unknown,4,0,0
+261,2024-02-02,2024,February,St. Clair,St. Clair,City Street,Clear,Morning Rush (6–9am),SUV/Truck,Serious Injury,Alcohol/Drugs,2,0,0
+262,2024-06-19,2024,June,Washtenaw,Ypsilanti,County Road,Dark - Unlighted,Midday (9am–3pm),SUV/Truck,Fatal,Following Too Closely,3,0,0
+263,2024-12-25,2024,December,Ingham,Lansing,City Street,Dark - Lighted,Midday (9am–3pm),Bus,Minor Injury,Failure to Yield,2,3,0
+264,2023-06-18,2023,June,Oakland,Troy,State Highway,Snow/Ice,Evening (6–10pm),SUV/Truck,Fatal,Following Too Closely,1,0,0
+265,2022-09-07,2022,September,Wayne,Detroit,State Highway,Rain,Evening (6–10pm),Motorcycle,Minor Injury,Following Too Closely,4,2,0
+266,2024-09-25,2024,September,Kent,Wyoming,Interstate/US Highway,Dark - Lighted,Morning Rush (6–9am),Commercial Truck,Serious Injury,Unknown,1,1,0
+267,2022-04-14,2022,April,Oakland,Farmington Hills,County Road,Rain,Morning Rush (6–9am),SUV/Truck,Minor Injury,Following Too Closely,2,0,0
+268,2022-05-01,2022,May,Oakland,Southfield,County Road,Rain,Morning Rush (6–9am),Passenger Car,Property Damage Only,Unknown,3,2,0
+269,2023-07-04,2023,July,Washtenaw,Ann Arbor,City Street,Clear,Evening (6–10pm),Pedestrian,Minor Injury,Failure to Yield,1,0,1
+270,2023-10-02,2023,October,Wayne,Detroit,City Street,Rain,Midday (9am–3pm),Passenger Car,Property Damage Only,Failure to Yield,4,3,0
+271,2022-08-09,2022,August,St. Clair,Port Huron,City Street,Clear,Afternoon Rush (3–6pm),SUV/Truck,Property Damage Only,Running Red Light,1,0,0
+272,2022-04-12,2022,April,Oakland,Royal Oak,County Road,Clear,Evening (6–10pm),Commercial Truck,Serious Injury,Following Too Closely,3,0,1
+273,2022-08-17,2022,August,Livingston,Brighton,State Highway,Snow/Ice,Late Night (10pm–6am),Motorcycle,Property Damage Only,Running Red Light,4,0,0
+274,2023-01-09,2023,January,Macomb,Utica,City Street,Clear,Evening (6–10pm),Pedestrian,Property Damage Only,Running Red Light,1,0,0
+275,2022-08-05,2022,August,Wayne,Dearborn Heights,County Road,Dark - Lighted,Evening (6–10pm),Pedestrian,Minor Injury,Unknown,3,0,0
+276,2022-12-17,2022,December,St. Clair,Marysville,City Street,Dark - Lighted,Midday (9am–3pm),Commercial Truck,Serious Injury,Alcohol/Drugs,2,0,0
+277,2023-06-21,2023,June,Wayne,Taylor,State Highway,Dark - Unlighted,Afternoon Rush (3–6pm),Pedestrian,Serious Injury,Failure to Yield,2,0,0
+278,2023-12-06,2023,December,Washtenaw,Ann Arbor,City Street,Clear,Midday (9am–3pm),Passenger Car,Property Damage Only,Running Red Light,2,0,0
+279,2022-12-27,2022,December,Oakland,Pontiac,City Street,Dark - Unlighted,Late Night (10pm–6am),SUV/Truck,Fatal,Following Too Closely,3,1,0
+280,2022-07-10,2022,July,Macomb,Roseville,City Street,Clear,Midday (9am–3pm),Passenger Car,Serious Injury,Following Too Closely,1,0,0
+281,2024-02-05,2024,February,Oakland,Farmington Hills,County Road,Snow/Ice,Evening (6–10pm),Passenger Car,Property Damage Only,Failure to Yield,2,0,1
+282,2023-06-26,2023,June,Wayne,Livonia,City Street,Fog,Late Night (10pm–6am),Commercial Truck,Property Damage Only,Weather Conditions,3,2,0
+283,2024-09-26,2024,September,Livingston,Brighton,City Street,Rain,Afternoon Rush (3–6pm),Bicycle,Minor Injury,Weather Conditions,3,0,0
+284,2023-03-30,2023,March,Oakland,Royal Oak,City Street,Clear,Evening (6–10pm),Pickup Truck,Minor Injury,Unknown,2,2,0
+285,2022-03-12,2022,March,Wayne,Westland,City Street,Rain,Midday (9am–3pm),Commercial Truck,Fatal,Speeding,4,0,0
+286,2022-10-10,2022,October,Washtenaw,Ypsilanti,County Road,Clear,Afternoon Rush (3–6pm),Motorcycle,Property Damage Only,Distracted Driving,4,0,0
+287,2022-01-22,2022,January,Wayne,Taylor,City Street,Clear,Morning Rush (6–9am),Passenger Car,Fatal,Running Red Light,4,3,0
+288,2023-03-17,2023,March,Oakland,Royal Oak,City Street,Dark - Unlighted,Late Night (10pm–6am),Commercial Truck,Property Damage Only,Following Too Closely,1,0,0
+289,2024-12-21,2024,December,Monroe,Carleton,City Street,Dark - Unlighted,Late Night (10pm–6am),Motorcycle,Property Damage Only,Unknown,1,2,0
+290,2023-06-03,2023,June,Wayne,Detroit,County Road,Rain,Midday (9am–3pm),Motorcycle,Property Damage Only,Speeding,4,0,1
+291,2024-12-16,2024,December,Monroe,Monroe,State Highway,Rain,Late Night (10pm–6am),Pedestrian,Serious Injury,Weather Conditions,3,1,1
+292,2023-12-05,2023,December,Oakland,Southfield,State Highway,Clear,Midday (9am–3pm),Bicycle,Minor Injury,Running Red Light,4,2,1
+293,2024-11-30,2024,November,Oakland,Troy,Interstate/US Highway,Clear,Evening (6–10pm),Motorcycle,Minor Injury,Failure to Yield,1,0,0
+294,2023-04-05,2023,April,Genesee,Grand Blanc,City Street,Clear,Midday (9am–3pm),Commercial Truck,Property Damage Only,Speeding,3,0,0
+295,2024-05-10,2024,May,Oakland,Southfield,City Street,Dark - Lighted,Midday (9am–3pm),Pickup Truck,Property Damage Only,Alcohol/Drugs,1,2,0
+296,2022-05-03,2022,May,Genesee,Burton,City Street,Fog,Late Night (10pm–6am),SUV/Truck,Minor Injury,Unknown,3,0,1
+297,2024-02-01,2024,February,Oakland,Southfield,Interstate/US Highway,Clear,Evening (6–10pm),Commercial Truck,Minor Injury,Unknown,2,3,0
+298,2022-10-28,2022,October,Genesee,Grand Blanc,City Street,Fog,Evening (6–10pm),Passenger Car,Property Damage Only,Speeding,2,3,0
+299,2022-05-19,2022,May,Oakland,Southfield,City Street,Dark - Unlighted,Late Night (10pm–6am),Commercial Truck,Serious Injury,Distracted Driving,3,0,0
+300,2024-09-18,2024,September,Washtenaw,Ypsilanti,City Street,Clear,Midday (9am–3pm),Pedestrian,Serious Injury,Distracted Driving,3,0,0
+301,2022-01-24,2022,January,Monroe,Monroe,City Street,Clear,Late Night (10pm–6am),Commercial Truck,Property Damage Only,Running Red Light,3,1,1
+302,2024-02-17,2024,February,Washtenaw,Saline,Interstate/US Highway,Clear,Morning Rush (6–9am),Pedestrian,Minor Injury,Running Red Light,1,0,0
+303,2023-09-08,2023,September,St. Clair,Port Huron,State Highway,Rain,Late Night (10pm–6am),Bicycle,Minor Injury,Distracted Driving,4,0,0
+304,2024-01-02,2024,January,Macomb,Roseville,City Street,Dark - Unlighted,Morning Rush (6–9am),SUV/Truck,Property Damage Only,Running Red Light,4,0,0
+305,2022-07-30,2022,July,Livingston,Pinckney,County Road,Dark - Lighted,Morning Rush (6–9am),SUV/Truck,Property Damage Only,Alcohol/Drugs,1,0,0
+306,2022-07-21,2022,July,Wayne,Warren,Interstate/US Highway,Clear,Late Night (10pm–6am),Passenger Car,Property Damage Only,Following Too Closely,3,2,0
+307,2023-08-27,2023,August,Oakland,Southfield,County Road,Rain,Afternoon Rush (3–6pm),Motorcycle,Fatal,Unknown,1,0,1
+308,2023-01-19,2023,January,St. Clair,Port Huron,State Highway,Clear,Afternoon Rush (3–6pm),Bicycle,Property Damage Only,Following Too Closely,2,3,0
+309,2022-04-01,2022,April,Wayne,Westland,City Street,Snow/Ice,Midday (9am–3pm),Passenger Car,Property Damage Only,Unknown,1,3,0
+310,2024-04-02,2024,April,Oakland,Pontiac,City Street,Clear,Late Night (10pm–6am),Passenger Car,Fatal,Weather Conditions,3,0,0
+311,2024-10-18,2024,October,Wayne,Taylor,City Street,Dark - Unlighted,Afternoon Rush (3–6pm),Commercial Truck,Fatal,Alcohol/Drugs,4,0,0
+312,2023-09-07,2023,September,Macomb,Clinton Township,City Street,Clear,Morning Rush (6–9am),Pedestrian,Fatal,Distracted Driving,2,3,0
+313,2023-05-08,2023,May,Washtenaw,Ypsilanti,Interstate/US Highway,Clear,Afternoon Rush (3–6pm),SUV/Truck,Serious Injury,Speeding,1,0,1
+314,2024-02-27,2024,February,Wayne,Livonia,City Street,Fog,Afternoon Rush (3–6pm),Bicycle,Fatal,Weather Conditions,4,0,0
+315,2024-03-22,2024,March,Macomb,Sterling Heights,County Road,Clear,Midday (9am–3pm),Bicycle,Property Damage Only,Following Too Closely,3,0,0
+316,2023-05-12,2023,May,Washtenaw,Ypsilanti,City Street,Rain,Afternoon Rush (3–6pm),Commercial Truck,Property Damage Only,Distracted Driving,1,0,0
+317,2023-04-06,2023,April,Wayne,Westland,City Street,Clear,Midday (9am–3pm),SUV/Truck,Serious Injury,Speeding,2,1,0
+318,2023-02-25,2023,February,Oakland,Southfield,City Street,Dark - Unlighted,Midday (9am–3pm),Pickup Truck,Fatal,Alcohol/Drugs,4,0,0
+319,2023-08-19,2023,August,Washtenaw,Saline,City Street,Fog,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Weather Conditions,3,0,0
+320,2023-09-01,2023,September,Wayne,Dearborn,County Road,Snow/Ice,Evening (6–10pm),Commercial Truck,Property Damage Only,Following Too Closely,3,3,0
+321,2023-01-10,2023,January,Genesee,Burton,City Street,Dark - Unlighted,Midday (9am–3pm),Passenger Car,Minor Injury,Distracted Driving,2,0,1
+322,2022-03-26,2022,March,Wayne,Westland,City Street,Rain,Morning Rush (6–9am),SUV/Truck,Fatal,Weather Conditions,1,1,0
+323,2024-06-24,2024,June,Monroe,Carleton,State Highway,Clear,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Distracted Driving,4,0,0
+324,2024-10-11,2024,October,Macomb,Utica,City Street,Snow/Ice,Afternoon Rush (3–6pm),Pickup Truck,Property Damage Only,Following Too Closely,2,0,0
+325,2023-09-03,2023,September,Macomb,Clinton Township,County Road,Clear,Morning Rush (6–9am),SUV/Truck,Minor Injury,Unknown,4,0,0
+326,2023-01-17,2023,January,Wayne,Detroit,City Street,Rain,Morning Rush (6–9am),Commercial Truck,Fatal,Running Red Light,4,0,0
+327,2022-04-30,2022,April,St. Clair,Port Huron,City Street,Fog,Morning Rush (6–9am),SUV/Truck,Minor Injury,Running Red Light,1,2,0
+328,2022-12-22,2022,December,Genesee,Grand Blanc,County Road,Fog,Afternoon Rush (3–6pm),Commercial Truck,Property Damage Only,Weather Conditions,1,0,0
+329,2023-10-26,2023,October,Ingham,Okemos,City Street,Fog,Evening (6–10pm),Commercial Truck,Property Damage Only,Unknown,2,0,0
+330,2024-11-14,2024,November,Kent,Wyoming,County Road,Snow/Ice,Late Night (10pm–6am),Commercial Truck,Property Damage Only,Unknown,3,2,0
+331,2023-05-13,2023,May,Oakland,Auburn Hills,City Street,Clear,Evening (6–10pm),SUV/Truck,Property Damage Only,Unknown,4,0,0
+332,2023-07-31,2023,July,Wayne,Warren,City Street,Snow/Ice,Midday (9am–3pm),Passenger Car,Property Damage Only,Running Red Light,1,2,0
+333,2024-07-13,2024,July,Wayne,Warren,Interstate/US Highway,Clear,Midday (9am–3pm),Passenger Car,Fatal,Speeding,2,0,0
+334,2024-02-18,2024,February,Wayne,Detroit,City Street,Clear,Afternoon Rush (3–6pm),Bicycle,Minor Injury,Running Red Light,1,0,0
+335,2022-02-25,2022,February,Macomb,Roseville,State Highway,Clear,Afternoon Rush (3–6pm),SUV/Truck,Property Damage Only,Unknown,4,0,0
+336,2022-12-15,2022,December,St. Clair,Marysville,City Street,Dark - Unlighted,Midday (9am–3pm),Pickup Truck,Property Damage Only,Weather Conditions,3,0,0
+337,2024-02-20,2024,February,Wayne,Taylor,City Street,Clear,Morning Rush (6–9am),SUV/Truck,Minor Injury,Speeding,3,0,0
+338,2023-05-27,2023,May,Oakland,Royal Oak,City Street,Rain,Midday (9am–3pm),Pickup Truck,Property Damage Only,Failure to Yield,4,0,1
+339,2023-08-28,2023,August,Washtenaw,Ann Arbor,Interstate/US Highway,Clear,Midday (9am–3pm),SUV/Truck,Minor Injury,Distracted Driving,3,0,0
+340,2023-07-30,2023,July,Oakland,Southfield,City Street,Rain,Afternoon Rush (3–6pm),SUV/Truck,Serious Injury,Alcohol/Drugs,3,0,0
+341,2024-06-03,2024,June,Macomb,Utica,Interstate/US Highway,Snow/Ice,Morning Rush (6–9am),Motorcycle,Minor Injury,Alcohol/Drugs,3,1,0
+342,2022-08-05,2022,August,Ingham,East Lansing,County Road,Rain,Morning Rush (6–9am),Pickup Truck,Fatal,Weather Conditions,3,0,0
+343,2024-05-09,2024,May,Wayne,Livonia,City Street,Clear,Evening (6–10pm),Passenger Car,Property Damage Only,Weather Conditions,2,2,0
+344,2023-02-18,2023,February,Monroe,Monroe,City Street,Clear,Midday (9am–3pm),Passenger Car,Property Damage Only,Weather Conditions,1,3,0
+345,2024-06-03,2024,June,Genesee,Grand Blanc,Interstate/US Highway,Dark - Unlighted,Evening (6–10pm),Pedestrian,Minor Injury,Following Too Closely,1,2,1
+346,2023-06-14,2023,June,Macomb,Sterling Heights,State Highway,Clear,Midday (9am–3pm),Passenger Car,Property Damage Only,Unknown,1,0,0
+347,2024-12-10,2024,December,Wayne,Warren,County Road,Clear,Midday (9am–3pm),Passenger Car,Property Damage Only,Alcohol/Drugs,1,0,0
+348,2023-11-29,2023,November,Wayne,Taylor,County Road,Rain,Morning Rush (6–9am),SUV/Truck,Property Damage Only,Distracted Driving,1,0,0
+349,2024-05-16,2024,May,Genesee,Grand Blanc,State Highway,Snow/Ice,Morning Rush (6–9am),Pickup Truck,Fatal,Running Red Light,3,0,0
+350,2022-04-06,2022,April,Oakland,Pontiac,State Highway,Clear,Evening (6–10pm),SUV/Truck,Property Damage Only,Failure to Yield,2,0,0
+351,2022-02-01,2022,February,Oakland,Royal Oak,State Highway,Clear,Late Night (10pm–6am),Pickup Truck,Property Damage Only,Running Red Light,2,2,0
+352,2024-11-15,2024,November,Monroe,Monroe,City Street,Dark - Unlighted,Afternoon Rush (3–6pm),Bus,Minor Injury,Alcohol/Drugs,4,0,0
+353,2023-09-14,2023,September,Oakland,Farmington Hills,City Street,Fog,Evening (6–10pm),Passenger Car,Minor Injury,Running Red Light,4,3,1
+354,2022-05-08,2022,May,Washtenaw,Saline,City Street,Clear,Afternoon Rush (3–6pm),Passenger Car,Serious Injury,Unknown,3,2,0
+355,2022-03-11,2022,March,Wayne,Livonia,State Highway,Fog,Afternoon Rush (3–6pm),Commercial Truck,Fatal,Alcohol/Drugs,3,1,0
+356,2022-02-22,2022,February,Wayne,Livonia,State Highway,Clear,Late Night (10pm–6am),Pedestrian,Serious Injury,Following Too Closely,4,3,0
+357,2022-12-13,2022,December,Monroe,Monroe,State Highway,Snow/Ice,Afternoon Rush (3–6pm),Bicycle,Property Damage Only,Speeding,2,0,0
+358,2024-07-05,2024,July,Washtenaw,Saline,City Street,Snow/Ice,Afternoon Rush (3–6pm),Passenger Car,Minor Injury,Unknown,1,2,1
+359,2023-04-29,2023,April,Ingham,Okemos,City Street,Clear,Evening (6–10pm),Commercial Truck,Minor Injury,Alcohol/Drugs,2,0,0
+360,2024-05-07,2024,May,Macomb,Utica,State Highway,Clear,Morning Rush (6–9am),Passenger Car,Fatal,Weather Conditions,3,0,0
+361,2022-12-26,2022,December,Livingston,Brighton,Interstate/US Highway,Clear,Evening (6–10pm),Passenger Car,Minor Injury,Distracted Driving,1,0,0
+362,2022-12-17,2022,December,Monroe,Carleton,County Road,Fog,Late Night (10pm–6am),Passenger Car,Property Damage Only,Following Too Closely,3,3,0
+363,2024-12-21,2024,December,Ingham,Okemos,City Street,Snow/Ice,Morning Rush (6–9am),SUV/Truck,Property Damage Only,Running Red Light,3,2,0
+364,2023-02-03,2023,February,Wayne,Livonia,County Road,Fog,Morning Rush (6–9am),Motorcycle,Serious Injury,Running Red Light,1,2,0
+365,2022-08-04,2022,August,Washtenaw,Ypsilanti,City Street,Rain,Morning Rush (6–9am),Pickup Truck,Minor Injury,Weather Conditions,3,1,0
+366,2023-09-20,2023,September,Wayne,Westland,City Street,Fog,Evening (6–10pm),Bus,Fatal,Following Too Closely,3,0,0
+367,2023-07-13,2023,July,Oakland,Troy,State Highway,Dark - Lighted,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Alcohol/Drugs,2,0,1
+368,2023-02-25,2023,February,Macomb,St. Clair Shores,City Street,Clear,Evening (6–10pm),Pickup Truck,Minor Injury,Unknown,1,0,0
+369,2023-12-28,2023,December,Wayne,Livonia,City Street,Dark - Unlighted,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Unknown,2,0,0
+370,2023-03-31,2023,March,Wayne,Taylor,City Street,Fog,Morning Rush (6–9am),Passenger Car,Property Damage Only,Speeding,1,0,1
+371,2024-02-05,2024,February,Livingston,Brighton,County Road,Rain,Evening (6–10pm),Passenger Car,Minor Injury,Speeding,3,1,0
+372,2023-06-15,2023,June,Wayne,Livonia,City Street,Fog,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Failure to Yield,2,0,0
+373,2024-07-24,2024,July,Wayne,Westland,County Road,Fog,Midday (9am–3pm),Passenger Car,Fatal,Unknown,1,1,0
+374,2023-07-11,2023,July,Kent,Wyoming,City Street,Clear,Afternoon Rush (3–6pm),SUV/Truck,Minor Injury,Speeding,2,3,0
+375,2022-08-04,2022,August,Wayne,Detroit,County Road,Rain,Late Night (10pm–6am),Passenger Car,Serious Injury,Weather Conditions,2,0,0
+376,2023-01-28,2023,January,St. Clair,Port Huron,City Street,Snow/Ice,Morning Rush (6–9am),Passenger Car,Minor Injury,Unknown,4,0,0
+377,2023-03-02,2023,March,Oakland,Southfield,City Street,Clear,Morning Rush (6–9am),Passenger Car,Property Damage Only,Unknown,3,0,0
+378,2024-03-23,2024,March,Macomb,Utica,City Street,Clear,Midday (9am–3pm),SUV/Truck,Property Damage Only,Speeding,3,0,0
+379,2022-11-01,2022,November,Wayne,Dearborn,County Road,Clear,Late Night (10pm–6am),Pickup Truck,Serious Injury,Failure to Yield,1,0,0
+380,2023-03-03,2023,March,Wayne,Livonia,County Road,Clear,Morning Rush (6–9am),Passenger Car,Serious Injury,Following Too Closely,2,0,0
+381,2023-05-07,2023,May,Wayne,Westland,City Street,Snow/Ice,Evening (6–10pm),SUV/Truck,Property Damage Only,Running Red Light,2,3,1
+382,2022-02-11,2022,February,Wayne,Dearborn,Interstate/US Highway,Clear,Late Night (10pm–6am),Passenger Car,Serious Injury,Weather Conditions,1,0,0
+383,2023-09-22,2023,September,Wayne,Warren,State Highway,Clear,Late Night (10pm–6am),Bus,Minor Injury,Alcohol/Drugs,3,0,0
+384,2022-02-19,2022,February,Wayne,Westland,City Street,Fog,Late Night (10pm–6am),Commercial Truck,Property Damage Only,Unknown,3,1,0
+385,2024-01-14,2024,January,Ingham,East Lansing,City Street,Clear,Evening (6–10pm),SUV/Truck,Property Damage Only,Alcohol/Drugs,2,2,0
+386,2023-02-25,2023,February,Monroe,Dundee,State Highway,Rain,Morning Rush (6–9am),SUV/Truck,Serious Injury,Running Red Light,2,0,1
+387,2022-08-09,2022,August,Macomb,Utica,State Highway,Rain,Late Night (10pm–6am),Commercial Truck,Property Damage Only,Alcohol/Drugs,2,2,1
+388,2023-01-23,2023,January,Macomb,St. Clair Shores,City Street,Snow/Ice,Afternoon Rush (3–6pm),Pickup Truck,Property Damage Only,Distracted Driving,2,2,0
+389,2022-10-15,2022,October,Kent,Grand Rapids,City Street,Dark - Unlighted,Midday (9am–3pm),Passenger Car,Property Damage Only,Alcohol/Drugs,4,0,0
+390,2024-05-30,2024,May,Monroe,Dundee,County Road,Dark - Unlighted,Midday (9am–3pm),Passenger Car,Property Damage Only,Failure to Yield,1,0,0
+391,2022-07-02,2022,July,Wayne,Westland,County Road,Clear,Afternoon Rush (3–6pm),Passenger Car,Property Damage Only,Alcohol/Drugs,4,0,0
+392,2022-08-28,2022,August,Oakland,Southfield,City Street,Fog,Afternoon Rush (3–6pm),Passenger Car,Minor Injury,Failure to Yield,3,0,0
+393,2024-10-31,2024,October,Oakland,Farmington Hills,City Street,Clear,Afternoon Rush (3–6pm),Passenger Car,Property Damage Only,Running Red Light,1,1,0
+394,2023-11-29,2023,November,Livingston,Brighton,City Street,Dark - Lighted,Evening (6–10pm),Pickup Truck,Fatal,Alcohol/Drugs,4,0,0
+395,2024-06-28,2024,June,Macomb,Sterling Heights,County Road,Clear,Afternoon Rush (3–6pm),SUV/Truck,Minor Injury,Unknown,2,0,0
+396,2023-11-05,2023,November,Wayne,Livonia,City Street,Rain,Afternoon Rush (3–6pm),Passenger Car,Fatal,Following Too Closely,2,2,1
+397,2022-10-17,2022,October,Oakland,Royal Oak,County Road,Dark - Unlighted,Afternoon Rush (3–6pm),SUV/Truck,Property Damage Only,Distracted Driving,4,0,0
+398,2022-11-28,2022,November,Washtenaw,Ypsilanti,County Road,Clear,Morning Rush (6–9am),SUV/Truck,Serious Injury,Running Red Light,3,1,0
+399,2022-07-27,2022,July,Macomb,Utica,City Street,Dark - Unlighted,Afternoon Rush (3–6pm),Pedestrian,Minor Injury,Unknown,1,0,0
+400,2024-11-17,2024,November,Oakland,Royal Oak,Interstate/US Highway,Dark - Lighted,Afternoon Rush (3–6pm),Passenger Car,Property Damage Only,Weather Conditions,2,0,0
+401,2023-11-18,2023,November,Oakland,Farmington Hills,State Highway,Clear,Late Night (10pm–6am),Passenger Car,Serious Injury,Distracted Driving,3,0,1
+402,2022-06-13,2022,June,Kent,Grand Rapids,City Street,Dark - Unlighted,Evening (6–10pm),Passenger Car,Property Damage Only,Alcohol/Drugs,4,0,0
+403,2022-04-07,2022,April,Washtenaw,Ypsilanti,State Highway,Fog,Afternoon Rush (3–6pm),Passenger Car,Fatal,Running Red Light,3,2,1
+404,2022-09-07,2022,September,Ingham,Okemos,County Road,Fog,Midday (9am–3pm),Bicycle,Property Damage Only,Running Red Light,1,2,0
+405,2022-02-26,2022,February,Monroe,Dundee,Interstate/US Highway,Snow/Ice,Morning Rush (6–9am),Pedestrian,Fatal,Weather Conditions,2,2,0
+406,2023-10-17,2023,October,Macomb,St. Clair Shores,County Road,Snow/Ice,Midday (9am–3pm),Commercial Truck,Property Damage Only,Following Too Closely,1,2,0
+407,2022-07-15,2022,July,Wayne,Detroit,City Street,Dark - Lighted,Morning Rush (6–9am),Passenger Car,Property Damage Only,Weather Conditions,1,1,0
+408,2023-01-19,2023,January,Ingham,Okemos,City Street,Dark - Lighted,Afternoon Rush (3–6pm),Pickup Truck,Property Damage Only,Following Too Closely,3,2,0
+409,2023-11-20,2023,November,Genesee,Grand Blanc,Interstate/US Highway,Dark - Unlighted,Afternoon Rush (3–6pm),Pedestrian,Property Damage Only,Following Too Closely,1,1,1
+410,2023-06-23,2023,June,Ingham,East Lansing,City Street,Snow/Ice,Morning Rush (6–9am),Bicycle,Property Damage Only,Weather Conditions,1,0,0
+411,2023-10-25,2023,October,Monroe,Dundee,City Street,Dark - Lighted,Afternoon Rush (3–6pm),SUV/Truck,Property Damage Only,Running Red Light,2,0,0
+412,2022-09-17,2022,September,Monroe,Carleton,City Street,Dark - Lighted,Evening (6–10pm),SUV/Truck,Property Damage Only,Distracted Driving,3,1,0
+413,2022-09-06,2022,September,Ingham,Okemos,City Street,Fog,Midday (9am–3pm),SUV/Truck,Property Damage Only,Speeding,4,0,0
+414,2023-07-12,2023,July,Ingham,Okemos,County Road,Dark - Lighted,Morning Rush (6–9am),Passenger Car,Minor Injury,Running Red Light,1,0,0
+415,2024-08-11,2024,August,Monroe,Carleton,City Street,Clear,Midday (9am–3pm),Pedestrian,Property Damage Only,Weather Conditions,4,2,0
+416,2024-06-26,2024,June,Washtenaw,Saline,Interstate/US Highway,Fog,Late Night (10pm–6am),SUV/Truck,Property Damage Only,Alcohol/Drugs,2,1,1
+417,2024-05-23,2024,May,Genesee,Flint,City Street,Rain,Late Night (10pm–6am),Pedestrian,Serious Injury,Failure to Yield,3,3,0
+418,2024-05-10,2024,May,Kent,Grand Rapids,City Street,Dark - Lighted,Midday (9am–3pm),Passenger Car,Property Damage Only,Alcohol/Drugs,2,0,1
+419,2024-03-10,2024,March,Oakland,Royal Oak,Interstate/US Highway,Clear,Morning Rush (6–9am),SUV/Truck,Minor Injury,Distracted Driving,3,3,1
+420,2023-10-26,2023,October,Wayne,Detroit,City Street,Clear,Afternoon Rush (3–6pm),SUV/Truck,Property Damage Only,Unknown,4,0,0
+421,2022-09-09,2022,September,Wayne,Livonia,City Street,Rain,Midday (9am–3pm),Bicycle,Property Damage Only,Following Too Closely,2,0,0
+422,2022-10-30,2022,October,Kent,Grand Rapids,City Street,Snow/Ice,Late Night (10pm–6am),Commercial Truck,Serious Injury,Running Red Light,4,2,0
+423,2024-08-14,2024,August,Washtenaw,Ypsilanti,City Street,Snow/Ice,Midday (9am–3pm),Commercial Truck,Serious Injury,Weather Conditions,3,1,0
+424,2024-01-15,2024,January,Macomb,Sterling Heights,City Street,Snow/Ice,Afternoon Rush (3–6pm),SUV/Truck,Serious Injury,Alcohol/Drugs,3,0,0
+425,2022-11-04,2022,November,Wayne,Dearborn,Interstate/US Highway,Snow/Ice,Late Night (10pm–6am),Passenger Car,Property Damage Only,Alcohol/Drugs,4,0,0
+426,2022-11-22,2022,November,Wayne,Dearborn Heights,City Street,Clear,Evening (6–10pm),SUV/Truck,Property Damage Only,Following Too Closely,3,0,0
+427,2022-07-03,2022,July,Oakland,Auburn Hills,City Street,Clear,Late Night (10pm–6am),Passenger Car,Minor Injury,Running Red Light,2,0,0
+428,2023-08-30,2023,August,Macomb,Clinton Township,City Street,Rain,Evening (6–10pm),SUV/Truck,Minor Injury,Distracted Driving,1,0,0
+429,2022-02-05,2022,February,Wayne,Dearborn Heights,City Street,Fog,Morning Rush (6–9am),SUV/Truck,Minor Injury,Weather Conditions,4,0,1
+430,2022-09-23,2022,September,Ingham,Lansing,Interstate/US Highway,Clear,Afternoon Rush (3–6pm),Passenger Car,Serious Injury,Following Too Closely,3,0,0
+431,2022-05-10,2022,May,Macomb,Clinton Township,Interstate/US Highway,Fog,Afternoon Rush (3–6pm),Pickup Truck,Minor Injury,Failure to Yield,2,3,0
+432,2024-06-26,2024,June,Oakland,Pontiac,City Street,Clear,Evening (6–10pm),Passenger Car,Property Damage Only,Unknown,1,1,0
+433,2024-06-23,2024,June,Kent,Kentwood,State Highway,Dark - Lighted,Midday (9am–3pm),Bus,Minor Injury,Speeding,3,3,0
+434,2024-06-22,2024,June,Wayne,Livonia,City Street,Rain,Late Night (10pm–6am),Bicycle,Fatal,Weather Conditions,2,2,0
+435,2024-09-23,2024,September,Wayne,Warren,City Street,Rain,Evening (6–10pm),SUV/Truck,Property Damage Only,Weather Conditions,2,0,0
+436,2024-08-01,2024,August,Wayne,Detroit,City Street,Snow/Ice,Midday (9am–3pm),Commercial Truck,Serious Injury,Distracted Driving,1,0,0
+437,2023-07-21,2023,July,St. Clair,Port Huron,City Street,Dark - Lighted,Late Night (10pm–6am),Pedestrian,Property Damage Only,Speeding,2,0,1
+438,2024-03-07,2024,March,St. Clair,St. Clair,City Street,Rain,Evening (6–10pm),Bicycle,Serious Injury,Following Too Closely,1,0,0
+439,2022-08-25,2022,August,Wayne,Dearborn Heights,City Street,Clear,Afternoon Rush (3–6pm),Pickup Truck,Minor Injury,Distracted Driving,3,0,0
+440,2022-02-18,2022,February,Oakland,Farmington Hills,City Street,Clear,Late Night (10pm–6am),Bus,Serious Injury,Speeding,3,0,0
+441,2024-08-11,2024,August,Ingham,Okemos,State Highway,Dark - Unlighted,Morning Rush (6–9am),Bicycle,Serious Injury,Speeding,2,0,1
+442,2023-08-19,2023,August,Wayne,Livonia,City Street,Fog,Morning Rush (6–9am),Pickup Truck,Property Damage Only,Failure to Yield,1,3,0
+443,2024-01-30,2024,January,Ingham,Lansing,City Street,Snow/Ice,Evening (6–10pm),Passenger Car,Minor Injury,Unknown,2,1,0
+444,2022-02-01,2022,February,Ingham,Lansing,City Street,Clear,Midday (9am–3pm),Passenger Car,Minor Injury,Weather Conditions,4,0,0
+445,2022-12-29,2022,December,Livingston,Brighton,State Highway,Clear,Morning Rush (6–9am),Commercial Truck,Fatal,Speeding,4,2,0
+446,2022-05-05,2022,May,Oakland,Pontiac,State Highway,Rain,Evening (6–10pm),Pedestrian,Property Damage Only,Running Red Light,2,0,0
+447,2022-07-10,2022,July,Oakland,Southfield,Interstate/US Highway,Fog,Evening (6–10pm),Passenger Car,Fatal,Weather Conditions,3,1,0
+448,2022-04-09,2022,April,Macomb,Sterling Heights,City Street,Dark - Unlighted,Afternoon Rush (3–6pm),SUV/Truck,Property Damage Only,Weather Conditions,2,2,0
+449,2022-09-26,2022,September,Wayne,Warren,City Street,Clear,Afternoon Rush (3–6pm),Motorcycle,Minor Injury,Failure to Yield,2,0,0
+450,2024-11-06,2024,November,Ingham,Okemos,County Road,Rain,Midday (9am–3pm),SUV/Truck,Property Damage Only,Running Red Light,4,0,0
+451,2022-05-05,2022,May,Wayne,Westland,State Highway,Fog,Afternoon Rush (3–6pm),Bus,Serious Injury,Running Red Light,2,0,0
+452,2024-03-23,2024,March,Kent,Kentwood,State Highway,Fog,Late Night (10pm–6am),Bicycle,Serious Injury,Unknown,4,0,1
+453,2024-04-29,2024,April,Oakland,Auburn Hills,Interstate/US Highway,Fog,Evening (6–10pm),Pickup Truck,Fatal,Running Red Light,3,1,0
+454,2024-03-24,2024,March,Washtenaw,Saline,City Street,Rain,Midday (9am–3pm),SUV/Truck,Minor Injury,Speeding,1,2,0
+455,2023-03-06,2023,March,Washtenaw,Saline,City Street,Snow/Ice,Afternoon Rush (3–6pm),SUV/Truck,Property Damage Only,Distracted Driving,1,1,0
+456,2024-11-06,2024,November,Oakland,Royal Oak,City Street,Rain,Midday (9am–3pm),Motorcycle,Fatal,Speeding,3,1,0
+457,2024-07-31,2024,July,Macomb,St. Clair Shores,Interstate/US Highway,Clear,Morning Rush (6–9am),Passenger Car,Minor Injury,Following Too Closely,1,3,0
+458,2024-10-19,2024,October,Wayne,Livonia,City Street,Fog,Morning Rush (6–9am),Passenger Car,Fatal,Speeding,3,0,0
+459,2023-12-04,2023,December,Ingham,East Lansing,City Street,Dark - Unlighted,Midday (9am–3pm),Commercial Truck,Property Damage Only,Failure to Yield,3,3,0
+460,2023-08-18,2023,August,Macomb,Clinton Township,State Highway,Clear,Evening (6–10pm),Passenger Car,Fatal,Weather Conditions,4,0,0
+461,2022-03-23,2022,March,Wayne,Taylor,County Road,Clear,Midday (9am–3pm),Passenger Car,Property Damage Only,Distracted Driving,4,1,0
+462,2024-03-27,2024,March,Washtenaw,Ypsilanti,City Street,Fog,Afternoon Rush (3–6pm),Passenger Car,Minor Injury,Unknown,4,2,0
+463,2022-03-28,2022,March,Ingham,Lansing,City Street,Clear,Afternoon Rush (3–6pm),SUV/Truck,Serious Injury,Unknown,2,2,0
+464,2022-08-08,2022,August,Wayne,Taylor,State Highway,Dark - Lighted,Morning Rush (6–9am),Passenger Car,Property Damage Only,Weather Conditions,1,2,0
+465,2022-11-10,2022,November,Wayne,Livonia,State Highway,Dark - Unlighted,Afternoon Rush (3–6pm),Pickup Truck,Minor Injury,Following Too Closely,4,0,0
+466,2022-07-03,2022,July,St. Clair,Marysville,City Street,Snow/Ice,Morning Rush (6–9am),Bus,Serious Injury,Following Too Closely,1,2,0
+467,2023-06-12,2023,June,Wayne,Livonia,City Street,Fog,Afternoon Rush (3–6pm),Commercial Truck,Minor Injury,Following Too Closely,4,0,0
+468,2022-03-30,2022,March,Monroe,Dundee,City Street,Fog,Morning Rush (6–9am),Passenger Car,Property Damage Only,Distracted Driving,2,0,0
+469,2024-11-25,2024,November,St. Clair,Marysville,State Highway,Dark - Lighted,Evening (6–10pm),Bicycle,Minor Injury,Running Red Light,4,0,1
+470,2023-01-16,2023,January,Genesee,Grand Blanc,City Street,Rain,Afternoon Rush (3–6pm),Pedestrian,Property Damage Only,Weather Conditions,1,2,0
+471,2023-04-15,2023,April,Wayne,Westland,State Highway,Dark - Lighted,Morning Rush (6–9am),Pedestrian,Serious Injury,Following Too Closely,2,0,0
+472,2022-11-08,2022,November,Macomb,Utica,City Street,Dark - Unlighted,Morning Rush (6–9am),Bicycle,Minor Injury,Weather Conditions,1,0,0
+473,2023-07-24,2023,July,Ingham,Lansing,City Street,Fog,Afternoon Rush (3–6pm),Passenger Car,Property Damage Only,Failure to Yield,2,3,0
+474,2024-10-15,2024,October,Oakland,Farmington Hills,City Street,Fog,Afternoon Rush (3–6pm),Pickup Truck,Property Damage Only,Failure to Yield,1,3,0
+475,2024-08-31,2024,August,Macomb,Utica,State Highway,Dark - Unlighted,Morning Rush (6–9am),Pickup Truck,Property Damage Only,Speeding,2,0,0
+476,2023-01-06,2023,January,St. Clair,St. Clair,State Highway,Clear,Midday (9am–3pm),Pedestrian,Minor Injury,Alcohol/Drugs,2,3,0
+477,2023-02-01,2023,February,Genesee,Grand Blanc,Interstate/US Highway,Dark - Unlighted,Morning Rush (6–9am),Pedestrian,Fatal,Failure to Yield,4,0,0
+478,2024-10-03,2024,October,Wayne,Detroit,County Road,Dark - Lighted,Midday (9am–3pm),Bicycle,Serious Injury,Speeding,2,1,1
+479,2022-11-03,2022,November,Macomb,Roseville,City Street,Clear,Midday (9am–3pm),Passenger Car,Fatal,Running Red Light,3,1,0
+480,2024-10-24,2024,October,Macomb,Clinton Township,County Road,Fog,Afternoon Rush (3–6pm),Passenger Car,Property Damage Only,Distracted Driving,1,0,0
+481,2022-11-03,2022,November,Oakland,Royal Oak,City Street,Clear,Morning Rush (6–9am),Bus,Minor Injury,Running Red Light,3,3,0
+482,2023-10-09,2023,October,Washtenaw,Ann Arbor,City Street,Clear,Afternoon Rush (3–6pm),SUV/Truck,Minor Injury,Speeding,1,3,0
+483,2023-03-12,2023,March,Wayne,Dearborn,Interstate/US Highway,Clear,Afternoon Rush (3–6pm),SUV/Truck,Minor Injury,Weather Conditions,2,0,0
+484,2022-08-22,2022,August,Washtenaw,Saline,State Highway,Clear,Late Night (10pm–6am),Passenger Car,Minor Injury,Failure to Yield,4,0,0
+485,2024-03-05,2024,March,Macomb,Utica,City Street,Dark - Lighted,Afternoon Rush (3–6pm),Commercial Truck,Minor Injury,Following Too Closely,4,0,0
+486,2024-12-30,2024,December,Macomb,Utica,City Street,Clear,Evening (6–10pm),Pickup Truck,Property Damage Only,Following Too Closely,4,0,0
+487,2022-07-06,2022,July,Oakland,Southfield,City Street,Clear,Late Night (10pm–6am),Motorcycle,Minor Injury,Speeding,2,0,0
+488,2024-02-14,2024,February,Washtenaw,Ann Arbor,City Street,Dark - Unlighted,Afternoon Rush (3–6pm),Pedestrian,Minor Injury,Running Red Light,3,0,0
+489,2024-01-03,2024,January,Washtenaw,Saline,State Highway,Clear,Late Night (10pm–6am),Passenger Car,Fatal,Speeding,4,0,0
+490,2023-11-06,2023,November,Washtenaw,Saline,City Street,Rain,Evening (6–10pm),Passenger Car,Property Damage Only,Following Too Closely,4,3,0
+491,2024-09-17,2024,September,Oakland,Southfield,City Street,Clear,Morning Rush (6–9am),Bus,Minor Injury,Failure to Yield,4,2,0
+492,2022-05-28,2022,May,Washtenaw,Saline,County Road,Clear,Afternoon Rush (3–6pm),Motorcycle,Serious Injury,Speeding,4,0,0
+493,2023-08-23,2023,August,Ingham,Lansing,City Street,Clear,Late Night (10pm–6am),Passenger Car,Property Damage Only,Unknown,1,2,0
+494,2024-12-31,2024,December,Macomb,Utica,City Street,Dark - Lighted,Late Night (10pm–6am),Motorcycle,Fatal,Following Too Closely,4,0,1
+495,2022-11-04,2022,November,Macomb,St. Clair Shores,City Street,Clear,Midday (9am–3pm),Passenger Car,Minor Injury,Alcohol/Drugs,4,2,0
+496,2022-01-19,2022,January,Wayne,Westland,County Road,Dark - Lighted,Morning Rush (6–9am),SUV/Truck,Property Damage Only,Unknown,4,0,0
+497,2022-10-25,2022,October,Oakland,Southfield,City Street,Dark - Lighted,Evening (6–10pm),Bicycle,Property Damage Only,Distracted Driving,3,0,0
+498,2022-04-13,2022,April,St. Clair,Marysville,County Road,Snow/Ice,Afternoon Rush (3–6pm),SUV/Truck,Minor Injury,Running Red Light,2,0,0
+499,2022-09-02,2022,September,Livingston,Brighton,City Street,Dark - Unlighted,Afternoon Rush (3–6pm),Bicycle,Property Damage Only,Running Red Light,1,0,0
+500,2024-09-10,2024,September,Macomb,Clinton Township,Interstate/US Highway,Clear,Late Night (10pm–6am),Motorcycle,Serious Injury,Weather Conditions,3,2,0
