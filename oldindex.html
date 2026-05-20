@@ -41,8 +41,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:
 
 /* Day cards */
 .days{display:grid;grid-template-columns:1fr;gap:1rem;margin-bottom:3rem;}
-@media(min-width:680px){.days{grid-template-columns:repeat(2,1fr);}}
-@media(min-width:980px){.days{grid-template-columns:repeat(4,1fr);}}
+@media(min-width:760px){.days{grid-template-columns:repeat(3,1fr);}}
 
 .day-card{
   background:var(--surface);
@@ -67,16 +66,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:
 
 .day-card.two::before{background:var(--accent3);}
 .day-card.three::before{background:var(--accent2);}
-.day-card.four::before{background:#A87014;}
 .day-card.two:hover{border-color:var(--accent3);box-shadow:0 8px 24px rgba(196,66,10,.08);}
 .day-card.three:hover{border-color:var(--accent2);box-shadow:0 8px 24px rgba(26,58,107,.08);}
-.day-card.four:hover{border-color:#A87014;box-shadow:0 8px 24px rgba(168,112,20,.08);}
 
 .day-num{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);}
 .day-num strong{color:var(--accent);font-weight:500;}
 .day-card.two .day-num strong{color:var(--accent3);}
 .day-card.three .day-num strong{color:var(--accent2);}
-.day-card.four .day-num strong{color:#A87014;}
 
 .day-title{font-family:var(--serif);font-size:1.35rem;font-weight:300;line-height:1.25;}
 .day-title em{font-style:italic;color:var(--text2);}
@@ -88,7 +84,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:
 }
 .day-card.two .day-cta{color:var(--accent3);}
 .day-card.three .day-cta{color:var(--accent2);}
-.day-card.four .day-cta{color:#A87014;}
 .day-cta::after{content:'→';transition:transform .2s ease;}
 .day-card:hover .day-cta::after{transform:translateX(3px);}
 
@@ -154,13 +149,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:
 <header class="hero">
   <div class="hero-inner">
     <p class="course-tag">AP Computer Science A · Data Unit</p>
-    <h1>Pivot Tables<br><em>a four-day unit</em></h1>
-    <p class="hero-sub">A hands-on introduction to grouping, aggregation, and data storytelling — built around real Michigan traffic crash data from 2022 to 2024, capped by a week-long mini-project on a dataset of your choice.</p>
+    <h1>Pivot Tables<br><em>a three-day unit</em></h1>
+    <p class="hero-sub">A hands-on introduction to grouping, aggregation, and data storytelling — built around real Michigan traffic crash data from 2022 to 2024.</p>
     <div class="hero-meta">
       <span><strong>500</strong> &nbsp;records</span>
       <span><strong>15</strong> &nbsp;columns</span>
       <span><strong>10</strong> &nbsp;counties</span>
-      <span><strong>4</strong> &nbsp;days</span>
+      <span><strong>3</strong> &nbsp;days</span>
     </div>
   </div>
 </header>
@@ -192,17 +187,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:
       <p class="day-desc">Turn pivot tables into charts. Learn when a bar chart, stacked bar, or line chart tells the truth — and when it lies.</p>
       <span class="day-cta">Open Day 3</span>
     </a>
-
-    <a class="day-card four" href="day4.html">
-      <span class="day-num"><strong>Day 4</strong> &nbsp;·&nbsp; Mini-Project</span>
-      <h3 class="day-title">Your question, your data <em>— a week-long capstone</em></h3>
-      <p class="day-desc">Pick your own dataset, frame a question, analyze with pivots, and present what you found. A full week from choosing to sharing.</p>
-      <span class="day-cta">Open Day 4</span>
-    </a>
   </div>
 
   <div class="pull">
-    <strong>Three days on one dataset, one week on yours.</strong>&nbsp; Days 1–3 use the same 500 Michigan traffic crash records — the patterns you discover on Day 1 are the foundation for the filters, cross-tabs, and charts you'll build on Days 2 and 3. Day 4 turns the lens on a dataset <em>you</em> choose.
+    <strong>One dataset, three days.</strong>&nbsp; All three days use the same 500 Michigan traffic crash records. The patterns you discover on Day 1 are the foundation for the filters, cross-tabs, and charts you'll build on Days 2 and 3.
   </div>
 
   <p class="eyebrow">Resources</p>

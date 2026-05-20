@@ -1,6 +1,6 @@
 # Pivot Tables Unit — AP Computer Science A
 
-A four-day data unit for AP Computer Science A at Divine Child High School. Students learn pivot tables in Google Sheets using a 500-record Michigan traffic crash dataset, then cap the unit with a week-long mini-project on a dataset of their choice.
+A three-day data unit for AP Computer Science A at Divine Child High School. Students learn pivot tables in Google Sheets using a 500-record Michigan traffic crash dataset, then submit their work as a PDF.
 
 **Live site:** _enable GitHub Pages and put the URL here_
 
@@ -11,23 +11,19 @@ A four-day data unit for AP Computer Science A at Divine Child High School. Stud
 | 1 | Introduction from scratch | Rows, Values, the COUNTA/SUM aggregation |
 | 2 | Filters & cross-tabs | Filtering before aggregation, two-dimensional grouping |
 | 3 | Visualizing | Bar / stacked-bar / line charts from pivots |
-| 4 | Mini-project (week-long) | Choose a dataset, frame a question, analyze, present |
 
-Days 1–3 are single-class lessons. Each is a self-contained HTML page with a built-in PDF generator — students enter their name, click **Download PDF & Submit**, and upload the resulting PDF to Google Classroom.
-
-Day 4 is a week-long capstone. Students pick from a curated list of datasets (Kaggle, data.gov) or bring their own that meets the criteria, then work through dataset selection, question framing, iterative analysis with pivot logs, and presentation planning. The page auto-saves their progress to localStorage so they can return to it across the week. Final deliverable is the PDF plus a 3-minute in-class presentation.
+Each day is a single self-contained HTML page with a built-in PDF generator. Students enter their name, click **Download PDF & Submit**, and upload the resulting PDF to Google Classroom.
 
 ## Repo layout
 
 ```
 pivot-tables-unit/
-├── index.html              # Landing page linking to all four days
+├── index.html              # Landing page linking to all three days
 ├── day1.html               # Day 1 — Introduction
 ├── day2.html               # Day 2 — Filters & Cross-tabs
 ├── day3.html               # Day 3 — Visualizing
-├── day4.html               # Day 4 — Mini-Project (week-long capstone)
 ├── data/
-│   ├── michigan_crashes.csv   # 500-row dataset (used by Days 1–3)
+│   ├── michigan_crashes.csv   # 500-row dataset (the single source of truth)
 │   └── michigan_crashes.js    # Same data as JS for offline use
 └── vendor/
     ├── jspdf.umd.min.js       # Vendored — PDF generation
@@ -56,8 +52,7 @@ The school network may block CDNs, and Schoology has been known to strip `<scrip
 
 - jsPDF and Chart.js are **vendored locally** in `vendor/`. No CDN dependency at runtime.
 - The dataset is **embedded as `data/michigan_crashes.js`** so the pages work even when loaded over `file://` (no `fetch` calls).
-- Days 1–3 reference the **same 500-row dataset**. Update `data/michigan_crashes.csv` once and re-run `build_data.mjs` (kept in this repo's history) if you ever change it.
-- Day 4 uses **localStorage** to persist student work across the week. Each browser keeps its own copy under the key `pivotTables_day4_v1` — no data leaves the device.
+- All three days reference the **same 500-row dataset**. Update `data/michigan_crashes.csv` once and re-run `build_data.mjs` (kept in this repo's history) if you ever change it.
 
 The only external dependency is Google Fonts (for Fraunces / DM Sans / DM Mono). If the school blocks Google Fonts, the pages fall back to system fonts and still work.
 
@@ -70,8 +65,6 @@ On each day's last section students:
 3. Browser downloads `PivotTables_DayN_FirstName_LastName.pdf` with every answer they typed
 
 The PDF includes a cover page, every section's responses, and a footer with student name and class identifier. No data leaves the browser — generation is 100% client-side.
-
-For Day 4, students also bring a 3-minute presentation (slide deck or poster) to class on the final day. The PDF captures their dataset choice, three candidate questions, pivot log of attempts, finding, and talking points — enough that you can review their thinking before they present.
 
 ## Local development
 
