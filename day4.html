@@ -25,6 +25,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:
 .page-header::before{content:'';position:absolute;top:-40px;right:-40px;width:220px;height:220px;border-radius:50%;background:var(--accent);opacity:.14;}
 .page-header::after{content:'';position:absolute;bottom:-80px;left:-30px;width:160px;height:160px;border-radius:50%;background:var(--accent3);opacity:.08;}
 .course-tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#A09890;margin-bottom:.5rem;position:relative;}
+.tag-row{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.5rem;position:relative;flex-wrap:wrap;}
+.tag-row .course-tag{margin-bottom:0;}
+.unit-home-link{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:#A09890;text-decoration:none;transition:color .15s;display:inline-flex;align-items:center;gap:5px;}
+.unit-home-link:hover{color:#FFFDF8;}
+.unit-home-link::before{content:'←';}
+
 .page-header h1{font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.4rem);font-weight:300;line-height:1.2;margin-bottom:.5rem;position:relative;}
 .page-header h1 em{color:#E5C97D;font-style:italic;}
 .header-sub{font-size:14px;color:#A09890;margin-bottom:1.5rem;position:relative;}
@@ -175,7 +181,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:
 <body>
 
 <div class="page-header">
-  <p class="course-tag">AP Computer Science A · Data Unit · Day 4</p>
+  <div class="tag-row">
+
+    <p class="course-tag">AP Computer Science A · Data Unit · Day 4</p>
+
+    <a class="unit-home-link" href="index.html">Unit home</a>
+
+  </div>
   <h1>Pivot Tables<br><em>Mini-Project: Your Question, Your Data</em></h1>
   <p class="header-sub">A week-long capstone — pick a dataset, ask a question, find an answer, present it.</p>
   <div class="progress-bar-wrap">

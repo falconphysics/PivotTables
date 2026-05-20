@@ -24,6 +24,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:
 .page-header{background:var(--text);color:var(--bg);padding:2.5rem 2rem 2rem;position:relative;overflow:hidden;}
 .page-header::before{content:'';position:absolute;top:-40px;right:-40px;width:220px;height:220px;border-radius:50%;background:var(--accent);opacity:.12;}
 .course-tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#A09890;margin-bottom:.5rem;}
+.tag-row{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.5rem;position:relative;flex-wrap:wrap;}
+.tag-row .course-tag{margin-bottom:0;}
+.unit-home-link{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:#A09890;text-decoration:none;transition:color .15s;display:inline-flex;align-items:center;gap:5px;}
+.unit-home-link:hover{color:#FFFDF8;}
+.unit-home-link::before{content:'←';}
+
 .page-header h1{font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.4rem);font-weight:300;line-height:1.2;margin-bottom:.5rem;}
 .page-header h1 em{color:#9EC9AD;font-style:italic;}
 .header-sub{font-size:14px;color:#A09890;margin-bottom:1.5rem;}
@@ -190,7 +196,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:
 <body>
 
 <div class="page-header">
-  <p class="course-tag">AP Computer Science A · Data Unit · Day 1</p>
+  <div class="tag-row">
+
+    <p class="course-tag">AP Computer Science A · Data Unit · Day 1</p>
+
+    <a class="unit-home-link" href="index.html">Unit home</a>
+
+  </div>
   <h1>Pivot Tables<br><em>Introduction from Scratch</em></h1>
   <p class="header-sub">Michigan Traffic Crash Data · 500 records · 2022–2024</p>
   <div class="progress-bar-wrap">
