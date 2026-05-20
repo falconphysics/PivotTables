@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pivot Tables: Day Four — Mini-Project</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,500;1,300&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="vendor/jspdf.umd.min.js"></script>
+<style>
+:root {
+  --bg:#F5F2EC; --surface:#FFFDF8; --surface2:#EDE9E0; --border:#D4CFC4;
+  --text:#1A1714; --text2:#5A5650; --text3:#8A8580;
+  --accent:#A87014; --accent-light:#F5EAD0;
+  --accent2:#1A3A6B; --accent2-light:#DDE8F5;
+  --accent3:#C4420A; --accent3-light:#FAE8DF;
+  --green:#2B5F3E; --green-light:#DCF0E4;
+  --mono:'DM Mono',monospace; --serif:'Fraunces',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif;
+  --r:6px; --rl:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.65;min-height:100vh;}
+
+/* Header */
+.page-header{background:var(--text);color:var(--bg);padding:2.5rem 2rem 2rem;position:relative;overflow:hidden;}
+.page-header::before{content:'';position:absolute;top:-40px;right:-40px;width:220px;height:220px;border-radius:50%;background:var(--accent);opacity:.14;}
+.page-header::after{content:'';position:absolute;bottom:-80px;left:-30px;width:160px;height:160px;border-radius:50%;background:var(--accent3);opacity:.08;}
+.course-tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#A09890;margin-bottom:.5rem;position:relative;}
+.page-header h1{font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.4rem);font-weight:300;line-height:1.2;margin-bottom:.5rem;position:relative;}
+.page-header h1 em{color:#E5C97D;font-style:italic;}
+.header-sub{font-size:14px;color:#A09890;margin-bottom:1.5rem;position:relative;}
+.progress-bar-wrap{display:flex;gap:4px;align-items:center;position:relative;}
+.progress-seg{height:4px;flex:1;border-radius:2px;background:#3A3630;transition:background .4s;}
+.progress-seg.done{background:var(--accent);}
+.progress-seg.active{background:#E5C97D;}
+.progress-label{font-family:var(--mono);font-size:11px;color:#A09890;margin-left:8px;white-space:nowrap;}
+
+/* Nav */
+.nav-strip{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;gap:0;overflow-x:auto;}
+.nav-btn{font-family:var(--mono);font-size:12px;padding:14px 16px;border:none;background:transparent;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;letter-spacing:.04em;}
+.nav-btn:hover{color:var(--text);}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* Save status */
+.save-bar{background:var(--accent-light);border-bottom:1px solid var(--border);padding:6px 2rem;font-family:var(--mono);font-size:11px;color:var(--accent);display:flex;justify-content:space-between;align-items:center;}
+.save-bar button{font-family:var(--mono);font-size:11px;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:3px 10px;border-radius:3px;cursor:pointer;transition:background .15s;}
+.save-bar button:hover{background:var(--accent);color:var(--surface);}
+
+/* Main */
+.main{max-width:860px;margin:0 auto;padding:2rem;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;margin-bottom:1.25rem;}
+.card-title{font-family:var(--serif);font-size:1.1rem;font-weight:300;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.num-badge{font-family:var(--mono);font-size:11px;background:var(--accent);color:white;padding:2px 7px;border-radius:3px;}
+.card p{font-size:14px;color:var(--text2);margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+
+/* Info boxes */
+.concept-box{background:var(--accent2-light);border-left:3px solid var(--accent2);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.25rem;margin:1rem 0;font-size:14px;}
+.tip-box{background:var(--green-light);border-left:3px solid var(--green);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.25rem;margin:1rem 0;font-size:14px;}
+.warn-box{background:var(--accent3-light);border-left:3px solid var(--accent3);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.25rem;margin:1rem 0;font-size:14px;}
+.gold-box{background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.25rem;margin:1rem 0;font-size:14px;}
+
+/* Section heading */
+.section-heading{font-family:var(--serif);font-size:clamp(1.4rem,2.4vw,1.7rem);font-weight:300;margin-bottom:1.5rem;}
+.section-heading span{color:var(--accent);font-style:italic;}
+
+/* Timeline (week schedule) */
+.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:1rem 0;}
+@media(max-width:680px){.timeline{grid-template-columns:1fr 1fr;}}
+.tl-day{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center;}
+.tl-day .tl-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:6px;}
+.tl-day .tl-name{font-family:var(--serif);font-size:15px;margin-bottom:6px;}
+.tl-day .tl-desc{font-size:12px;color:var(--text2);line-height:1.4;}
+
+/* Rubric */
+.rubric{width:100%;border-collapse:collapse;margin:1rem 0;font-size:13px;}
+.rubric th{background:var(--text);color:var(--bg);padding:10px 12px;text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.06em;font-weight:400;}
+.rubric td{padding:10px 12px;border-bottom:1px solid var(--surface2);background:var(--surface);vertical-align:top;}
+.rubric td:first-child{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500;white-space:nowrap;}
+
+/* Dataset gallery */
+.dataset-grid{display:grid;grid-template-columns:1fr;gap:10px;margin:1rem 0;}
+@media(min-width:680px){.dataset-grid{grid-template-columns:1fr 1fr;}}
+.dataset-card{
+  display:flex;flex-direction:column;gap:8px;
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:14px;background:var(--surface);
+  text-decoration:none;color:inherit;
+  transition:border-color .2s,background .2s;
+}
+.dataset-card:hover{border-color:var(--accent);background:var(--accent-light);}
+.ds-source{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);}
+.ds-title{font-family:var(--serif);font-size:15px;font-weight:500;line-height:1.3;}
+.ds-desc{font-size:12.5px;color:var(--text2);line-height:1.5;}
+.ds-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:6px;}
+.ds-tag{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:3px;background:var(--surface2);color:var(--text3);}
+
+/* Steps */
+.steps{list-style:none;counter-reset:steps;}
+.steps li{counter-increment:steps;display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--surface2);font-size:14px;}
+.steps li:last-child{border-bottom:none;}
+.steps li::before{content:counter(steps);font-family:var(--mono);font-size:11px;background:var(--text);color:var(--bg);min-width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+
+/* Answer area */
+.answer-area{margin-top:12px;}
+.answer-area label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:6px;}
+.answer-area textarea{width:100%;min-height:70px;font-family:var(--sans);font-size:14px;border:1px solid var(--border);border-radius:var(--r);padding:10px;background:var(--surface);color:var(--text);resize:vertical;}
+.answer-area textarea:focus{outline:none;border-color:var(--accent);}
+.answer-area input[type="text"],.answer-area input[type="url"]{
+  width:100%;font-family:var(--sans);font-size:14px;
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:10px;background:var(--surface);color:var(--text);
+}
+.answer-area input:focus{outline:none;border-color:var(--accent);}
+
+/* Question rows for "log of pivots" */
+.pivot-log{display:flex;flex-direction:column;gap:10px;}
+.log-row{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:12px;display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;
+}
+.log-num{
+  font-family:var(--mono);font-size:11px;background:var(--accent);color:white;
+  width:24px;height:24px;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+}
+.log-fields{display:flex;flex-direction:column;gap:8px;}
+.log-fields input,.log-fields textarea{
+  width:100%;font-family:var(--sans);font-size:13px;
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:7px 9px;background:var(--bg);color:var(--text);
+}
+.log-fields textarea{min-height:50px;resize:vertical;}
+.log-fields input:focus,.log-fields textarea:focus{outline:none;border-color:var(--accent);}
+.log-fields .micro-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:-4px;}
+
+/* BYO checklist */
+.checklist{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:.5rem;}
+.checklist li{display:flex;gap:10px;font-size:13.5px;color:var(--text2);align-items:flex-start;}
+.checklist li::before{
+  content:'✓';font-family:var(--mono);font-size:12px;
+  color:var(--green);background:var(--green-light);
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+
+/* Footer nav */
+.footer-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0 2.5rem;margin-top:1rem;gap:10px;}
+.footer-btn{font-family:var(--sans);font-size:14px;padding:10px 20px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;transition:background .15s;}
+.footer-btn:hover{background:var(--surface2);}
+.footer-btn.next{background:var(--text);color:var(--bg);border-color:var(--text);}
+.footer-btn.next:hover{opacity:.85;}
+.footer-btn.dl{background:var(--accent);color:white;border-color:var(--accent);}
+.footer-btn.dl:hover{opacity:.88;}
+.footer-btn:disabled{opacity:.3;cursor:default;}
+
+/* Form group */
+.form-group{margin-bottom:1rem;}
+.form-group label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:6px;}
+.form-group input{width:100%;max-width:340px;font-family:var(--sans);font-size:14px;border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;background:var(--surface);color:var(--text);}
+.form-group input:focus{outline:none;border-color:var(--accent);}
+
+/* Pivot plan rows */
+.plan-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;}
+@media(max-width:600px){.plan-row{grid-template-columns:1fr 1fr;}}
+.plan-cell{display:flex;flex-direction:column;gap:4px;}
+.plan-cell label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);}
+.plan-cell input{font-family:var(--sans);font-size:13px;border:1px solid var(--border);border-radius:var(--r);padding:7px 9px;background:var(--surface);color:var(--text);}
+.plan-cell input:focus{outline:none;border-color:var(--accent);}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <p class="course-tag">AP Computer Science A · Data Unit · Day 4</p>
+  <h1>Pivot Tables<br><em>Mini-Project: Your Question, Your Data</em></h1>
+  <p class="header-sub">A week-long capstone — pick a dataset, ask a question, find an answer, present it.</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-seg active" id="seg0"></div>
+    <div class="progress-seg" id="seg1"></div>
+    <div class="progress-seg" id="seg2"></div>
+    <div class="progress-seg" id="seg3"></div>
+    <div class="progress-seg" id="seg4"></div>
+    <div class="progress-seg" id="seg5"></div>
+    <span class="progress-label" id="progress-label">1 / 6</span>
+  </div>
+</div>
+
+<div class="nav-strip">
+  <button class="nav-btn active" data-sec="0">0. Overview</button>
+  <button class="nav-btn" data-sec="1">1. Dataset</button>
+  <button class="nav-btn" data-sec="2">2. Questions</button>
+  <button class="nav-btn" data-sec="3">3. Analyze</button>
+  <button class="nav-btn" data-sec="4">4. Present</button>
+  <button class="nav-btn" data-sec="5">5. Submit</button>
+</div>
+
+<div class="save-bar">
+  <span id="save-status">💾 Your work auto-saves to this browser.</span>
+  <button onclick="resetWork()">Clear my saved work</button>
+</div>
+
+<div class="main">
+
+<!-- ══════════ SEC 0: OVERVIEW ══════════ -->
+<div class="section active" id="sec0">
+  <h2 class="section-heading">Project overview — <span>what the week looks like</span></h2>
+
+  <div class="card">
+    <div class="card-title">The challenge</div>
+    <p>For Days 1–3, you used the dataset I chose. Now you choose. Find a dataset that genuinely interests you, frame a real question about it, use pivot tables to answer that question, and present what you found.</p>
+    <p>The goal isn't to use every trick we've learned — it's to use the right one for your question, and to tell a clear story with the result.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The week</div>
+    <div class="timeline">
+      <div class="tl-day">
+        <div class="tl-label">Mon</div>
+        <div class="tl-name">Choose</div>
+        <div class="tl-desc">Pick your dataset</div>
+      </div>
+      <div class="tl-day">
+        <div class="tl-label">Tue</div>
+        <div class="tl-name">Question</div>
+        <div class="tl-desc">Frame three; pick one</div>
+      </div>
+      <div class="tl-day">
+        <div class="tl-label">Wed</div>
+        <div class="tl-name">Analyze</div>
+        <div class="tl-desc">Build pivots; log results</div>
+      </div>
+      <div class="tl-day">
+        <div class="tl-label">Thu</div>
+        <div class="tl-name">Present</div>
+        <div class="tl-desc">Build your poster/slides</div>
+      </div>
+      <div class="tl-day">
+        <div class="tl-label">Fri</div>
+        <div class="tl-name">Share</div>
+        <div class="tl-desc">Present + submit PDF</div>
+      </div>
+    </div>
+    <div class="gold-box" style="margin-top:1rem;">
+      <strong>Auto-save:</strong> This page saves your work to your browser as you type. You can close it and come back. <em>Important:</em> use the same browser on the same computer all week. If you switch devices, your progress doesn't follow.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">What you'll turn in</div>
+    <p><strong>By Friday class:</strong></p>
+    <ol class="steps">
+      <li><strong>A PDF</strong> generated from this page (your dataset choice, questions, pivot log, findings, and reflection)</li>
+      <li><strong>A short presentation</strong> — 3 minutes, either a slide deck (3–5 slides) or a physical/digital poster. Show your question, your key pivot table, your chart, and what you found.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How it's graded</div>
+    <table class="rubric">
+      <tr>
+        <th>Criterion</th>
+        <th>What I'm looking for</th>
+      </tr>
+      <tr>
+        <td>Dataset</td>
+        <td>Genuinely meets the criteria (size, columns, source). Cited.</td>
+      </tr>
+      <tr>
+        <td>Question</td>
+        <td>Specific, answerable with this data, and non-obvious.</td>
+      </tr>
+      <tr>
+        <td>Analysis</td>
+        <td>Pivot table(s) actually answer the question. Log shows real exploration, not just one try.</td>
+      </tr>
+      <tr>
+        <td>Finding</td>
+        <td>One clear sentence with a number, and one sentence on why it matters.</td>
+      </tr>
+      <tr>
+        <td>Honesty</td>
+        <td>You name what your data <em>can't</em> tell you. (Limits, biases, missing context.)</td>
+      </tr>
+      <tr>
+        <td>Presentation</td>
+        <td>Clear, on-time, audience could repeat your finding back to you.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Model finding (from Days 1–3)</div>
+    <div class="gold-box" style="font-style:italic;">
+      "Motorcycles made up only 4% of all crashes in Wayne County, but accounted for 21% of fatal crashes — more than five times their expected share. This suggests motorcycle crashes are disproportionately deadly even when they happen less often."
+    </div>
+    <p style="margin-top:0.75rem;">Notice it has: a specific number, a comparison, and a "this suggests…" interpretation. That's the shape we're going for.</p>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" disabled>← Back</button>
+    <button class="footer-btn next" onclick="goSection(1)">Next: Pick your dataset →</button>
+  </div>
+</div>
+
+<!-- ══════════ SEC 1: DATASET ══════════ -->
+<div class="section" id="sec1">
+  <h2 class="section-heading">Step 1 — <span>choose your dataset</span></h2>
+
+  <p style="font-size:15px; color:var(--text2); margin-bottom:1.25rem;">You have two paths. Pick the one that fits your interest.</p>
+
+  <div class="card">
+    <div class="card-title"><span class="num-badge">A</span> Pick from the curated list</div>
+    <p>These are all free, downloadable datasets that meet the project criteria. Click any to open in a new tab.</p>
+    <div class="dataset-grid">
+
+      <a class="dataset-card" href="https://www.kaggle.com/datasets/heesoo37/120-years-of-olympic-history-athletes-and-results" target="_blank" rel="noopener">
+        <span class="ds-source">Kaggle</span>
+        <span class="ds-title">120 Years of Olympic History</span>
+        <span class="ds-desc">Every Olympic athlete from 1896–2016: name, country, sport, event, medal, age, height, weight.</span>
+        <div class="ds-tags"><span class="ds-tag">~270K rows</span><span class="ds-tag">sports</span></div>
+      </a>
+
+      <a class="dataset-card" href="https://www.kaggle.com/datasets/yamaerenay/spotify-dataset-19212020-600k-tracks" target="_blank" rel="noopener">
+        <span class="ds-source">Kaggle</span>
+        <span class="ds-title">Spotify Tracks 1921–2020</span>
+        <span class="ds-desc">Songs with genre, year, tempo, energy, danceability, popularity. Great for "what makes a hit?" questions.</span>
+        <div class="ds-tags"><span class="ds-tag">600K rows</span><span class="ds-tag">music</span></div>
+      </a>
+
+      <a class="dataset-card" href="https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset" target="_blank" rel="noopener">
+        <span class="ds-source">Kaggle</span>
+        <span class="ds-title">The Movies Dataset</span>
+        <span class="ds-desc">45K movies with budget, revenue, genre, rating, release year, runtime, language.</span>
+        <div class="ds-tags"><span class="ds-tag">45K rows</span><span class="ds-tag">film</span></div>
+      </a>
+
+      <a class="dataset-card" href="https://www.kaggle.com/datasets/maxhorowitz/nflplaybyplay2009to2016" target="_blank" rel="noopener">
+        <span class="ds-source">Kaggle</span>
+        <span class="ds-title">NFL Play-by-Play 2009–2018</span>
+        <span class="ds-desc">Every NFL play with team, down, distance, play type, yards, score. Detroit Lions data included.</span>
+        <div class="ds-tags"><span class="ds-tag">large</span><span class="ds-tag">sports</span></div>
+      </a>
+
+      <a class="dataset-card" href="https://catalog.data.gov/dataset/college-scorecard" target="_blank" rel="noopener">
+        <span class="ds-source">data.gov</span>
+        <span class="ds-title">College Scorecard</span>
+        <span class="ds-desc">U.S. colleges with tuition, graduation rates, average earnings, student demographics, location.</span>
+        <div class="ds-tags"><span class="ds-tag">~6K rows</span><span class="ds-tag">education</span></div>
+      </a>
+
+      <a class="dataset-card" href="https://www.kaggle.com/datasets/rtatman/188-million-us-wildfires" target="_blank" rel="noopener">
+        <span class="ds-source">Kaggle</span>
+        <span class="ds-title">U.S. Wildfires 1992–2015</span>
+        <span class="ds-desc">1.88M wildfires with cause, size, state, county, date. Big — sample to 10K rows in Sheets.</span>
+        <div class="ds-tags"><span class="ds-tag">very large</span><span class="ds-tag">environment</span></div>
+      </a>
+
+      <a class="dataset-card" href="https://www.kaggle.com/datasets/snap/amazon-fine-food-reviews" target="_blank" rel="noopener">
+        <span class="ds-source">Kaggle</span>
+        <span class="ds-title">Amazon Fine Food Reviews</span>
+        <span class="ds-desc">568K product reviews with score (1–5), helpfulness votes, product, time.</span>
+        <div class="ds-tags"><span class="ds-tag">568K rows</span><span class="ds-tag">commerce</span></div>
+      </a>
+
+      <a class="dataset-card" href="https://www.kaggle.com/datasets/ronitf/heart-disease-uci" target="_blank" rel="noopener">
+        <span class="ds-source">Kaggle</span>
+        <span class="ds-title">Heart Disease (UCI)</span>
+        <span class="ds-desc">Patient data with age, sex, chest-pain type, cholesterol, max heart rate, diagnosis outcome.</span>
+        <div class="ds-tags"><span class="ds-tag">~300 rows</span><span class="ds-tag">health</span></div>
+      </a>
+
+      <a class="dataset-card" href="https://www.kaggle.com/datasets/zynicide/wine-reviews" target="_blank" rel="noopener">
+        <span class="ds-source">Kaggle</span>
+        <span class="ds-title">Wine Reviews</span>
+        <span class="ds-desc">130K wines with country, variety, price, points (rating), description, winery, region.</span>
+        <div class="ds-tags"><span class="ds-tag">130K rows</span><span class="ds-tag">food/drink</span></div>
+      </a>
+
+      <a class="dataset-card" href="https://catalog.data.gov/dataset/?res_format=CSV" target="_blank" rel="noopener">
+        <span class="ds-source">data.gov</span>
+        <span class="ds-title">Browse data.gov (CSVs only)</span>
+        <span class="ds-desc">If none of the above grab you, browse government datasets filtered to CSV format.</span>
+        <div class="ds-tags"><span class="ds-tag">browse</span><span class="ds-tag">varied</span></div>
+      </a>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="num-badge">B</span> Bring your own</div>
+    <p>Find something you actually care about — from Kaggle, data.gov, your state's open data portal, a sports stats site, a Wikipedia table you can paste into Sheets. To count, it must meet all of these:</p>
+    <ul class="checklist">
+      <li>At least <strong>200 rows</strong> (so groups have real counts)</li>
+      <li>At least <strong>3 categorical columns</strong> you could group by (text values like "Country", "Genre", "Decade")</li>
+      <li>At least <strong>1 numeric column</strong> you could aggregate (counts, sums, or averages)</li>
+      <li>You can <strong>actually download it</strong> as CSV or Excel — not just view it on a webpage</li>
+      <li>The source is <strong>cited and credible</strong> (a name, a URL, a date)</li>
+    </ul>
+    <div class="warn-box" style="margin-top:1rem;">
+      <strong>Not allowed:</strong> the Michigan crash data from Days 1–3 (we already analyzed it), survey data you generated yourself with under 50 responses, or scraped data without a clear source.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Record your choice</div>
+    <div class="answer-area">
+      <label>Dataset name</label>
+      <input type="text" id="ds-name" placeholder="e.g. 120 Years of Olympic History">
+    </div>
+    <div class="answer-area">
+      <label>Source URL</label>
+      <input type="url" id="ds-url" placeholder="https://...">
+    </div>
+    <div class="answer-area">
+      <label>Where did this data come from? (organization, time period, how was it collected — 1–2 sentences)</label>
+      <textarea id="ds-source" placeholder="This data was compiled by ___ from ___, covering the years ___ through ___."></textarea>
+    </div>
+    <div class="answer-area">
+      <label>Rough size (rows × columns)</label>
+      <input type="text" id="ds-size" placeholder="e.g. 271,116 rows × 15 columns">
+    </div>
+    <div class="answer-area">
+      <label>List 3+ categorical columns (the ones you could group by)</label>
+      <textarea id="ds-cat" placeholder="e.g. Sport, Country, Year, Medal, Sex"></textarea>
+    </div>
+    <div class="answer-area">
+      <label>List 1+ numeric column (the ones you could SUM, COUNT, or AVERAGE)</label>
+      <textarea id="ds-num" placeholder="e.g. Age, Height, Weight"></textarea>
+    </div>
+    <div class="answer-area">
+      <label>Why did you pick this one? What about it interests you?</label>
+      <textarea id="ds-why" placeholder="I chose this because…"></textarea>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(0)">← Back</button>
+    <button class="footer-btn next" onclick="goSection(2)">Next: Frame your questions →</button>
+  </div>
+</div>
+
+<!-- ══════════ SEC 2: QUESTIONS ══════════ -->
+<div class="section" id="sec2">
+  <h2 class="section-heading">Step 2 — <span>frame your questions</span></h2>
+
+  <div class="card">
+    <div class="card-title">What makes a good pivot-table question?</div>
+    <div class="concept-box">
+      A good question has the shape: <strong>"For [filter / subset], how does [numeric thing] vary by [categorical thing]?"</strong>
+    </div>
+    <p>That shape maps directly to a pivot table: the <em>filter</em> goes in Filters, the <em>categorical thing</em> goes in Rows (or Columns), and the <em>numeric thing</em> goes in Values.</p>
+
+    <div class="tip-box">
+      <strong>Examples of good questions:</strong>
+      <ul style="margin-top:6px;padding-left:18px;">
+        <li>"Among Olympic gold medalists, how does average age vary by sport?"</li>
+        <li>"For songs from 1960–2020, how has average tempo changed by decade?"</li>
+        <li>"Which colleges have the best graduation rate per dollar of tuition?"</li>
+      </ul>
+    </div>
+
+    <div class="warn-box">
+      <strong>Bad questions (and why):</strong>
+      <ul style="margin-top:6px;padding-left:18px;">
+        <li><em>"What's interesting in this data?"</em> — too vague, no pivot maps to it</li>
+        <li><em>"Are basketball players tall?"</em> — answer is obvious, no surprise possible</li>
+        <li><em>"Why do people get heart disease?"</em> — pivots show what, not why</li>
+        <li><em>"How many rows are there?"</em> — that's a count, not an analysis</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Brainstorm — write three candidate questions</div>
+    <p>Write three different questions you could ask about your dataset. Don't filter yet — get them on paper, then pick. Use the "For ___, how does ___ vary by ___?" shape.</p>
+
+    <div class="answer-area">
+      <label>Candidate Question 1</label>
+      <textarea id="q-cand-1" placeholder="For ___, how does ___ vary by ___?"></textarea>
+    </div>
+    <div class="answer-area">
+      <label>Candidate Question 2</label>
+      <textarea id="q-cand-2" placeholder="For ___, how does ___ vary by ___?"></textarea>
+    </div>
+    <div class="answer-area">
+      <label>Candidate Question 3</label>
+      <textarea id="q-cand-3" placeholder="For ___, how does ___ vary by ___?"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Pick one and sharpen it</div>
+    <p>Which of your three feels most interesting AND is actually answerable with your columns? Restate it as a single clear question.</p>
+    <div class="answer-area">
+      <label>Your final question</label>
+      <textarea id="q-final" placeholder="Among ___, how does ___ vary by ___?"></textarea>
+    </div>
+    <div class="answer-area">
+      <label>Why is this question worth asking? (One sentence — who would care about the answer, or what would it tell us?)</label>
+      <textarea id="q-why" placeholder="This matters because…"></textarea>
+    </div>
+    <div class="answer-area">
+      <label>What's your gut prediction for the answer? (We're writing this down BEFORE you analyze — to see if the data surprises you.)</label>
+      <textarea id="q-predict" placeholder="My prediction is that…"></textarea>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(1)">← Back</button>
+    <button class="footer-btn next" onclick="goSection(3)">Next: Analyze →</button>
+  </div>
+</div>
+
+<!-- ══════════ SEC 3: ANALYZE ══════════ -->
+<div class="section" id="sec3">
+  <h2 class="section-heading">Step 3 — <span>analyze with pivot tables</span></h2>
+
+  <div class="card">
+    <div class="card-title">Get your data into Sheets</div>
+    <ol class="steps">
+      <li>Download the dataset as <strong>CSV</strong> or <strong>Excel (.xlsx)</strong> from your source.</li>
+      <li>If the file is huge (over 50,000 rows), open it in Excel or Sheets and trim it. Take a clean subset — e.g., one country, one decade, one league — that still has 200+ rows.</li>
+      <li>In Google Sheets: <strong>File → Import → Upload</strong>, then <strong>Replace spreadsheet</strong>, separator <strong>Comma</strong>.</li>
+      <li><strong>Check your import:</strong> Row 1 should be column headers. Numeric columns should be right-aligned (numbers, not text). Date columns should sort as dates.</li>
+    </ol>
+    <div class="warn-box">
+      <strong>If a numeric column shows up as text:</strong> select the column, then <strong>Format → Number → Number</strong>. Pivots can only sum/average actual numbers.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Plan your first pivot</div>
+    <p>Before you click anything in Sheets, plan it out. What goes in each zone?</p>
+    <div class="plan-row">
+      <div class="plan-cell">
+        <label>Filter</label>
+        <input type="text" id="plan-filter" placeholder="e.g. Year ≥ 2000">
+      </div>
+      <div class="plan-cell">
+        <label>Rows</label>
+        <input type="text" id="plan-rows" placeholder="e.g. Sport">
+      </div>
+      <div class="plan-cell">
+        <label>Columns</label>
+        <input type="text" id="plan-cols" placeholder="(optional)">
+      </div>
+      <div class="plan-cell">
+        <label>Values</label>
+        <input type="text" id="plan-vals" placeholder="e.g. AVG of Age">
+      </div>
+    </div>
+    <div class="answer-area">
+      <label>What do you expect to see, before you build it?</label>
+      <textarea id="plan-expect" placeholder="I expect the pivot to show…"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Pivot log — record what you tried</div>
+    <p>Real analysis is iterative. Build at least <strong>three</strong> pivots. The first one is rarely the right one. Log each attempt: what setup, what you saw, what it made you want to try next.</p>
+
+    <div class="pivot-log">
+      <div class="log-row">
+        <div class="log-num">1</div>
+        <div class="log-fields">
+          <div class="micro-label">Setup (Filter / Rows / Columns / Values)</div>
+          <input type="text" id="log1-setup" placeholder="Rows: Sport · Values: AVG Age · Filter: Medal = Gold">
+          <div class="micro-label">What it showed (top result, or the shape of the result)</div>
+          <input type="text" id="log1-result" placeholder="Equestrian had the highest avg age at 36.4; gymnastics lowest at 18.2">
+          <div class="micro-label">What you tried next, and why</div>
+          <textarea id="log1-next" placeholder="The gap was bigger than I expected, so I…"></textarea>
+        </div>
+      </div>
+
+      <div class="log-row">
+        <div class="log-num">2</div>
+        <div class="log-fields">
+          <div class="micro-label">Setup</div>
+          <input type="text" id="log2-setup" placeholder="">
+          <div class="micro-label">What it showed</div>
+          <input type="text" id="log2-result" placeholder="">
+          <div class="micro-label">What you tried next, and why</div>
+          <textarea id="log2-next" placeholder=""></textarea>
+        </div>
+      </div>
+
+      <div class="log-row">
+        <div class="log-num">3</div>
+        <div class="log-fields">
+          <div class="micro-label">Setup</div>
+          <input type="text" id="log3-setup" placeholder="">
+          <div class="micro-label">What it showed</div>
+          <input type="text" id="log3-result" placeholder="">
+          <div class="micro-label">What you tried next, and why</div>
+          <textarea id="log3-next" placeholder=""></textarea>
+        </div>
+      </div>
+
+      <div class="log-row">
+        <div class="log-num">+</div>
+        <div class="log-fields">
+          <div class="micro-label">(Optional) Pivot 4 — if you needed more attempts to land your finding</div>
+          <input type="text" id="log4-setup" placeholder="Setup">
+          <input type="text" id="log4-result" placeholder="What it showed">
+          <textarea id="log4-next" placeholder="Notes (optional)"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The pivot that answers your question</div>
+    <p>Of all the pivots you built, which ONE actually answers the question from Step 2? Describe it here. This is the one you'll show in your presentation.</p>
+    <div class="plan-row">
+      <div class="plan-cell">
+        <label>Final Filter</label>
+        <input type="text" id="final-filter" placeholder="">
+      </div>
+      <div class="plan-cell">
+        <label>Final Rows</label>
+        <input type="text" id="final-rows" placeholder="">
+      </div>
+      <div class="plan-cell">
+        <label>Final Columns</label>
+        <input type="text" id="final-cols" placeholder="">
+      </div>
+      <div class="plan-cell">
+        <label>Final Values</label>
+        <input type="text" id="final-vals" placeholder="">
+      </div>
+    </div>
+    <div class="answer-area">
+      <label>Best chart type for this pivot, and why?</label>
+      <textarea id="final-chart" placeholder="I'd use a ___ chart because…"></textarea>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(2)">← Back</button>
+    <button class="footer-btn next" onclick="goSection(4)">Next: Present →</button>
+  </div>
+</div>
+
+<!-- ══════════ SEC 4: PRESENT ══════════ -->
+<div class="section" id="sec4">
+  <h2 class="section-heading">Step 4 — <span>tell the story</span></h2>
+
+  <div class="card">
+    <div class="card-title">Your finding, in two sentences</div>
+    <p>The model from Days 1–3 had: a specific number, a comparison, and an interpretation. Use that shape.</p>
+    <div class="answer-area">
+      <label>Sentence 1 — the finding with a specific number</label>
+      <textarea id="finding-1" placeholder="Example: Among Olympic gold medalists since 2000, average age in equestrian (36.4) was nearly double that of gymnastics (18.2)."></textarea>
+    </div>
+    <div class="answer-area">
+      <label>Sentence 2 — why it matters, or what it suggests</label>
+      <textarea id="finding-2" placeholder="Example: This suggests that some sports reward decades of experience while others reward physical peaks that don't last past age 20."></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Honest limitations</div>
+    <p>What your data CAN'T tell you is just as important as what it can. Be the one to name the limits before someone in the audience does.</p>
+    <div class="answer-area">
+      <label>What's one thing your pivot can't tell you? (causation, missing data, sampling bias, time-window mismatch…)</label>
+      <textarea id="limit-1" placeholder="My pivot can't tell me whether…"></textarea>
+    </div>
+    <div class="answer-area">
+      <label>What's one follow-up question your analysis raises?</label>
+      <textarea id="followup" placeholder="A next question would be…"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Build your presentation</div>
+    <p>Choose <strong>one</strong> format and build it on your own time. You have ~3 minutes to present in class on Friday.</p>
+
+    <div class="concept-box">
+      <strong>Option A — Slide deck</strong> (Google Slides or Keynote, 3–5 slides):
+      <ol style="margin-top:6px;padding-left:18px;">
+        <li><strong>Title slide</strong> — your name, your dataset, your question</li>
+        <li><strong>The data</strong> — what it is, where it's from, what's in it</li>
+        <li><strong>The pivot</strong> — a screenshot of your final pivot table</li>
+        <li><strong>The chart</strong> — a screenshot of the chart you built from it</li>
+        <li><strong>The finding</strong> — your two-sentence finding + one limitation</li>
+      </ol>
+    </div>
+
+    <div class="tip-box">
+      <strong>Option B — Poster</strong> (physical or digital, like Google Drawings or Canva):
+      <ul style="margin-top:6px;padding-left:18px;">
+        <li>One big sheet, glanceable from 6 feet away</li>
+        <li>Question at the top, in 30+ point text</li>
+        <li>Chart in the middle (the visual is the star)</li>
+        <li>Finding written underneath in 2 sentences</li>
+        <li>Dataset source cited at the bottom</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Talking points — what you'll say</div>
+    <p>Your 3 minutes, in writing. You don't need a full script, just the beats. Practice this out loud once before Friday.</p>
+    <div class="answer-area">
+      <label>1. The hook — first sentence (the question, or a surprising number)</label>
+      <textarea id="talk-hook" placeholder="Did you know that…"></textarea>
+    </div>
+    <div class="answer-area">
+      <label>2. The data — 1 sentence about what the dataset is and where it came from</label>
+      <textarea id="talk-data" placeholder="I used data from…"></textarea>
+    </div>
+    <div class="answer-area">
+      <label>3. The approach — 1 sentence about the pivot setup that got you the answer</label>
+      <textarea id="talk-method" placeholder="I built a pivot table grouping by…"></textarea>
+    </div>
+    <div class="answer-area">
+      <label>4. The finding — your two-sentence finding from above (you can re-write here)</label>
+      <textarea id="talk-finding" placeholder="What I found is…"></textarea>
+    </div>
+    <div class="answer-area">
+      <label>5. The honest caveat — your one limitation</label>
+      <textarea id="talk-limit" placeholder="One thing this can't tell us is…"></textarea>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(3)">← Back</button>
+    <button class="footer-btn next" onclick="goSection(5)">Next: Submit →</button>
+  </div>
+</div>
+
+<!-- ══════════ SEC 5: SUBMIT ══════════ -->
+<div class="section" id="sec5">
+  <h2 class="section-heading">Step 5 — <span>submit your project</span></h2>
+
+  <div class="card">
+    <div class="card-title">Exit reflection — unit-wide</div>
+    <p>You've spent four days on pivot tables. Take a minute to reflect on the whole unit.</p>
+    <div class="answer-area">
+      <label>What's the most useful thing you learned about working with data?</label>
+      <textarea id="exit-1" placeholder=""></textarea>
+    </div>
+    <div class="answer-area">
+      <label>How does a pivot table relate to something we'll do in AP CS A with arrays, loops, or HashMaps? (Be specific.)</label>
+      <textarea id="exit-2" placeholder="A pivot table is similar to a HashMap because…"></textarea>
+    </div>
+    <div class="answer-area">
+      <label>Where else in your life could you imagine using pivot tables?</label>
+      <textarea id="exit-3" placeholder=""></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Ready to submit?</div>
+    <p>Enter your name and download your PDF. Upload it to Google Classroom <strong>along with a screenshot of your chart and a link to your slides/photo of your poster</strong>.</p>
+    <div class="form-group">
+      <label>Your name</label>
+      <input type="text" id="student-name" placeholder="First Last">
+    </div>
+    <div class="warn-box">
+      <strong>Don't forget Friday:</strong> Even after you submit this PDF, you still need to present in class. Bring your slides or poster ready to go.
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <button class="footer-btn" onclick="goSection(4)">← Back</button>
+    <button class="footer-btn dl" onclick="generatePDF()">Download PDF &amp; Submit</button>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ── Navigation ────────────────────────────────────────
+let current = 0;
+const sections = document.querySelectorAll('.section');
+const navBtns = document.querySelectorAll('.nav-btn');
+const segs = document.querySelectorAll('.progress-seg');
+
+function goSection(n) {
+  sections[current].classList.remove('active');
+  navBtns[current].classList.remove('active');
+  segs[current].classList.remove('active');
+  segs[current].classList.add('done');
+  current = n;
+  sections[current].classList.add('active');
+  navBtns[current].classList.add('active');
+  segs[current].classList.remove('done');
+  segs[current].classList.add('active');
+  document.getElementById('progress-label').textContent = `${n+1} / 6`;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+navBtns.forEach((btn, i) => btn.addEventListener('click', () => goSection(i)));
+
+// ── Auto-save to localStorage ─────────────────────────
+const STORAGE_KEY = 'pivotTables_day4_v1';
+const INPUT_IDS = [
+  'ds-name','ds-url','ds-source','ds-size','ds-cat','ds-num','ds-why',
+  'q-cand-1','q-cand-2','q-cand-3','q-final','q-why','q-predict',
+  'plan-filter','plan-rows','plan-cols','plan-vals','plan-expect',
+  'log1-setup','log1-result','log1-next',
+  'log2-setup','log2-result','log2-next',
+  'log3-setup','log3-result','log3-next',
+  'log4-setup','log4-result','log4-next',
+  'final-filter','final-rows','final-cols','final-vals','final-chart',
+  'finding-1','finding-2','limit-1','followup',
+  'talk-hook','talk-data','talk-method','talk-finding','talk-limit',
+  'exit-1','exit-2','exit-3',
+  'student-name'
+];
+
+function loadWork() {
+  try {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    INPUT_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && data[id] !== undefined) el.value = data[id];
+    });
+    if (data.__savedAt) {
+      const d = new Date(data.__savedAt);
+      document.getElementById('save-status').innerHTML =
+        `💾 Loaded your saved work from ${d.toLocaleString()}. Auto-saves as you type.`;
+    }
+  } catch(e) { /* ignore */ }
+}
+
+let saveTimer;
+function saveWork() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const data = { __savedAt: new Date().toISOString() };
+    INPUT_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) data[id] = el.value;
+    });
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      const status = document.getElementById('save-status');
+      status.innerHTML = '✓ Saved · ' + new Date().toLocaleTimeString();
+      setTimeout(() => {
+        status.innerHTML = '💾 Your work auto-saves to this browser.';
+      }, 2000);
+    } catch(e) { /* storage full or disabled */ }
+  }, 400);
+}
+
+function resetWork() {
+  if (!confirm('Erase all your saved work on this page? This cannot be undone.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  INPUT_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('save-status').innerHTML = '🗑️ Cleared. Start fresh.';
+}
+
+window.addEventListener('load', () => {
+  loadWork();
+  INPUT_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', saveWork);
+  });
+});
+
+// ── PDF Generation ─────────────────────────────────────
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? (el.value || '').trim() : '';
+}
+
+function generatePDF() {
+  const name = val('student-name');
+  if (!name) { alert('Please enter your name before downloading.'); return; }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'pt', format:'letter' });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const margin = 54;
+  const cw = pageW - margin * 2;
+  let y = margin;
+
+  const C = {
+    dark:[26,23,20], accent:[168,112,20], mid:[90,86,80],
+    light:[237,233,224], white:[255,253,248], blue:[26,58,107],
+    gold:[229,201,125]
+  };
+
+  function checkPage(need=40) {
+    if (y + need > pageH - margin) { doc.addPage(); y = margin; pageHdr(); }
+  }
+  function pageHdr() {
+    doc.setFillColor(...C.light);
+    doc.rect(0,0,pageW,28,'F');
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...C.mid);
+    doc.text('AP CS A  ·  Pivot Tables Day 4  ·  Mini-Project', margin, 18);
+    doc.text(name, pageW-margin, 18, {align:'right'});
+    y = Math.max(y, 44);
+  }
+  function secHdr(title, sub) {
+    checkPage(60);
+    doc.setFillColor(...C.accent);
+    doc.rect(margin, y, 4, 22, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(...C.dark);
+    doc.text(title, margin+12, y+15);
+    if (sub) {
+      doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...C.mid);
+      doc.text(sub, margin+12, y+26);
+      y += 38;
+    } else { y += 30; }
+  }
+  function fldBlock(label, value) {
+    checkPage(44);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...C.mid);
+    doc.text(label.toUpperCase(), margin, y+10);
+    y += 14;
+    const t = (value || '').trim() || '(no answer)';
+    const lines = doc.splitTextToSize(t, cw-12);
+    checkPage(lines.length*13+14);
+    doc.setFillColor(...C.white); doc.setDrawColor(...C.light);
+    doc.roundedRect(margin, y, cw, lines.length*13+14, 3, 3, 'FD');
+    doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+    const isBlank = t === '(no answer)';
+    doc.setTextColor(isBlank?C.mid[0]:C.dark[0], isBlank?C.mid[1]:C.dark[1], isBlank?C.mid[2]:C.dark[2]);
+    doc.text(lines, margin+8, y+12);
+    y += lines.length*13+20;
+  }
+  function divider() {
+    checkPage(20); doc.setDrawColor(...C.light); doc.setLineWidth(.5);
+    doc.line(margin, y, pageW-margin, y); y += 16;
+  }
+  function pivotRowBlock(n, setup, result, next) {
+    checkPage(60);
+    doc.setFillColor(...C.accent);
+    doc.roundedRect(margin, y, 24, 14, 2, 2, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(255,253,248);
+    doc.text(`#${n}`, margin+12, y+10, {align:'center'});
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...C.dark);
+    doc.text(`Pivot attempt ${n}`, margin+32, y+10);
+    y += 22;
+    fldBlock('Setup', setup);
+    fldBlock('What it showed', result);
+    fldBlock('What I tried next', next);
+  }
+
+  // ── Cover ──────────────────────────────────────────
+  doc.setFillColor(...C.dark); doc.rect(0,0,pageW,110,'F');
+  doc.setFillColor(...C.accent); doc.circle(pageW-30,-20,80,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(22); doc.setTextColor(255,253,248);
+  doc.text('Pivot Tables: Day Four', margin, 52);
+  doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(160,152,144);
+  doc.text('Mini-Project  ·  AP Computer Science A', margin, 70);
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(...C.gold);
+  doc.text(name, margin, 90);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(160,152,144);
+  const now = new Date();
+  doc.text(`Submitted ${now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`, margin, 104);
+
+  y = 130; pageHdr(); y = 130;
+
+  // ── Sec 1: Dataset ──
+  secHdr('Section 1', 'Dataset');
+  fldBlock('Dataset name', val('ds-name'));
+  fldBlock('Source URL', val('ds-url'));
+  fldBlock('Origin & time period', val('ds-source'));
+  fldBlock('Size (rows × columns)', val('ds-size'));
+  fldBlock('Categorical columns', val('ds-cat'));
+  fldBlock('Numeric columns', val('ds-num'));
+  fldBlock('Why this dataset', val('ds-why'));
+
+  divider();
+
+  // ── Sec 2: Questions ──
+  secHdr('Section 2', 'Framing the question');
+  fldBlock('Candidate question 1', val('q-cand-1'));
+  fldBlock('Candidate question 2', val('q-cand-2'));
+  fldBlock('Candidate question 3', val('q-cand-3'));
+  fldBlock('Final question (chosen)', val('q-final'));
+  fldBlock('Why it matters', val('q-why'));
+  fldBlock('Prediction (before analyzing)', val('q-predict'));
+
+  divider();
+
+  // ── Sec 3: Analyze ──
+  secHdr('Section 3', 'Analysis');
+  fldBlock('Pivot plan — Filter', val('plan-filter'));
+  fldBlock('Pivot plan — Rows', val('plan-rows'));
+  fldBlock('Pivot plan — Columns', val('plan-cols'));
+  fldBlock('Pivot plan — Values', val('plan-vals'));
+  fldBlock('Expected before building', val('plan-expect'));
+
+  divider();
+  pivotRowBlock(1, val('log1-setup'), val('log1-result'), val('log1-next'));
+  pivotRowBlock(2, val('log2-setup'), val('log2-result'), val('log2-next'));
+  pivotRowBlock(3, val('log3-setup'), val('log3-result'), val('log3-next'));
+  // Only render 4th log if any field is filled
+  if (val('log4-setup') || val('log4-result') || val('log4-next')) {
+    pivotRowBlock(4, val('log4-setup'), val('log4-result'), val('log4-next'));
+  }
+
+  divider();
+  fldBlock('Final pivot — Filter', val('final-filter'));
+  fldBlock('Final pivot — Rows', val('final-rows'));
+  fldBlock('Final pivot — Columns', val('final-cols'));
+  fldBlock('Final pivot — Values', val('final-vals'));
+  fldBlock('Best chart type & why', val('final-chart'));
+
+  divider();
+
+  // ── Sec 4: Present ──
+  secHdr('Section 4', 'Findings & presentation');
+  fldBlock('Finding sentence 1 (the number)', val('finding-1'));
+  fldBlock('Finding sentence 2 (why it matters)', val('finding-2'));
+  fldBlock('Honest limitation', val('limit-1'));
+  fldBlock('Follow-up question', val('followup'));
+
+  divider();
+  fldBlock('Talking point — hook', val('talk-hook'));
+  fldBlock('Talking point — the data', val('talk-data'));
+  fldBlock('Talking point — approach', val('talk-method'));
+  fldBlock('Talking point — finding', val('talk-finding'));
+  fldBlock('Talking point — caveat', val('talk-limit'));
+
+  divider();
+
+  // ── Sec 5: Exit reflection ──
+  secHdr('Section 5', 'Exit reflection');
+  fldBlock('Most useful thing I learned', val('exit-1'));
+  fldBlock('Connection to AP CS A (arrays / loops / HashMaps)', val('exit-2'));
+  fldBlock('Where else I could use pivot tables', val('exit-3'));
+
+  // ── Footer ──
+  checkPage(30);
+  doc.setFillColor(...C.light);
+  doc.rect(margin, y, cw, 28, 'F');
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...C.mid);
+  doc.text('AP CS A  ·  Pivot Tables Day 4  ·  Divine Child High School', margin+10, y+17);
+  doc.text(name, pageW-margin-10, y+17, {align:'right'});
+
+  doc.save(`PivotTables_Day4_${name.replace(/\s+/g,'_')}.pdf`);
+}
+</script>
+</body>
+</html>
