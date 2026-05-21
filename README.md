@@ -2,7 +2,7 @@
 
 A four-day data unit for AP Computer Science A at Divine Child High School. Students learn pivot tables in Google Sheets using a 500-record Michigan traffic crash dataset, then cap the unit with a week-long mini-project on a dataset of their choice.
 
-**Live site:** _enable GitHub Pages and put the URL here_
+**Live site:** [https://github.com/falconphysics/PivotTables](https://github.com/falconphysics/PivotTables)
 
 ## What's in the unit
 
